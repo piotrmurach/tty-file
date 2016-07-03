@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'pastel'
+require 'tty-prompt'
 require 'tty/file/version'
 
 module TTY
@@ -9,6 +10,75 @@ module TTY
       module_function(method)
       private_class_method(method)
     end
+
+    # Create new file if doesn't exist
+    #
+    # @param [String] relative_path
+    # @param [String|nil] content
+    #   the content to add to file
+    # @param [Hash] options
+    # @option options [Symbol] :force
+    #   forces ovewrite if conflict present
+    #
+    # @example
+    #   create_file('doc/README.md', '# Title header')
+    #
+    # @example
+    #   create_file 'doc/README.md' do
+    #     '# Title Header'
+    #   end
+    #
+    # @api public
+    def create_file(relative_path, *args, &block)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+
+      content = block_given? ? block.call : args.join
+
+      if ::File.exist?(relative_path)
+        if ::File.binread(relative_path) == content # identical
+          log_status(:identical, relative_path, options.fetch(:verbose, true), :blue)
+        elsif options[:force]
+          log_status(:force, relative_path, options.fetch(:verbose, true), :yellow)
+        elsif options[:skip]
+          log_status(:skip, relative_path, options.fetch(:verbose, true), :yellow)
+        else
+          log_status(:collision, relative_path, options.fetch(:verbose, true), :red)
+          if file_collision(relative_path, content)
+            FileUtils.mkdir_p(::File.dirname(relative_path))
+            ::File.open(relative_path, 'wb') { |f| f.write(content) }
+          end
+        end
+      else
+        log_status(:create, relative_path, options.fetch(:verbose, true), :green)
+        return if options[:noop]
+
+        FileUtils.mkdir_p(::File.dirname(relative_path))
+        ::File.open(relative_path, 'wb') { |f| f.write(content) }
+      end
+      relative_path
+    end
+    module_function :create_file
+
+    def file_collision(relative_path, content)
+      prompt = TTY::Prompt.new
+      choices = [
+        { key: 'y', name: 'yes, overwrite', value: :yes },
+        { key: 'n', name: 'no, do not overwrite', value: :no },
+        { key: 'q', name: 'quit, abort', value: :quit },
+        { key: 'd', name: 'diff, compare files line by line', value: :diff }
+      ]
+      answer = prompt.expand("Overwrite #{relative_path}?", choices)
+
+      case answer
+      when :yes
+        true
+      when :no
+        false
+      when :quit
+        abort
+      end
+    end
+    module_function :file_collision
 
     # Prepend to a file
     #
