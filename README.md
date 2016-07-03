@@ -14,6 +14,10 @@
 
 > File manipulation utility methods
 
+## Motivation
+
+Though Ruby's `File` and `FileUtils` provide very robust apis for dealing with files, this library aims to provide level of abstraction that is much convenient with useful logging capabilities.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -34,8 +38,9 @@ Or install it yourself as:
 
 * [1. Usage](#1-usage)
 * [2. Interface](#2-interface)
-  * [2.1. inject_into_file](#21-inject_into_file)
-  * [2.2. replace_in_file](#22-replace_in_file)
+  * [2.1. create_file](#21-create_file)
+  * [2.2. inject_into_file](#22-inject_into_file)
+  * [2.3. replace_in_file](#23-replace_in_file)
 
 ## 1. Usage
 
@@ -47,7 +52,21 @@ TTY::File.replace_in_file('Gemfile', /gem 'rails'/, "gem 'hanami'")
 
 The following are methods available for creating and manipulating files.
 
-### 2.1. inject_into_file
+If you wish to silence verbose output use `verbose: false`. Similarly if you wish to run action without actually triggering use `noop: true`.
+
+### 2.1. create_file
+
+To create a file at a given destination with the given content use `create_file`:
+
+```ruby
+TTY::File.create_file 'docs/README.md', '## Title header'
+```
+
+On collision with already existing file, a menu is displayed:
+
+You can force to always overwrite file with `:force` option or always skip by providing `:skip`.
+
+### 2.2. inject_into_file
 
 Inject content into a file at a given location
 
@@ -59,7 +78,7 @@ end
 
 You can also use Regular Expressions in `:after` or `:before` to match file location. The `append_to_file` and `prepend_to_file` allow you to add content at the end and the begging of a file.
 
-### 2.2. replace_in_file
+### 2.3. replace_in_file
 
 Replace content of a file matching condition.
 
