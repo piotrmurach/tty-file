@@ -38,9 +38,10 @@ Or install it yourself as:
 
 * [1. Usage](#1-usage)
 * [2. Interface](#2-interface)
-  * [2.1. create_file](#21-create_file)
-  * [2.2. inject_into_file](#22-inject_into_file)
-  * [2.3. replace_in_file](#23-replace_in_file)
+  * [2.1. chmod](#21-chmod)
+  * [2.2. create_file](#22-create_file)
+  * [2.3. inject_into_file](#23-inject_into_file)
+  * [2.4. replace_in_file](#24-replace_in_file)
 
 ## 1. Usage
 
@@ -54,7 +55,29 @@ The following are methods available for creating and manipulating files.
 
 If you wish to silence verbose output use `verbose: false`. Similarly if you wish to run action without actually triggering use `noop: true`.
 
-### 2.1. create_file
+### 2.1. chmod
+
+To change file modes use `chmod` like so:
+
+```ruby
+TTY::File.chmod('filename.rb', 0777)
+```
+
+There are number of constants available to represent common mode bits such as `TTY::File::U_R`, `TTY::File::O_X` and can be used as follows:
+
+```ruby
+TTY::File.chmod('filename.rb', TTY::File::U_R | TTY::File::O_X)
+```
+
+Apart from traditional octal number definition for file permissions, you can use more convenient permission notation accepted by Unix `chmod` command:
+
+```ruby
+TTY::File.chmod('filename.rb', 'u=wrx,g+x')
+```
+
+The `u`, `g`, and `o` specify the user, group, and other parts of the mode bits. The `a` symbol is equivalent to `ugo`.
+
+### 2.2. create_file
 
 To create a file at a given destination with the given content use `create_file`:
 
@@ -66,7 +89,7 @@ On collision with already existing file, a menu is displayed:
 
 You can force to always overwrite file with `:force` option or always skip by providing `:skip`.
 
-### 2.2. inject_into_file
+### 2.3. inject_into_file
 
 Inject content into a file at a given location
 
@@ -78,7 +101,7 @@ end
 
 You can also use Regular Expressions in `:after` or `:before` to match file location. The `append_to_file` and `prepend_to_file` allow you to add content at the end and the begging of a file.
 
-### 2.3. replace_in_file
+### 2.4. replace_in_file
 
 Replace content of a file matching condition.
 
