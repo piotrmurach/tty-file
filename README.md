@@ -97,11 +97,11 @@ To compare files line by line in a system independent way use `diff`:
 ```ruby
 TTY::File.diff('file_a', 'file_b')
 # =>
-  @@ -1,4 +1,4 @@
-   aaa
-  -bbb
-  +xxx
-   ccc
+#  @@ -1,4 +1,4 @@
+#   aaa
+#  -bbb
+#  +xxx
+#   ccc
 ```
 
 You can also pass additional arguments such as `:format` and `:context_lines`.
@@ -111,14 +111,14 @@ Accepted formats are `:old`, `:unified`, `:context`, `:ed`, `:reverse_ed`, by de
 ```ruby
 TTY::File.diff('file_a', 'file_b', format: :old)
 # =>
-  1,4c1,4
-  < aaa
-  < bbb
-  < ccc
-  ---
-  > aaa
-  > xxx
-  > ccc
+#  1,4c1,4
+#  < aaa
+#  < bbb
+#  < ccc
+#  ---
+#  > aaa
+#  > xxx
+#  > ccc
 ```
 
 ### 2.4. inject_into_file
