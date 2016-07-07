@@ -88,6 +88,58 @@ module TTY
     end
     module_function :create_file
 
+    # Diff files line by line
+    #
+    # @param [String] path_a
+    # @param [String] path_b
+    # @param [Hash[Symbol]] options
+    # @option options [Symbol] :format
+    #   the diffining output format
+    # @option options [Symbol] :context_lines
+    #   the number of extra lines for the context
+    #
+    # @example
+    #   diff(file_a, file_b, format: :old)
+    #
+    # @api public
+    def diff(path_a, path_b, options = {})
+      if FileTest.file?(path_a) && FileTest.file?(path_b)
+        diff_files(path_a, path_b, options)
+      else
+        diff_strings(path_a, path_b, options)
+      end
+    end
+    module_function :diff
+
+    # Diff strings
+    #
+    # @api private
+    def diff_strings(string_a, string_b, options)
+      Differ.new(string_a, string_b, options).call
+    end
+    private_module_function :diff_strings
+
+    # Diff files
+    #
+    # @api private
+    def diff_files(path_a, path_b, options)
+      return '' if ::FileUtils.identical?(path_a, path_b)
+      output = ''
+      ::File.open(path_a) do |file_a|
+        ::File.open(path_b) do |file_b|
+          block_size = file_a.lstat.blksize
+          while !file_a.eof? && !file_b.eof?
+            output << diff_strings(file_a.read(block_size),
+                                   file_b.read(block_size),
+                                   options)
+
+          end
+        end
+      end
+      output
+    end
+    private_module_function :diff_files
+
     # Prepend to a file
     #
     # @param [String] relative_path
