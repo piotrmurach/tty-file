@@ -3,6 +3,7 @@
 require 'pastel'
 require 'tty-prompt'
 require 'tty/file/create_file'
+require 'tty/file/differ'
 require 'tty/file/version'
 
 module TTY
