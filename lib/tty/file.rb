@@ -104,8 +104,7 @@ module TTY
     # @api public
     def prepend_to_file(relative_path, *args, &block)
       options = args.last.is_a?(Hash) ? args.pop : {}
-      log_status(:prepend, "#{relative_path}",
-                 options.fetch(:verbose, true), :green)
+      log_status(:prepend, relative_path, options.fetch(:verbose, true), :green)
       options.merge!(before: /\A/, verbose: false)
       inject_into_file(relative_path, *(args << options), &block)
     end
@@ -128,13 +127,12 @@ module TTY
     # @api public
     def append_to_file(relative_path, *args, &block)
       options = args.last.is_a?(Hash) ? args.pop : {}
-      log_status(:append, "#{relative_path}",
-                 options.fetch(:verbose, true), :green)
+      log_status(:append, relative_path, options.fetch(:verbose, true), :green)
       options.merge!(after: /\z/, verbose: false)
       inject_into_file(relative_path, *(args << options), &block)
     end
     module_function :append_to_file
-    alias_method :add_to_file, :append_to_file
+    alias add_to_file append_to_file
 
     # Inject content into file at a given location
     #
@@ -182,11 +180,10 @@ module TTY
 
       replace_in_file(relative_path, /#{match}/, content, options.merge(verbose: false))
 
-      log_status(:inject, "#{relative_path}",
-                 options.fetch(:verbose, true), :green)
+      log_status(:inject, relative_path, options.fetch(:verbose, true), :green)
     end
     module_function :inject_into_file
-    alias_method :insert_into_file, :inject_into_file
+    alias insert_into_file inject_into_file
 
     # Replace content of a file matching string
     #
@@ -213,8 +210,7 @@ module TTY
 
       replacement = (block ? block.call : args[1..-1].join).gsub('\0', '')
 
-      log_status(:replace, "#{relative_path}",
-                 options.fetch(:verbose, true), :green)
+      log_status(:replace, relative_path, options.fetch(:verbose, true), :green)
 
       return if options[:noop]
 
@@ -229,6 +225,7 @@ module TTY
       end
     end
     module_function :replace_in_file
+    alias gsub_file replace_in_file
 
     # Check if path exists
     #
