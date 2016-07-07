@@ -12,6 +12,54 @@ module TTY
       private_class_method(method)
     end
 
+    # File permissions
+    U_R = 0400
+    U_W = 0200
+    U_X = 0100
+    G_R = 0040
+    G_W = 0020
+    G_X = 0010
+    O_R = 0004
+    O_W = 0002
+    O_X = 0001
+    A_R = 0444
+    A_W = 0222
+    A_X = 0111
+
+    # Change file permissions
+    #
+    # @param [String] relative_path
+    # @param [Integer,String] permisssions
+    # @param [Hash[Symbol]] options
+    #
+    # @example
+    #   chmod('Gemfile', 0755)
+    #
+    # @example
+    #   chmod('Gemilfe', TTY::File::U_R | TTY::File::U_W)
+    #
+    # @example
+    #   chmod('Gemfile', 'u+x,g+x')
+    #
+    # @api public
+    def chmod(relative_path, permissions, options = {})
+      mode = ::File.lstat(relative_path).mode
+      if permissions.to_s =~ /\d+/
+        mode = permissions
+      else
+        permissions.scan(/[ugoa][+-=][rwx]+/) do |setting|
+          who, action = setting[0], setting[1]
+          setting[2..setting.size].each_byte do |perm|
+            mask = const_get("#{who.upcase}_#{perm.chr.upcase}")
+            (action == '+') ? mode |= mask : mode ^= mask
+          end
+        end
+      end
+      log_status(:chmod, relative_path, options.fetch(:verbose, true), :green)
+      ::FileUtils.chmod_R(mode, relative_path) unless options[:noop]
+    end
+    module_function :chmod
+
     # Create new file if doesn't exist
     #
     # @param [String] relative_path
