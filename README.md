@@ -40,8 +40,9 @@ Or install it yourself as:
 * [2. Interface](#2-interface)
   * [2.1. chmod](#21-chmod)
   * [2.2. create_file](#22-create_file)
-  * [2.3. inject_into_file](#23-inject_into_file)
-  * [2.4. replace_in_file](#24-replace_in_file)
+  * [2.3. diff](#23-diff)
+  * [2.4. inject_into_file](#24-inject_into_file)
+  * [2.5. replace_in_file](#25-replace_in_file)
 
 ## 1. Usage
 
@@ -89,7 +90,38 @@ On collision with already existing file, a menu is displayed:
 
 You can force to always overwrite file with `:force` option or always skip by providing `:skip`.
 
-### 2.3. inject_into_file
+### 2.3. diff
+
+To compare files line by line in a system independent way use `diff`:
+
+```ruby
+TTY::File.diff('file_a', 'file_b')
+# =>
+  @@ -1,4 +1,4 @@
+   aaa
+  -bbb
+  +xxx
+   ccc
+```
+
+You can also pass additional arguments such as `:format` and `:context_lines`.
+
+Accepted formats are `:old`, `:unified`, `:context`, `:ed`, `:reverse_ed`, by default the `:unified` format is used.
+
+```ruby
+TTY::File.diff('file_a', 'file_b', format: :old)
+# =>
+  1,4c1,4
+  < aaa
+  < bbb
+  < ccc
+  ---
+  > aaa
+  > xxx
+  > ccc
+```
+
+### 2.4. inject_into_file
 
 Inject content into a file at a given location
 
@@ -101,7 +133,7 @@ end
 
 You can also use Regular Expressions in `:after` or `:before` to match file location. The `append_to_file` and `prepend_to_file` allow you to add content at the end and the begging of a file.
 
-### 2.4. replace_in_file
+### 2.5. replace_in_file
 
 Replace content of a file matching condition.
 
