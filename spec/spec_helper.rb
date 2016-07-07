@@ -25,6 +25,11 @@ module Helpers
   def tmp_path
     File.join(File.dirname(__FILE__), '../tmp')
   end
+
+   def strip_heredoc(content)
+     indent = content.scan(/^[ \t]*(?=\S)/).min.size || 0
+     content.gsub(/^[ \t]{#{indent}}/, '')
+   end
 end
 
 RSpec.configure do |config|
