@@ -10,11 +10,11 @@ module TTY
       # Create a Differ
       #
       # @api public
-      def initialize(string_a, string_b, format, context_lines)
+      def initialize(string_a, string_b, options = {})
         @string_a      = string_a
         @string_b      = string_b
-        @format        = format
-        @context_lines = context_lines
+        @format        = options.fetch(:format, :unified)
+        @context_lines = options.fetch(:context_lines, 3)
       end
 
       # @api public
