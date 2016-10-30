@@ -1,39 +1,37 @@
 # encoding: utf-8
 
 RSpec.describe TTY::File, '#create_file' do
-  before do
-    ::FileUtils.rm_rf(tmp_path)
-  end
+  context 'when new file' do
+    it "creates file" do
+      expect {
+        TTY::File.create_file(File.join(tmp_path, 'doc/README.md'))
+      }.to output(/create/).to_stdout_from_any_process
 
-  it "creates file" do
-    expect {
-      TTY::File.create_file(File.join(tmp_path, 'doc/README.md'))
-    }.to output(/create/).to_stdout_from_any_process
-
-    expect(File.exist?(File.join(tmp_path, 'doc/README.md'))).to eq(true)
-  end
-
-  it "creates file with content" do
-    file = File.join(tmp_path, 'doc/README.md')
-    TTY::File.create_file(file, '# Title', verbose: false)
-
-    expect(File.read(file)).to eq('# Title')
-  end
-
-  it "creates file with content in a block" do
-    file = File.join(tmp_path, 'doc/README.md')
-    TTY::File.create_file(file, verbose: false) do
-      "# Title"
+      expect(File.exist?(File.join(tmp_path, 'doc/README.md'))).to eq(true)
     end
 
-    expect(File.read(file)).to eq('# Title')
-  end
+    it "creates file with content" do
+      file = File.join(tmp_path, 'doc/README.md')
+      TTY::File.create_file(file, '# Title', verbose: false)
 
-  it "doesn't create file if :noop is true" do
-    file = File.join(tmp_path, 'doc/README.md')
-    TTY::File.create_file(file, '# Title', noop: true, verbose: false)
+      expect(File.read(file)).to eq('# Title')
+    end
 
-    expect(File.exist?(file)).to eq(false)
+    it "creates file with content in a block" do
+      file = File.join(tmp_path, 'doc/README.md')
+      TTY::File.create_file(file, verbose: false) do
+        "# Title"
+      end
+
+      expect(File.read(file)).to eq('# Title')
+    end
+
+    it "doesn't create file if :noop is true" do
+      file = File.join(tmp_path, 'doc/README.md')
+      TTY::File.create_file(file, '# Title', noop: true, verbose: false)
+
+      expect(File.exist?(file)).to eq(false)
+    end
   end
 
   context 'when file exists' do
