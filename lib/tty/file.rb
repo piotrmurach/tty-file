@@ -2,6 +2,8 @@
 
 require 'pastel'
 require 'tty-prompt'
+require 'erb'
+
 require 'tty/file/create_file'
 require 'tty/file/differ'
 require 'tty/file/version'
@@ -87,6 +89,38 @@ module TTY
       CreateFile.new(relative_path, content, options).call
     end
     module_function :create_file
+
+    # Copy file from the relative source to the relative
+    # destination running it through ERB.
+    #
+    # @param [Hash] options
+    # @option options [Symbol] :context
+    #   the binding to use for the template
+    #
+    # @api public
+    def copy_file(source_path, *args, &block)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      dest_path = args.first || source_path.sub(/\.erb$/, '')
+
+      if ::File.directory?(dest_path)
+        dest_path = ::File.join(dest_path, ::File.basename(source_path))
+      end
+
+      ctx = if (vars = options[:context])
+              vars.instance_eval('binding')
+            else
+              instance_eval('binding')
+            end
+
+      options[:context] ||= self
+      create_file(dest_path, options) do
+        template = ERB.new(::File.binread(source_path), nil, "-", "@output_buffer")
+        content = template.result(ctx)
+        content = block.call(content) if block
+        content
+      end
+    end
+    module_function :copy_file
 
     # Diff files line by line
     #

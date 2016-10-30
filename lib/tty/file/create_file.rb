@@ -6,9 +6,9 @@ module TTY
       attr_reader :relative_path, :content, :options, :prompt
 
       def initialize(relative_path, content, options = {})
-        @relative_path = relative_path
         @content = content
         @options = options
+        @relative_path = convert_encoded_path(relative_path)
         @prompt  = TTY::Prompt.new
       end
 
@@ -33,6 +33,23 @@ module TTY
           ::File.open(relative_path, 'wb') { |f| f.write(content) }
         end
         relative_path
+      end
+
+      protected
+
+      def context
+        options[:context]
+      end
+
+      def convert_encoded_path(filename)
+        filename.gsub(/%(.*?)%/) do |match|
+          method = $1.strip
+          if context.respond_to?(method, true)
+            context.public_send(method)
+          else
+            match
+          end
+        end
       end
 
       # Check if file already exists and ask for user input on collision
