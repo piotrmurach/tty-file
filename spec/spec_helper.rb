@@ -22,18 +22,23 @@ module Helpers
     File.join(File.dirname(__FILE__), 'fixtures')
   end
 
-  def tmp_path
-    File.join(File.dirname(__FILE__), '../tmp')
+  def tmp_path(filename = nil)
+    File.join(File.dirname(__FILE__), '..', 'tmp', filename.to_s)
   end
 
-   def strip_heredoc(content)
-     indent = content.scan(/^[ \t]*(?=\S)/).min.size || 0
-     content.gsub(/^[ \t]{#{indent}}/, '')
-   end
+  def strip_heredoc(content)
+    indent = content.scan(/^[ \t]*(?=\S)/).min.size || 0
+    content.gsub(/^[ \t]{#{indent}}/, '')
+  end
 end
 
 RSpec.configure do |config|
   config.include(Helpers)
+
+  config.before(:each) do
+    FileUtils.rm_rf(tmp_path)
+    FileUtils.cp_r(fixtures_path, tmp_path)
+  end
 
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
