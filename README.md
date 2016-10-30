@@ -39,10 +39,14 @@ Or install it yourself as:
 * [1. Usage](#1-usage)
 * [2. Interface](#2-interface)
   * [2.1. chmod](#21-chmod)
-  * [2.2. create_file](#22-create_file)
-  * [2.3. diff](#23-diff)
-  * [2.4. inject_into_file](#24-inject_into_file)
-  * [2.5. replace_in_file](#25-replace_in_file)
+  * [2.2. copy_file](#22-copy_file)
+  * [2.3. create_file](#23-create_file)
+  * [2.4. diff](#24-diff)
+  * [2.5. inject_into_file](#25-inject_into_file)
+  * [2.6. replace_in_file](#26-replace_in_file)
+  * [2.7. append_to_file](#27-apend_to_file)
+  * [2.8. prepend_to_file](#28-prepend_to_file)
+
 
 ## 1. Usage
 
@@ -54,7 +58,7 @@ TTY::File.replace_in_file('Gemfile', /gem 'rails'/, "gem 'hanami'")
 
 The following are methods available for creating and manipulating files.
 
-If you wish to silence verbose output use `verbose: false`. Similarly if you wish to run action without actually triggering use `noop: true`.
+If you wish to silence verbose output use `verbose: false`. Similarly if you wish to run action without actually triggering any action use `noop: true`.
 
 ### 2.1. chmod
 
@@ -78,7 +82,21 @@ TTY::File.chmod('filename.rb', 'u=wrx,g+x')
 
 The `u`, `g`, and `o` specify the user, group, and other parts of the mode bits. The `a` symbol is equivalent to `ugo`.
 
-### 2.2. create_file
+### 2.2. copy_file
+
+Copies a file content from relative source to relative destination.
+
+```ruby
+TTY::File.copy_file 'Gemfile', 'Gemfile.bak'
+```
+
+If the destination is a directory, then copies source inside that directory.
+
+```ruby
+TTY::File.copy_file 'docs/README.md', 'app'
+```
+
+### 2.3. create_file
 
 To create a file at a given destination with the given content use `create_file`:
 
@@ -90,7 +108,7 @@ On collision with already existing file, a menu is displayed:
 
 You can force to always overwrite file with `:force` option or always skip by providing `:skip`.
 
-### 2.3. diff
+### 2.4. diff
 
 To compare files line by line in a system independent way use `diff`:
 
@@ -121,7 +139,7 @@ TTY::File.diff('file_a', 'file_b', format: :old)
 #  > ccc
 ```
 
-### 2.4. inject_into_file
+### 2.5. inject_into_file
 
 Inject content into a file at a given location
 
@@ -133,12 +151,44 @@ end
 
 You can also use Regular Expressions in `:after` or `:before` to match file location. The `append_to_file` and `prepend_to_file` allow you to add content at the end and the begging of a file.
 
-### 2.5. replace_in_file
+### 2.6. replace_in_file
 
 Replace content of a file matching condition.
 
 ```ruby
 TTY::File.replace_in_file 'filename.rb', /matching condition/, 'replacement'
+```
+
+### 2.7. append_to_file
+
+Appends text to a file. You can provide the text as a second argument:
+
+```ruby
+TTY::File.append_to_file('Gemfile', "gem 'tty'")
+```
+
+or inside a block:
+
+```ruby
+TTY::File.append_to_file('Gemfile') do
+  "gem 'tty'"
+end
+```
+
+### 2.8. prepend_to_file
+
+Prepends text to a file. You can provide the text as a second argument:
+
+```ruby
+TTY::File.prepend_to_file('Gemfile', "gem 'tty'")
+```
+
+or inside a block:
+
+```ruby
+TTY::File.prepend_to_file('Gemfile') do
+  "gem 'tty'"
+end
 ```
 
 ## Development
