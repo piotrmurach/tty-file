@@ -91,7 +91,7 @@ RSpec.describe TTY::File, '#copy_file' do
         'expected'
       end
     })
-    TestCase.include(TTY::File)
+    TestCase.send(:include, TTY::File)
 
     TestCase.new.send(:copy_file, src, verbose: false)
 
