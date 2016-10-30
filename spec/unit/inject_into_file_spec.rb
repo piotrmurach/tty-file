@@ -1,13 +1,8 @@
 # encoding: utf-8
 
 RSpec.describe TTY::File, '#inject_into_file' do
-  before do
-    FileUtils.rm_rf(tmp_path)
-    FileUtils.cp_r(fixtures_path, tmp_path)
-  end
-
   it "injects content into file :before" do
-    file = File.join(tmp_path, 'Gemfile')
+    file = tmp_path('Gemfile')
     TTY::File.inject_into_file(file, "gem 'tty'\n",
       before: "gem 'rack', '>=1.0'\n", verbose: false)
 
@@ -20,7 +15,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
   end
 
   it "injects content into file :after" do
-    file = File.join(tmp_path, 'Gemfile')
+    file = tmp_path('Gemfile')
 
     expect {
       TTY::File.inject_into_file(file, "gem 'tty'", after: "gem 'rack', '>=1.0'\n")
@@ -35,7 +30,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
   end
 
   it "accepts content in block" do
-    file = File.join(tmp_path, 'Gemfile')
+    file = tmp_path('Gemfile')
 
     expect {
       TTY::File.inject_into_file(file, after: "gem 'rack', '>=1.0'\n") do
@@ -52,7 +47,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
   end
 
   it "accepts many lines" do
-    file = File.join(tmp_path, 'Gemfile')
+    file = tmp_path('Gemfile')
 
     TTY::File.inject_into_file(file, "gem 'tty'\n", "gem 'loaf'",
       after: "gem 'rack', '>=1.0'\n", verbose: false)
@@ -67,7 +62,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
   end
 
   it "logs action" do
-    file = File.join(tmp_path, 'Gemfile')
+    file = tmp_path('Gemfile')
 
     expect {
     TTY::File.inject_into_file(file, "gem 'tty'\n", "gem 'loaf'",
@@ -76,7 +71,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
   end
 
   it "doesn't change content if already exists" do
-    file = File.join(tmp_path, 'Gemfile')
+    file = tmp_path('Gemfile')
     TTY::File.inject_into_file(file, "gem 'tty'",
       after: "gem 'rack', '>=1.0'\n", verbose: false)
 
@@ -99,7 +94,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
   end
 
   it "changes content already present if :force flag is true" do
-    file = File.join(tmp_path, 'Gemfile')
+    file = tmp_path('Gemfile')
 
     TTY::File.inject_into_file(file, "gem 'tty'\n",
       before: "gem 'nokogiri'", verbose: false)
@@ -124,7 +119,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
   end
 
   it "fails to inject into non existent file" do
-    file = File.join(tmp_path, 'unknown')
+    file = tmp_path('unknown')
 
     expect {
       TTY::File.inject_into_file(file, "gem 'tty'", after: "gem 'rack', '>=1.0'\n")
@@ -132,7 +127,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
   end
 
   it "doesn't change content when :noop flag is true" do
-    file = File.join(tmp_path, 'Gemfile')
+    file = tmp_path('Gemfile')
     TTY::File.inject_into_file(file, "gem 'tty'\n",
       before: "gem 'nokogiri'", verbose: false, noop: true)
 

@@ -53,7 +53,7 @@ RSpec.describe TTY::File, '#copy_file' do
 
     expect {
       TTY::File.copy_file(src, dest)
-    }.to output(/create/).to_stdout_from_any_process
+    }.to output(/create.*Gemfile/).to_stdout_from_any_process
   end
 
   it "removes template .erb extension" do

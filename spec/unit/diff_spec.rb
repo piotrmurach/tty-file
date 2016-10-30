@@ -1,14 +1,9 @@
 # encoding: utf-8
 
 RSpec.describe TTY::File, '#diff' do
-  before do
-    FileUtils.rm_rf(tmp_path)
-    FileUtils.cp_r(fixtures_path, tmp_path)
-  end
-
   it "diffs two files" do
-    file_a = ::File.open(::File.join(tmp_path, 'diff/file_a'))
-    file_b = ::File.open(::File.join(tmp_path, 'diff/file_b'))
+    file_a = ::File.open(tmp_path('diff/file_a'))
+    file_b = ::File.open(tmp_path('diff/file_b'))
 
     diff = TTY::File.diff(file_a, file_b)
 

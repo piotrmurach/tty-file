@@ -1,14 +1,9 @@
 # encoding: utf-8
 
 RSpec.describe TTY::File, '#chmod' do
-  before do
-    FileUtils.rm_rf(tmp_path)
-    FileUtils.cp_r(fixtures_path, tmp_path)
-  end
-
   context 'when octal permisssions' do
     it "adds permissions to file - user executable" do
-      file = File.join(tmp_path, 'script.sh')
+      file = tmp_path('script.sh')
       mode = File.lstat(file).mode
       expect(File.executable?(file)).to eq(false)
 
@@ -18,7 +13,7 @@ RSpec.describe TTY::File, '#chmod' do
     end
 
     it "logs status when :verbose flag is true" do
-      file = File.join(tmp_path, 'script.sh')
+      file = tmp_path('script.sh')
       mode = File.lstat(file).mode
       expect(File.executable?(file)).to eq(false)
 
@@ -30,7 +25,7 @@ RSpec.describe TTY::File, '#chmod' do
     end
 
     it "doesn't change permission when :noop flag is true" do
-      file = File.join(tmp_path, 'script.sh')
+      file = tmp_path('script.sh')
       mode = File.lstat(file).mode
       expect(File.executable?(file)).to eq(false)
 
@@ -42,7 +37,7 @@ RSpec.describe TTY::File, '#chmod' do
 
   context 'when human readable permissions' do
     it "adds permisions to file - user executable" do
-      file = File.join(tmp_path, 'script.sh')
+      file = tmp_path('script.sh')
       mode = File.lstat(file).mode
       expect(File.executable?(file)).to eq(false)
 
@@ -52,7 +47,7 @@ RSpec.describe TTY::File, '#chmod' do
     end
 
     it "removes permission for user executable" do
-      file = File.join(tmp_path, 'script.sh')
+      file = tmp_path('script.sh')
       mode = File.lstat(file).mode
       expect(File.writable?(file)).to eq(true)
 
@@ -63,7 +58,7 @@ RSpec.describe TTY::File, '#chmod' do
     end
 
     it "adds multiple permissions separated by comma" do
-      file = File.join(tmp_path, 'script.sh')
+      file = tmp_path('script.sh')
       mode = File.lstat(file).mode
       expect(File.executable?(file)).to eq(false)
 

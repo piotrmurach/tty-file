@@ -4,21 +4,21 @@ RSpec.describe TTY::File, '#create_file' do
   context 'when new file' do
     it "creates file" do
       expect {
-        TTY::File.create_file(File.join(tmp_path, 'doc/README.md'))
+        TTY::File.create_file(tmp_path('doc/README.md'))
       }.to output(/create/).to_stdout_from_any_process
 
-      expect(File.exist?(File.join(tmp_path, 'doc/README.md'))).to eq(true)
+      expect(File.exist?(tmp_path('doc/README.md'))).to eq(true)
     end
 
     it "creates file with content" do
-      file = File.join(tmp_path, 'doc/README.md')
+      file = tmp_path('doc/README.md')
       TTY::File.create_file(file, '# Title', verbose: false)
 
       expect(File.read(file)).to eq('# Title')
     end
 
     it "creates file with content in a block" do
-      file = File.join(tmp_path, 'doc/README.md')
+      file = tmp_path('doc/README.md')
       TTY::File.create_file(file, verbose: false) do
         "# Title"
       end
@@ -27,7 +27,7 @@ RSpec.describe TTY::File, '#create_file' do
     end
 
     it "doesn't create file if :noop is true" do
-      file = File.join(tmp_path, 'doc/README.md')
+      file = tmp_path('doc/README.md')
       TTY::File.create_file(file, '# Title', noop: true, verbose: false)
 
       expect(File.exist?(file)).to eq(false)
@@ -37,7 +37,7 @@ RSpec.describe TTY::File, '#create_file' do
   context 'when file exists' do
     context 'and is identical' do
       it "logs identical status" do
-        file = File.join(tmp_path, 'README.md')
+        file = tmp_path('README.md')
         TTY::File.create_file(file, '# Title', verbose: false)
         expect {
           TTY::File.create_file(file, '# Title', verbose: true)
@@ -47,7 +47,7 @@ RSpec.describe TTY::File, '#create_file' do
 
     context 'and is not identical' do
       it "logs forced status if force is true" do
-        file = File.join(tmp_path, 'README.md')
+        file = tmp_path('README.md')
         TTY::File.create_file(file, '# Title', verbose: false)
         expect {
           TTY::File.create_file(file, '# Header', verbose: true, force: true)
@@ -60,7 +60,7 @@ RSpec.describe TTY::File, '#create_file' do
         test_prompt.input.rewind
         allow(TTY::Prompt).to receive(:new).and_return(test_prompt)
 
-        file = File.join(tmp_path, 'README.md')
+        file = tmp_path('README.md')
         TTY::File.create_file(file, '# Title', verbose: false)
 
         expect {
@@ -76,7 +76,7 @@ RSpec.describe TTY::File, '#create_file' do
         test_prompt.input.rewind
         allow(TTY::Prompt).to receive(:new).and_return(test_prompt)
 
-        file = File.join(tmp_path, 'README.md')
+        file = tmp_path('README.md')
         TTY::File.create_file(file, '# Title', verbose: false)
 
         expect {
@@ -92,7 +92,7 @@ RSpec.describe TTY::File, '#create_file' do
         test_prompt.input.rewind
         allow(TTY::Prompt).to receive(:new).and_return(test_prompt)
 
-        file = File.join(tmp_path, 'README.md')
+        file = tmp_path('README.md')
         TTY::File.create_file(file, '# Title', verbose: false)
 
         expect {
