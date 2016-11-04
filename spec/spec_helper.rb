@@ -16,14 +16,23 @@ if RUBY_VERSION > '1.9' and (ENV['COVERAGE'] || ENV['TRAVIS'])
 end
 
 require 'tty/file'
+require "webmock/rspec"
 
 module Helpers
-  def fixtures_path
-    File.join(File.dirname(__FILE__), 'fixtures')
+  def fixtures_path(filename = nil)
+    File.join(File.dirname(__FILE__), 'fixtures', filename.to_s)
   end
 
   def tmp_path(filename = nil)
     File.join(File.dirname(__FILE__), '..', 'tmp', filename.to_s)
+  end
+
+  def exists_and_identical?(source, dest)
+    dest_path = tmp_path(dest)
+    expect(::File.exist?(dest_path)).to be(true)
+
+    source_path = fixtures_path(source)
+    expect(::FileUtils).to be_identical(source_path, dest_path)
   end
 
   def strip_heredoc(content)
