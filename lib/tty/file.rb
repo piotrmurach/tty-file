@@ -5,6 +5,7 @@ require 'tty-prompt'
 require 'erb'
 
 require 'tty/file/create_file'
+require 'tty/file/download_file'
 require 'tty/file/differ'
 require 'tty/file/version'
 
@@ -196,6 +197,48 @@ module TTY
       output
     end
     private_module_function :diff_files
+
+    # Download the content from a given address and
+    # save at the given relative destination. If block
+    # is provided in place of destination, the content of
+    # of the uri is yielded.
+    #
+    # @param [String] uri
+    #   the URI address
+    # @param [String] dest
+    #   the relative path to save
+    # @param [Hash[Symbol]] options
+    # @param options [Symbol] :limit
+    #   the limit of redirects
+    #
+    # @example
+    #   download_file("https://gist.github.com/4701967",
+    #                 "doc/benchmarks")
+    #
+    # @example
+    #   download_file("https://gist.github.com/4701967") do |content|
+    #     content.gsub("\n", " ")
+    #   end
+    #
+    # @api public
+    def download_file(uri, *args, &block)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      dest_path = args.first || ::File.basename(uri)
+
+      unless uri =~ %r{^https?\://}
+        copy_file(uri, dest_path, options)
+        return
+      end
+
+      content = DownloadFile.new(uri, dest_path, options).call
+
+      if block_given?
+        content = (block.arity == 1 ? block.call(content) : block.call)
+      end
+
+      create_file(dest_path, content, options)
+    end
+    module_function :download_file
 
     # Prepend to a file
     #
