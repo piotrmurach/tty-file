@@ -96,6 +96,12 @@ If the destination is a directory, then copies source inside that directory.
 TTY::File.copy_file 'docs/README.md', 'app'
 ```
 
+If you wish to preserve original owner, group, permission and modified time use `:preserve` option:
+
+```ruby
+TTY::File.copy_file 'docs/README.md', 'app', preserve: true
+```
+
 ### 2.3. create_file
 
 To create a file at a given destination with the given content use `create_file`:
