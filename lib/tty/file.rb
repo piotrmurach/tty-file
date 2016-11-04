@@ -92,10 +92,20 @@ module TTY
 
     # Copy file from the relative source to the relative
     # destination running it through ERB.
+    # 
+    # @example
+    #   copy_file 'templates/test.rb', 'app/test.rb'
     #
     # @param [Hash] options
     # @option options [Symbol] :context
     #   the binding to use for the template
+    # @option options [Symbol] :preserve
+    #   If true, the owner, group, permissions and modified time
+    #   are preserved on the copied file, defaults to false.
+    # @option options [Symbol] :noop
+    #   If true do not execute the action.
+    # @option options [Symbol] :verbose
+    #   If true log the action status to stdout
     #
     # @api public
     def copy_file(source_path, *args, &block)
@@ -119,8 +129,21 @@ module TTY
         content = block.call(content) if block
         content
       end
+      if options[:preserve]
+        copy_metadata(source_path, dest_path, options)
+      end
     end
     module_function :copy_file
+
+    # Copy file metadata
+    #
+    # @api public
+    def copy_metadata(src_path, dest_path, options = {})
+      stats = ::File.lstat(src_path)
+      ::File.utime(stats.atime, stats.mtime, dest_path)
+      chmod(dest_path, stats.mode, options)
+    end
+    module_function :copy_metadata
 
     # Diff files line by line
     #

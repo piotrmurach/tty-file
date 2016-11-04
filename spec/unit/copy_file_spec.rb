@@ -47,6 +47,26 @@ RSpec.describe TTY::File, '#copy_file' do
     expect(File.read(dest)).to eq("https://rubygems.org\ngem 'nokogiri'\ngem 'rails', '5.0.0'\ngem 'rack', '>=1.0'\n")
   end
 
+  it "copies file and preservs metadata" do
+    src  = tmp_path('Gemfile')
+    dest = tmp_path('app/Gemfile')
+
+    expect {
+      TTY::File.copy_file(src, dest, verbose: false, preserve: true)
+    }.to output('').to_stdout_from_any_process
+
+    expect(File.stat(src)).to eq(File.stat(dest))
+  end
+
+  it "doesn't copy file if :noop is true" do
+    src  = tmp_path('Gemfile')
+    dest = tmp_path('app/Gemfile')
+
+    TTY::File.copy_file(src, dest, verbose: false, noop: true)
+
+    expect(File.exist?(dest)).to eq(false)
+  end
+
   it "logs status" do
     src  = tmp_path('Gemfile')
     dest = tmp_path('app/Gemfile')
