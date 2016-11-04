@@ -42,10 +42,11 @@ Or install it yourself as:
   * [2.2. copy_file](#22-copy_file)
   * [2.3. create_file](#23-create_file)
   * [2.4. diff](#24-diff)
-  * [2.5. inject_into_file](#25-inject_into_file)
-  * [2.6. replace_in_file](#26-replace_in_file)
-  * [2.7. append_to_file](#27-apend_to_file)
-  * [2.8. prepend_to_file](#28-prepend_to_file)
+  * [2.5. download_file](#25-download_file)
+  * [2.6. inject_into_file](#26-inject_into_file)
+  * [2.7. replace_in_file](#27-replace_in_file)
+  * [2.8. append_to_file](#28-apend_to_file)
+  * [2.9. prepend_to_file](#29-prepend_to_file)
 
 
 ## 1. Usage
@@ -145,7 +146,30 @@ TTY::File.diff('file_a', 'file_b', format: :old)
 #  > ccc
 ```
 
-### 2.5. inject_into_file
+### 2.5. download_file
+
+To download a content from a given address and to save at a given relative location do:
+
+```ruby
+TTY::File.download_file("https://gist.github.com/4701967", "doc/README.md")
+```
+
+If you pass a block then the content will be yielded to allow modification:
+
+```ruby
+TTY::File.download_file("https://gist.github.com/4701967", "doc/README.md") do |content|
+  content.gsub("\n", " ")
+end
+```
+
+By default `download_file` will follow maximum 3 redirects. This can be changed by passing `:limit` option:
+
+```ruby
+TTY::File.download_file("https://gist.github.com/4701967", "doc/README.md", limit: 5)
+# => raises TTY::File::DownloadError
+```
+
+### 2.6. inject_into_file
 
 Inject content into a file at a given location
 
@@ -157,7 +181,7 @@ end
 
 You can also use Regular Expressions in `:after` or `:before` to match file location. The `append_to_file` and `prepend_to_file` allow you to add content at the end and the begging of a file.
 
-### 2.6. replace_in_file
+### 2.7. replace_in_file
 
 Replace content of a file matching condition.
 
@@ -165,7 +189,7 @@ Replace content of a file matching condition.
 TTY::File.replace_in_file 'filename.rb', /matching condition/, 'replacement'
 ```
 
-### 2.7. append_to_file
+### 2.8. append_to_file
 
 Appends text to a file. You can provide the text as a second argument:
 
@@ -181,7 +205,7 @@ TTY::File.append_to_file('Gemfile') do
 end
 ```
 
-### 2.8. prepend_to_file
+### 2.9. prepend_to_file
 
 Prepends text to a file. You can provide the text as a second argument:
 
