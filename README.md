@@ -47,7 +47,7 @@ Or install it yourself as:
   * [2.7. replace_in_file](#27-replace_in_file)
   * [2.8. append_to_file](#28-apend_to_file)
   * [2.9. prepend_to_file](#29-prepend_to_file)
-
+  * [2.10. remove_file](#210-remove_file)
 
 ## 1. Usage
 
@@ -219,6 +219,20 @@ or inside a block:
 TTY::File.prepend_to_file('Gemfile') do
   "gem 'tty'"
 end
+```
+
+### 2.10. remove_file
+
+To remove a file do:
+
+```ruby
+TTY::File.remove_file 'doc/README.md'
+```
+
+You can also pass in `:force` to remove file ignoring any errors:
+
+```ruby
+TTY::File.remove_file 'doc/README.md', force: true
 ```
 
 ## Development
