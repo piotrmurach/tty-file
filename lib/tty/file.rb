@@ -390,6 +390,9 @@ module TTY
     # @option options [Symbol] :verbose
     #   log status
     #
+    # @example
+    #   remove_file 'doc/README.md'
+    #
     # @api public
     def remove_file(relative_path, *args, &block)
       options = args.last.is_a?(Hash) ? args.pop : {}
