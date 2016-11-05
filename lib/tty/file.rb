@@ -380,6 +380,28 @@ module TTY
     module_function :replace_in_file
     alias gsub_file replace_in_file
 
+    # Remove a file or a directory at specified relative path.
+    #
+    # @param [Hash[:Symbol]] options
+    # @option options [Symbol] :noop
+    #   pretend removing file
+    # @option options [Symbol] :force
+    #   remove file ignoring errors
+    # @option options [Symbol] :verbose
+    #   log status
+    #
+    # @api public
+    def remove_file(relative_path, *args, &block)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+
+      log_status(:remove, relative_path, options.fetch(:verbose, true), :red)
+
+      return if options[:noop]
+
+      ::FileUtils.rm_r(relative_path, {force: options[:force], secure: true})
+    end
+    module_function :remove_file
+
     # Check if path exists
     #
     # @raise [ArgumentError]
