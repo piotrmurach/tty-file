@@ -38,16 +38,17 @@ Or install it yourself as:
 
 * [1. Usage](#1-usage)
 * [2. Interface](#2-interface)
-  * [2.1. chmod](#21-chmod)
-  * [2.2. copy_file](#22-copy_file)
-  * [2.3. create_file](#23-create_file)
-  * [2.4. diff](#24-diff)
-  * [2.5. download_file](#25-download_file)
-  * [2.6. inject_into_file](#26-inject_into_file)
-  * [2.7. replace_in_file](#27-replace_in_file)
-  * [2.8. append_to_file](#28-apend_to_file)
-  * [2.9. prepend_to_file](#29-prepend_to_file)
-  * [2.10. remove_file](#210-remove_file)
+  * [2.1. binary?](#21-binary)
+  * [2.2. chmod](#22-chmod)
+  * [2.3. copy_file](#23-copy_file)
+  * [2.4. create_file](#24-create_file)
+  * [2.5. diff](#25-diff)
+  * [2.6. download_file](#26-download_file)
+  * [2.7. inject_into_file](#27-inject_into_file)
+  * [2.8. replace_in_file](#28-replace_in_file)
+  * [2.9. append_to_file](#29-apend_to_file)
+  * [2.10. prepend_to_file](#30-prepend_to_file)
+  * [2.11. remove_file](#211-remove_file)
 
 ## 1. Usage
 
@@ -61,7 +62,15 @@ The following are methods available for creating and manipulating files.
 
 If you wish to silence verbose output use `verbose: false`. Similarly if you wish to run action without actually triggering any action use `noop: true`.
 
-### 2.1. chmod
+### 2.1. binary?
+
+To check whether a file is a binary file, i.e. image, executable etc. do:
+
+```ruby
+TTY::File.binary?('image.png') # => true
+```
+
+### 2.2. chmod
 
 To change file modes use `chmod` like so:
 
@@ -83,7 +92,7 @@ TTY::File.chmod('filename.rb', 'u=wrx,g+x')
 
 The `u`, `g`, and `o` specify the user, group, and other parts of the mode bits. The `a` symbol is equivalent to `ugo`.
 
-### 2.2. copy_file
+### 2.3. copy_file
 
 Copies a file content from relative source to relative destination.
 
@@ -103,7 +112,7 @@ If you wish to preserve original owner, group, permission and modified time use 
 TTY::File.copy_file 'docs/README.md', 'app', preserve: true
 ```
 
-### 2.3. create_file
+### 2.4. create_file
 
 To create a file at a given destination with the given content use `create_file`:
 
@@ -115,7 +124,7 @@ On collision with already existing file, a menu is displayed:
 
 You can force to always overwrite file with `:force` option or always skip by providing `:skip`.
 
-### 2.4. diff
+### 2.5. diff
 
 To compare files line by line in a system independent way use `diff`:
 
@@ -156,7 +165,7 @@ Equally, you can perform a comparison between a file content and a string conten
 TTY::File.diff('/path/to/file', 'some long text')
 ```
 
-### 2.5. download_file
+### 2.6. download_file
 
 To download a content from a given address and to save at a given relative location do:
 
@@ -179,7 +188,7 @@ TTY::File.download_file("https://gist.github.com/4701967", "doc/README.md", limi
 # => raises TTY::File::DownloadError
 ```
 
-### 2.6. inject_into_file
+### 2.7. inject_into_file
 
 Inject content into a file at a given location
 
@@ -191,7 +200,7 @@ end
 
 You can also use Regular Expressions in `:after` or `:before` to match file location. The `append_to_file` and `prepend_to_file` allow you to add content at the end and the begging of a file.
 
-### 2.7. replace_in_file
+### 2.8. replace_in_file
 
 Replace content of a file matching condition.
 
@@ -199,7 +208,7 @@ Replace content of a file matching condition.
 TTY::File.replace_in_file 'filename.rb', /matching condition/, 'replacement'
 ```
 
-### 2.8. append_to_file
+### 2.9. append_to_file
 
 Appends text to a file. You can provide the text as a second argument:
 
@@ -215,7 +224,7 @@ TTY::File.append_to_file('Gemfile') do
 end
 ```
 
-### 2.9. prepend_to_file
+### 2.10. prepend_to_file
 
 Prepends text to a file. You can provide the text as a second argument:
 
@@ -231,7 +240,7 @@ TTY::File.prepend_to_file('Gemfile') do
 end
 ```
 
-### 2.10. remove_file
+### 2.11. remove_file
 
 To remove a file do:
 
