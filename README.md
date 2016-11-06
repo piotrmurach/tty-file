@@ -133,6 +133,8 @@ You can also pass additional arguments such as `:format` and `:context_lines`.
 
 Accepted formats are `:old`, `:unified`, `:context`, `:ed`, `:reverse_ed`, by default the `:unified` format is used.
 
+The `:context_lines` specifies how many extra lines around the differing lines to include in the output. By default its 3 lines.
+
 ```ruby
 TTY::File.diff('file_a', 'file_b', format: :old)
 # =>
@@ -144,6 +146,12 @@ TTY::File.diff('file_a', 'file_b', format: :old)
 #  > aaa
 #  > xxx
 #  > ccc
+```
+
+Equally, you can perform a comparison between a file content and a string content like so:
+
+```ruby
+TTY::File.diff('/path/to/file', 'some long text')
 ```
 
 ### 2.5. download_file
