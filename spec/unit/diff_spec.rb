@@ -2,10 +2,32 @@
 
 RSpec.describe TTY::File, '#diff' do
   it "diffs two files" do
-    file_a = ::File.open(tmp_path('diff/file_a'))
-    file_b = ::File.open(tmp_path('diff/file_b'))
+    file_a = tmp_path('diff/file_a')
+    file_b = tmp_path('diff/file_b')
 
     diff = TTY::File.diff(file_a, file_b)
+
+    expect(diff).to eq(strip_heredoc(<<-EOS
+      @@ -1,4 +1,4 @@
+       aaa
+      -bbb
+      +xxx
+       ccc
+    EOS
+    ))
+  end
+
+  it "diffs identical files" do
+    src_a = tmp_path('diff/file_a')
+
+    expect(TTY::File.diff(src_a, src_a)).to eq('')
+  end
+
+  it "diffs a file and a string" do
+    src_a = tmp_path('diff/file_a')
+    src_b = "aaa\nxxx\nccc\n"
+
+    diff = TTY::File.diff(src_a, src_b)
 
     expect(diff).to eq(strip_heredoc(<<-EOS
       @@ -1,4 +1,4 @@

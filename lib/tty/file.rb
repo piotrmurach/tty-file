@@ -3,6 +3,7 @@
 require 'pastel'
 require 'tty-prompt'
 require 'erb'
+require 'tempfile'
 
 require 'tty/file/create_file'
 require 'tty/file/download_file'
@@ -85,7 +86,7 @@ module TTY
     def create_file(relative_path, *args, &block)
       options = args.last.is_a?(Hash) ? args.pop : {}
 
-      content = block_given? ? block.call : args.join
+      content = block_given? ? block[] : args.join
 
       CreateFile.new(relative_path, content, options).call
     end
@@ -93,7 +94,7 @@ module TTY
 
     # Copy file from the relative source to the relative
     # destination running it through ERB.
-    # 
+    #
     # @example
     #   copy_file 'templates/test.rb', 'app/test.rb'
     #
@@ -127,7 +128,7 @@ module TTY
       create_file(dest_path, options) do
         template = ERB.new(::File.binread(source_path), nil, "-", "@output_buffer")
         content = template.result(ctx)
-        content = block.call(content) if block
+        content = block[content] if block
         content
       end
       if options[:preserve]
@@ -161,42 +162,22 @@ module TTY
     #
     # @api public
     def diff(path_a, path_b, options = {})
-      if FileTest.file?(path_a) && FileTest.file?(path_b)
-        diff_files(path_a, path_b, options)
-      else
-        diff_strings(path_a, path_b, options)
-      end
-    end
-    module_function :diff
-
-    # Diff strings
-    #
-    # @api private
-    def diff_strings(string_a, string_b, options)
-      Differ.new(string_a, string_b, options).call
-    end
-    private_module_function :diff_strings
-
-    # Diff files
-    #
-    # @api private
-    def diff_files(path_a, path_b, options)
-      return '' if ::FileUtils.identical?(path_a, path_b)
       output = ''
-      ::File.open(path_a) do |file_a|
-        ::File.open(path_b) do |file_b|
+      open_tempfile_if_missing(path_a) do |file_a|
+        open_tempfile_if_missing(path_b) do |file_b|
           block_size = file_a.lstat.blksize
           while !file_a.eof? && !file_b.eof?
-            output << diff_strings(file_a.read(block_size),
-                                   file_b.read(block_size),
-                                   options)
+            output << Differ.new(file_a.read(block_size),
+                                 file_b.read(block_size),
+                                 options).call
 
           end
         end
       end
       output
     end
-    private_module_function :diff_files
+    module_function :diff
+    alias_method :diff_files, :diff
 
     # Download the content from a given address and
     # save at the given relative destination. If block
@@ -440,5 +421,30 @@ module TTY
       @output.flush
     end
     module_function :log_status
+
+    # If content is not a path to a file, create a
+    # tempfile and open it instead.
+    #
+    # @param [String] object
+    #   a path to file or content
+    #
+    # @api private
+    def open_tempfile_if_missing(object, &block)
+      if ::FileTest.file?(object)
+        ::File.open(object, &block)
+      else
+        tempfile = Tempfile.new("tty-file-diff")
+        tempfile << object
+        tempfile.rewind
+
+        block[tempfile]
+
+        unless tempfile.nil?
+          tempfile.close
+          tempfile.unlink
+        end
+      end
+    end
+    private_module_function :open_tempfile_if_missing
   end # File
 end # TTY
