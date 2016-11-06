@@ -133,6 +133,8 @@ If the destination is a directory, then copies source inside that directory.
 TTY::File.copy_file 'docs/README.md', 'app'
 ```
 
+If the destination file already exists, a prompt menu will be displayed to enquire about action:
+
 If you wish to preserve original owner, group, permission and modified time use `:preserve` option:
 
 ```ruby
