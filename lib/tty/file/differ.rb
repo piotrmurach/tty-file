@@ -17,9 +17,16 @@ module TTY
         @context_lines = options.fetch(:context_lines, 3)
       end
 
+      # Find character difference between two strings
+      #
+      # @return [String]
+      #   the difference between content or empty if no
+      #   difference found
+      #
       # @api public
       def call
         diffs  = Diff::LCS.diff(string_a_lines, string_b_lines)
+        return '' if diffs.empty?
         hunks  = extract_hunks(diffs)
         format_hunks(hunks)
       end

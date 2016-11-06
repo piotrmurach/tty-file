@@ -1,6 +1,14 @@
 # encoding: utf-8
 
 RSpec.describe TTY::File::Differ, '#call' do
+  it "diffs identical content" do
+    string_a = "aaa bbb ccc"
+
+    diff = TTY::File::Differ.new(string_a, string_a).call
+
+    expect(diff).to eq('')
+  end
+
   it "diffs two files with single line content" do
     string_a = "aaa bbb ccc"
     string_b = "aaa xxx ccc"
