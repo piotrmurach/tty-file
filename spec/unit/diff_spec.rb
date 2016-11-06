@@ -69,15 +69,15 @@ RSpec.describe TTY::File, '#diff' do
     file_b = tmp_path('diff/file_b')
 
     expect {
-      TTY::File.diff(file_a, file_b, verbose: true) 
-    }.to output(/diff(.*)\/diff\/file_a(.*)\/diff\/file_b/).to_stdout_from_any_process
+      TTY::File.diff(file_a, file_b, verbose: true)
+    }.to output(%r{diff(.*)/diff/file_a(.*)/diff/file_b}).to_stdout_from_any_process
   end
 
   it "doesn't diff files when :noop option is given" do
     file_a = tmp_path('diff/file_a')
     file_b = tmp_path('diff/file_b')
 
-    diff = TTY::File.diff(file_a, file_b, verbose: false, noop: true) 
+    diff = TTY::File.diff(file_a, file_b, verbose: false, noop: true)
 
     expect(diff).to eq('')
   end
