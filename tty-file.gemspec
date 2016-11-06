@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'pastel',     '~> 0.6.0'
-  spec.add_dependency 'tty-prompt', '~> 0.6.0'
+  spec.add_dependency 'tty-prompt', '~> 0.7.0'
   spec.add_dependency 'diff-lcs',   '~> 1.2.5'
 
   spec.add_development_dependency 'bundler', '>= 1.5.0', '< 2.0'
