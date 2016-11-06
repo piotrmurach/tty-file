@@ -100,6 +100,33 @@ Copies a file content from relative source to relative destination.
 TTY::File.copy_file 'Gemfile', 'Gemfile.bak'
 ```
 
+If you provide a block then the file content is yielded:
+
+```ruby
+TTY::File.copy_file('Gemfile', 'app/Gemfile') do |content|
+  "https://rubygems.org\n" + content
+end
+```
+
+If the source file is an `ERB` template then you can provide `:context` in which the file gets evaluted or if `TTY::File` gets included as a module then approprite object context will be used by default. To use `:context` do:
+
+```ruby
+variables = OpenStruct.new
+variables[:foo] = 'bar'
+
+TTY::File.copy_file('templates/application.html.erb', context: variables)
+```
+
+You can also specifie template name surrounding any dynamic variables with `%` to be evaluted:
+
+```ruby
+variables = OpenStruct.new
+variables[:file_name] = 'foo'
+
+TTY::File.copy_file('templates/%file_name%.rb', context: variables)
+# => Creates templates/foo.rb
+```
+
 If the destination is a directory, then copies source inside that directory.
 
 ```ruby
