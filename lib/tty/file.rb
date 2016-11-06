@@ -195,9 +195,18 @@ module TTY
       output = ''
 
       open_tempfile_if_missing(path_a) do |file_a|
+        if ::File.size(file_a) > threshold
+          raise ArgumentError, "(file size of #{file_a.path} exceeds #{threshold} bytes, diff output suppressed)"
+        end
+        if binary?(file_a)
+          raise ArgumentError, "(#{file_a.path} is binary, diff output suppressed)"
+        end
         open_tempfile_if_missing(path_b) do |file_b|
-          if (::File.size(file_a) > threshold) || (::File.size(file_b) > threshold)
-            return "(file sizes exceed #{threshold} bytes, diff output suppressed)"
+          if binary?(file_b)
+            raise ArgumentError, "(#{file_a.path} is binary, diff output suppressed)"
+          end
+          if ::File.size(file_b) > threshold
+            return "(file size of #{file_b.path} exceeds #{threshold} bytes, diff output suppressed)"
           end
 
           log_status(:diff, "#{file_a.path} - #{file_b.path}",

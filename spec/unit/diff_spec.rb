@@ -55,15 +55,6 @@ RSpec.describe TTY::File, '#diff' do
     ))
   end
 
-  it "doesn't diff large files" do
-    file_a = tmp_path('diff/file_a')
-    file_b = tmp_path('diff/file_b')
-
-    diff = TTY::File.diff(file_a, file_b, threshold: 10)
-
-    expect(diff).to eq('(file sizes exceed 10 bytes, diff output suppressed)')
-  end
-
   it "logs status" do
     file_a = tmp_path('diff/file_a')
     file_b = tmp_path('diff/file_b')
@@ -80,5 +71,23 @@ RSpec.describe TTY::File, '#diff' do
     diff = TTY::File.diff(file_a, file_b, verbose: false, noop: true)
 
     expect(diff).to eq('')
+  end
+
+  it "doesn't diff if first file is too large" do
+    file_a = tmp_path('diff/file_a')
+    file_b = tmp_path('diff/file_b')
+
+    expect {
+      TTY::File.diff(file_a, file_b, threshold: 10)
+    }.to raise_error(ArgumentError, /file size of (.*) exceeds 10 bytes/)
+  end
+
+  it "doesn't diff binary files" do
+    file_a = tmp_path('blackhole.png')
+    file_b = tmp_path('diff/file_b')
+
+    expect {
+      TTY::File.diff(file_a, file_b)
+    }.to raise_error(ArgumentError, /is binary, diff output suppressed/)
   end
 end
