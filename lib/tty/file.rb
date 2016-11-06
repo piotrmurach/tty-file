@@ -31,6 +31,34 @@ module TTY
     A_W = 0222
     A_X = 0111
 
+    # Check if file is binary
+    #
+    # @param [String] relative_path
+    #   the path to file to check
+    #
+    # @example
+    #   binary?('Gemfile') # => false
+    #
+    # @example
+    #   binary?('image.jpg') # => true
+    #
+    # @return [Boolean]
+    #   Returns `true` if the file is binary
+    #
+    # @api public
+    def binary?(relative_path)
+      bytes = ::File.stat(relative_path).blksize
+      bytes = 4096 if bytes > 4096
+      buffer = ::File.read(relative_path) || ''
+      begin
+        return buffer !~ /\A[\s[[:print:]]]*\z/m
+      rescue ArgumentError => error
+        return true if error.message =~ /invalid byte sequence/
+        raise
+      end
+    end
+    module_function :binary?
+
     # Change file permissions
     #
     # @param [String] relative_path
