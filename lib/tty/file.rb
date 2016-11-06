@@ -155,15 +155,23 @@ module TTY
     #   the diffining output format
     # @option options [Symbol] :context_lines
     #   the number of extra lines for the context
+    # @option options [Symbol] :threshold
+    #   maximum file size in bytes
     #
     # @example
     #   diff(file_a, file_b, format: :old)
     #
     # @api public
     def diff(path_a, path_b, options = {})
+      threshold = options[:threshold] || 10_000_000
       output = ''
+
       open_tempfile_if_missing(path_a) do |file_a|
         open_tempfile_if_missing(path_b) do |file_b|
+          if (::File.size(file_a) > threshold) || (::File.size(file_b) > threshold)
+            return "(file sizes exceed #{threshold} bytes, diff output suppressed)"
+          end
+
           block_size = file_a.lstat.blksize
           while !file_a.eof? && !file_b.eof?
             output << Differ.new(file_a.read(block_size),

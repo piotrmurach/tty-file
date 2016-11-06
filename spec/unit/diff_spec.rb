@@ -54,4 +54,13 @@ RSpec.describe TTY::File, '#diff' do
     EOS
     ))
   end
+
+  it "doesn't diff large files" do
+    file_a = tmp_path('diff/file_a')
+    file_b = tmp_path('diff/file_b')
+
+    diff = TTY::File.diff(file_a, file_b, threshold: 10)
+
+    expect(diff).to eq('(file sizes exceed 10 bytes, diff output suppressed)')
+  end
 end
