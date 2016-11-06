@@ -172,6 +172,10 @@ module TTY
             return "(file sizes exceed #{threshold} bytes, diff output suppressed)"
           end
 
+          log_status(:diff, "#{file_a.path} - #{file_b.path}",
+                     options.fetch(:verbose, true), :green)
+          return output if options[:noop]
+
           block_size = file_a.lstat.blksize
           while !file_a.eof? && !file_b.eof?
             output << Differ.new(file_a.read(block_size),
