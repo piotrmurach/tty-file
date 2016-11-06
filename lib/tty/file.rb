@@ -131,9 +131,8 @@ module TTY
         content = block[content] if block
         content
       end
-      if options[:preserve]
-        copy_metadata(source_path, dest_path, options)
-      end
+      return unless options[:preserve]
+      copy_metadata(source_path, dest_path, options)
     end
     module_function :copy_file
 
@@ -170,14 +169,13 @@ module TTY
             output << Differ.new(file_a.read(block_size),
                                  file_b.read(block_size),
                                  options).call
-
           end
         end
       end
       output
     end
     module_function :diff
-    alias_method :diff_files, :diff
+    alias diff_files diff
 
     # Download the content from a given address and
     # save at the given relative destination. If block
@@ -214,7 +212,7 @@ module TTY
       content = DownloadFile.new(uri, dest_path, options).call
 
       if block_given?
-        content = (block.arity == 1 ? block.call(content) : block.call)
+        content = (block.arity == 1 ? block[content] : block[])
       end
 
       create_file(dest_path, content, options)
@@ -297,7 +295,7 @@ module TTY
     def inject_into_file(relative_path, *args, &block)
       options = args.last.is_a?(Hash) ? args.pop : {}
 
-      replacement = block_given? ? block.call : args.join
+      replacement = block_given? ? block[] : args.join
 
       flag, match = if options.key?(:after)
                       [:after, options.delete(:after)]
@@ -342,7 +340,7 @@ module TTY
 
       contents = IO.read(relative_path)
 
-      replacement = (block ? block.call : args[1..-1].join).gsub('\0', '')
+      replacement = (block ? block[] : args[1..-1].join).gsub('\0', '')
 
       log_status(:replace, relative_path, options.fetch(:verbose, true), :green)
 
@@ -351,7 +349,7 @@ module TTY
       if options[:force] || !contents.include?(replacement)
         if !contents.gsub!(*args, &block)
           find = args[0]
-          fail "#{find.inspect} not found in #{relative_path}"
+          raise "#{find.inspect} not found in #{relative_path}"
         end
         ::File.open(relative_path, 'w') do |file|
           file.write(contents)
@@ -375,14 +373,14 @@ module TTY
     #   remove_file 'doc/README.md'
     #
     # @api public
-    def remove_file(relative_path, *args, &block)
+    def remove_file(relative_path, *args)
       options = args.last.is_a?(Hash) ? args.pop : {}
 
       log_status(:remove, relative_path, options.fetch(:verbose, true), :red)
 
       return if options[:noop]
 
-      ::FileUtils.rm_r(relative_path, {force: options[:force], secure: true})
+      ::FileUtils.rm_r(relative_path, force: options[:force], secure: true)
     end
     module_function :remove_file
 
@@ -393,7 +391,7 @@ module TTY
     # @api private
     def check_path(path)
       return if ::File.exist?(path)
-      fail ArgumentError, "File path #{path} does not exist."
+      raise ArgumentError, "File path #{path} does not exist."
     end
     private_module_function :check_path
 
@@ -433,7 +431,7 @@ module TTY
       if ::FileTest.file?(object)
         ::File.open(object, &block)
       else
-        tempfile = Tempfile.new("tty-file-diff")
+        tempfile = Tempfile.new('tty-file-diff')
         tempfile << object
         tempfile.rewind
 
