@@ -70,7 +70,23 @@ To check whether a file is a binary file, i.e. image, executable etc. do:
 TTY::File.binary?('image.png') # => true
 ```
 
-### 2.2. chmod
+### 2.2. checksum_file
+
+To generate checksum for a file, IO object or String use `checksum_file`. By default `MD5` algorithm is used which can be changed by passing second argument.
+
+Among supported message digest algorithms are:
+
+* `sha`, `sha1`, `sha224`, `sha256`, `sha384`, `sha512`
+* `md2`, `md4`, `md5`
+
+For example, to create digest for string using `SHA1` do:
+
+```ruby
+TTY::File.checksum_file("Some content\nThe end", 'sha1')
+# => "289388f187404135e6c15b21460442cf867180dd"
+```
+
+### 2.3. chmod
 
 To change file modes use `chmod` like so:
 
@@ -92,7 +108,7 @@ TTY::File.chmod('filename.rb', 'u=wrx,g+x')
 
 The `u`, `g`, and `o` specify the user, group, and other parts of the mode bits. The `a` symbol is equivalent to `ugo`.
 
-### 2.3. copy_file
+### 2.4. copy_file
 
 Copies a file content from relative source to relative destination.
 
@@ -141,7 +157,7 @@ If you wish to preserve original owner, group, permission and modified time use 
 TTY::File.copy_file 'docs/README.md', 'app', preserve: true
 ```
 
-### 2.4. create_file
+### 2.5. create_file
 
 To create a file at a given destination with the given content use `create_file`:
 
@@ -194,7 +210,7 @@ Equally, you can perform a comparison between a file content and a string conten
 TTY::File.diff('/path/to/file', 'some long text')
 ```
 
-### 2.6. download_file
+### 2.8. download_file
 
 To download a content from a given address and to save at a given relative location do:
 
@@ -217,7 +233,7 @@ TTY::File.download_file("https://gist.github.com/4701967", "doc/README.md", limi
 # => raises TTY::File::DownloadError
 ```
 
-### 2.7. inject_into_file
+### 2.9. inject_into_file
 
 Inject content into a file at a given location
 
@@ -229,15 +245,23 @@ end
 
 You can also use Regular Expressions in `:after` or `:before` to match file location. The `append_to_file` and `prepend_to_file` allow you to add content at the end and the begging of a file.
 
-### 2.8. replace_in_file
+### 2.10. replace_in_file
 
-Replace content of a file matching condition.
+Replace content of a file matching condition by calling `replace_in_file` or `gsub_file`
 
 ```ruby
 TTY::File.replace_in_file 'filename.rb', /matching condition/, 'replacement'
 ```
 
-### 2.9. append_to_file
+The replacement content can be provided in a block
+
+```ruby
+TTY::File.gsub_file 'filename.rb', /matching condition/ do
+  'replacement'
+end
+```
+
+### 2.11. append_to_file
 
 Appends text to a file. You can provide the text as a second argument:
 
@@ -253,7 +277,7 @@ TTY::File.append_to_file('Gemfile') do
 end
 ```
 
-### 2.10. prepend_to_file
+### 2.12. prepend_to_file
 
 Prepends text to a file. You can provide the text as a second argument:
 
@@ -269,7 +293,7 @@ TTY::File.prepend_to_file('Gemfile') do
 end
 ```
 
-### 2.11. remove_file
+### 2.13. remove_file
 
 To remove a file do:
 
