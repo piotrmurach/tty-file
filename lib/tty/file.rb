@@ -43,13 +43,14 @@ module TTY
     #   binary?('image.jpg') # => true
     #
     # @return [Boolean]
-    #   Returns `true` if the file is binary
+    #   Returns `true` if the file is binary, `false` otherwise
     #
     # @api public
     def binary?(relative_path)
       bytes = ::File.stat(relative_path).blksize
       bytes = 4096 if bytes > 4096
-      buffer = ::File.read(relative_path) || ''
+      buffer = ::File.read(relative_path, bytes, 0) || ''
+      buffer = buffer.force_encoding(Encoding.default_external)
       begin
         return buffer !~ /\A[\s[[:print:]]]*\z/m
       rescue ArgumentError => error
