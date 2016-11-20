@@ -6,6 +6,7 @@ require 'erb'
 require 'tempfile'
 
 require 'tty/file/create_file'
+require 'tty/file/digest_file'
 require 'tty/file/download_file'
 require 'tty/file/differ'
 require 'tty/file/version'
@@ -59,6 +60,32 @@ module TTY
       end
     end
     module_function :binary?
+
+    # Create checksum for a file, io or string objects
+    #
+    # @param [File,IO,String] source
+    #   the source to generate checksum for
+    # @param [String] mode
+    # @param [Hash[Symbol]] options
+    # @option options [String] :noop
+    #   No operation
+    #
+    # @example
+    #   checksum_file('/path/to/file')
+    #
+    # @example
+    #   checksum_file('Some string content', 'md5')
+    #
+    # @return [String]
+    #   the generated hex value
+    #
+    # @api public
+    def checksum_file(source, *args, **options)
+      mode     = args.size.zero? ? 'sha256' : args.pop
+      digester = DigestFile.new(source, mode, options)
+      digester.call unless options[:noop]
+    end
+    module_function :checksum_file
 
     # Change file permissions
     #
