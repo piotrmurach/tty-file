@@ -1,15 +1,26 @@
 # encoding: utf-8
 
+require 'forwardable'
+
 module TTY
   module File
     class CreateFile
+      extend Forwardable
+
       attr_reader :relative_path, :content, :options, :prompt
 
-      def initialize(relative_path, content, options = {})
+      def_delegators "@base", :log_status
+
+      def initialize(base, relative_path, content, options = {})
+        @base    = base
         @content = content
         @options = options
         @relative_path = convert_encoded_path(relative_path)
         @prompt  = TTY::Prompt.new
+      end
+
+      def context
+        options[:context] || @base
       end
 
       def exist?
@@ -18,10 +29,6 @@ module TTY
 
       def identical?
         ::File.binread(relative_path) == content
-      end
-
-      def log_status(*args)
-        TTY::File.log_status(*args)
       end
 
       # Create a file
@@ -36,10 +43,6 @@ module TTY
       end
 
       protected
-
-      def context
-        options[:context]
-      end
 
       def convert_encoded_path(filename)
         filename.gsub(/%(.*?)%/) do |match|
@@ -69,8 +72,7 @@ module TTY
           end
         else
           log_status(:create, relative_path, options.fetch(:verbose, true), :green)
-          return if options[:noop]
-          yield
+          yield unless options[:noop]
         end
       end
 
@@ -81,8 +83,7 @@ module TTY
         choices = [
           { key: 'y', name: 'yes, overwrite', value: :yes },
           { key: 'n', name: 'no, do not overwrite', value: :no },
-          { key: 'q', name: 'quit, abort', value: :quit },
-          { key: 'd', name: 'diff, compare files line by line', value: :diff }
+          { key: 'q', name: 'quit, abort', value: :quit }
         ]
         answer = prompt.expand("Overwrite #{relative_path}?", choices)
         interpret_answer(answer)

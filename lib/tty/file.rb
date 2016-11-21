@@ -144,7 +144,7 @@ module TTY
 
       content = block_given? ? block[] : args.join
 
-      CreateFile.new(relative_path, content, options).call
+      CreateFile.new(self, relative_path, content, options).call
     end
     module_function :create_file
 
@@ -495,7 +495,7 @@ module TTY
       @output.print(message)
       @output.flush
     end
-    module_function :log_status
+    private_module_function :log_status
 
     # If content is not a path to a file, create a
     # tempfile and open it instead.
