@@ -54,6 +54,7 @@ RSpec.describe TTY::File, '#replace_in_file' do
   it "allows for noop run" do
     content = "gem 'hanami'"
     file = tmp_path('Gemfile')
+
     expect {
       TTY::File.replace_in_file(file, /gem 'rails'/, content, noop: true)
     }.to output(/replace/).to_stdout_from_any_process
@@ -68,17 +69,30 @@ RSpec.describe TTY::File, '#replace_in_file' do
   it "doesn't replace content if already present" do
     content = "gem 'hanami'"
     file = tmp_path('Gemfile')
-    TTY::File.replace_in_file(file, /gem 'rails'/, content, verbose: false)
+
+    TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'hanami', '5.0.0'\n",
       "gem 'rack', '>=1.0'\n"
     ].join)
 
-    TTY::File.replace_in_file(file, /gem 'rails'/, content, verbose: false)
+    TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'hanami', '5.0.0'\n",
+      "gem 'rack', '>=1.0'\n"
+    ].join)
+  end
+
+  it "replaces with multibyte content" do
+    content = "gem 'ようこそ'"
+    file = tmp_path('Gemfile')
+
+    TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
+    expect(File.read(file)).to eq([
+      "gem 'nokogiri'\n",
+      "#{content}, '5.0.0'\n",
       "gem 'rack', '>=1.0'\n"
     ].join)
   end

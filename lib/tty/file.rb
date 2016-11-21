@@ -437,13 +437,15 @@ module TTY
           find = args[0]
           raise "#{find.inspect} not found in #{relative_path}"
         end
-        ::File.open(relative_path, 'w') do |file|
+        ::File.open(relative_path, 'wb') do |file|
           file.write(contents)
         end
       end
     end
     module_function :replace_in_file
+
     alias gsub_file replace_in_file
+    module_function :gsub_file
 
     # Remove a file or a directory at specified relative path.
     #
