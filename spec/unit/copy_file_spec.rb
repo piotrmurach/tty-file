@@ -29,8 +29,7 @@ RSpec.describe TTY::File, '#copy_file' do
 
   it "copies file to existing destination" do
     src  = tmp_path('Gemfile')
-    dest = tmp_path('app')
-    FileUtils.mkdir(dest)
+    dest = tmp_path('app/Gemfile')
 
     TTY::File.copy_file(src, dest, verbose: false)
 
@@ -87,15 +86,16 @@ RSpec.describe TTY::File, '#copy_file' do
 
   it "converts filename based on context" do
     src = tmp_path('templates/%file_name%.rb')
+    dest = tmp_path('app/%file_name%.rb')
 
     variables = OpenStruct.new
     variables[:foo] = 'bar'
     variables[:file_name] = 'expected'
 
-    TTY::File.copy_file(src, context: variables, verbose: false)
+    TTY::File.copy_file(src, dest, context: variables, verbose: false)
 
-    dest = tmp_path('templates/expected.rb')
-    expect(File.read(dest)).to eq("bar\n")
+    expected = tmp_path('app/expected.rb')
+    expect(File.read(expected)).to eq("bar\n")
   end
 
   it "converts filename based on class context" do

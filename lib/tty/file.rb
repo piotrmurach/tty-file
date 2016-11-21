@@ -157,6 +157,11 @@ module TTY
     # @example
     #   copy_file 'templates/test.rb', 'app/test.rb'
     #
+    # @example
+    #   vars = OpenStruct.new
+    #   vars[:name] = 'foo'
+    #   copy_file 'templates/%name%.rb', 'app/%name%.rb', context: vars
+    #
     # @param [Hash] options
     # @option options [Symbol] :context
     #   the binding to use for the template
@@ -169,13 +174,8 @@ module TTY
     #   If true log the action status to stdout
     #
     # @api public
-    def copy_file(source_path, *args, &block)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-      dest_path = args.first || source_path.sub(/\.erb$/, '')
-
-      if ::File.directory?(dest_path)
-        dest_path = ::File.join(dest_path, ::File.basename(source_path))
-      end
+    def copy_file(source_path, *args, **options, &block)
+      dest_path = (args.first || source_path).sub(/\.erb$/, '')
 
       ctx = if (vars = options[:context])
               vars.instance_eval('binding')
@@ -183,7 +183,6 @@ module TTY
               instance_eval('binding')
             end
 
-      options[:context] ||= self
       create_file(dest_path, options) do
         template = ERB.new(::File.binread(source_path), nil, "-", "@output_buffer")
         content = template.result(ctx)
