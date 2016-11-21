@@ -33,7 +33,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
     file = tmp_path('Gemfile')
 
     expect {
-      TTY::File.inject_into_file(file, after: "gem 'rack', '>=1.0'\n") do
+      TTY::File.insert_into_file(file, after: "gem 'rack', '>=1.0'\n") do
         "gem 'tty'"
       end
     }.to output(/inject/).to_stdout_from_any_process

@@ -399,7 +399,9 @@ module TTY
       log_status(:inject, relative_path, options.fetch(:verbose, true), :green)
     end
     module_function :inject_into_file
+
     alias insert_into_file inject_into_file
+    module_function :insert_into_file
 
     # Replace content of a file matching string
     #
