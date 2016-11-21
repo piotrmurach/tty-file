@@ -39,16 +39,18 @@ Or install it yourself as:
 * [1. Usage](#1-usage)
 * [2. Interface](#2-interface)
   * [2.1. binary?](#21-binary)
-  * [2.2. chmod](#22-chmod)
-  * [2.3. copy_file](#23-copy_file)
-  * [2.4. create_file](#24-create_file)
-  * [2.5. diff](#25-diff)
-  * [2.6. download_file](#26-download_file)
-  * [2.7. inject_into_file](#27-inject_into_file)
-  * [2.8. replace_in_file](#28-replace_in_file)
-  * [2.9. append_to_file](#29-apend_to_file)
-  * [2.10. prepend_to_file](#30-prepend_to_file)
-  * [2.11. remove_file](#211-remove_file)
+  * [2.2. checksum_file](#22-checksum_file)
+  * [2.3. chmod](#23-chmod)
+  * [2.4. copy_file](#24-copy_file)
+  * [2.5. create_file](#25-create_file)
+  * [2.6. create_dir](#26-create_dir)
+  * [2.7. diff](#27-diff)
+  * [2.8. download_file](#28-download_file)
+  * [2.9. inject_into_file](#29-inject_into_file)
+  * [2.10. replace_in_file](#30-replace_in_file)
+  * [2.11. append_to_file](#31-apend_to_file)
+  * [2.12. prepend_to_file](#32-prepend_to_file)
+  * [2.13. remove_file](#213-remove_file)
 
 ## 1. Usage
 
@@ -169,9 +171,50 @@ On collision with already existing file, a menu is displayed:
 
 You can force to always overwrite file with `:force` option or always skip by providing `:skip`.
 
-### 2.5. diff
+### 2.6. create_dir
 
-To compare files line by line in a system independent way use `diff`:
+To create directory use `create_directory` or its alias `create_dir` passing as a first argument file path:
+
+```ruby
+TTY::File.create_dir(/path/to/directory)
+```
+
+or a data structure describing the directory tree including any files with or without content:
+
+```ruby
+tree =
+  'app' => [
+    'README.md',
+    ['Gemfile', "gem 'tty-file'"],
+    'lib' => [
+      'cli.rb',
+      ['file_utils.rb', "require 'tty-file'"]
+    ]
+    'spec' => []
+  ]
+```
+
+```ruby
+TTY::File.create_dir(tree)
+# =>
+# app
+# app/README.md
+# app/Gemfile
+# app/lib
+# app/lib/cli.rb
+# app/lib/file_utils.rb
+# app/spec
+```
+
+As a second argument you can provide a parent directory, otherwise current directory will be assumed:
+
+```ruby
+TTy::File.create_dir(tree, '/path/to/parent/dir')
+```
+
+### 2.7. diff
+
+To compare files line by line in a system independent way use `diff`, or `diff_files`:
 
 ```ruby
 TTY::File.diff('file_a', 'file_b')
