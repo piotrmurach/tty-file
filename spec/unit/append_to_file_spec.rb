@@ -38,7 +38,7 @@ RSpec.describe TTY::File, '#append_to_file' do
   it "logs action" do
     file = tmp_path('Gemfile')
     expect {
-      TTY::File.append_to_file(file, "gem 'tty'")
+      TTY::File.add_to_file(file, "gem 'tty'")
     }.to output(/append.*Gemfile/).to_stdout_from_any_process
   end
 end

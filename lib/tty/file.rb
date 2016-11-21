@@ -346,7 +346,9 @@ module TTY
       inject_into_file(relative_path, *(args << options), &block)
     end
     module_function :append_to_file
+
     alias add_to_file append_to_file
+    module_function :add_to_file
 
     # Inject content into file at a given location
     #
