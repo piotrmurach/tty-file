@@ -121,6 +121,58 @@ module TTY
     end
     module_function :chmod
 
+    # Create directory structure
+    #
+    # @param [String, Hash] destination
+    #   the path or data structure describing directory tree
+    #
+    # @example
+    #   create_directory('/path/to/dir')
+    #
+    # @example
+    #   tree =
+    #     'app' => [
+    #       'README.md',
+    #       ['Gemfile', "gem 'tty-file'"],
+    #       'lib' => [
+    #         'cli.rb',
+    #         ['file_utils.rb', "require 'tty-file'"]
+    #       ]
+    #       'spec' => []
+    #     ]
+    #
+    #   create_directory(tree)
+    #
+    # @return [void]
+    #
+    # @api public
+    def create_directory(destination, *args, **options)
+      parent = args.size.nonzero? ? args.pop : nil
+      if destination.is_a?(String)
+        destination = { destination => [] }
+      end
+
+      destination.each do |dir, files|
+        path = parent.nil? ? dir : ::File.join(parent, dir)
+        unless ::File.exist?(path)
+          ::FileUtils.mkdir_p(path)
+          log_status(:create, path, options.fetch(:verbose, true), :green)
+        end
+
+        files.each do |filename, contents|
+          if filename.respond_to?(:each_pair)
+            create_directory(filename, path, options)
+          else
+            create_file(::File.join(path, filename), contents, options)
+          end
+        end
+      end
+    end
+    module_function :create_directory
+
+    alias create_dir create_directory
+    module_function :create_dir
+
     # Create new file if doesn't exist
     #
     # @param [String] relative_path

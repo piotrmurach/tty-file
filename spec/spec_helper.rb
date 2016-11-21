@@ -16,6 +16,7 @@ if RUBY_VERSION > '1.9' and (ENV['COVERAGE'] || ENV['TRAVIS'])
 end
 
 require 'tty/file'
+require 'find'
 require "webmock/rspec"
 
 module Helpers
