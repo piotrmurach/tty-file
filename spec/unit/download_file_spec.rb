@@ -46,7 +46,8 @@ RSpec.describe TTY::File, '#download_file' do
   it "copies the file from relative location if not URI" do
     src_path  = tmp_path('Gemfile')
     dest_path = tmp_path('app/Gemfile')
-    TTY::File.download_file(src_path, dest_path, verbose: false)
+
+    TTY::File.get_file(src_path, dest_path, verbose: false)
 
     exists_and_identical?('Gemfile', 'app/Gemfile')
   end

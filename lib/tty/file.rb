@@ -103,7 +103,7 @@ module TTY
     #   chmod('Gemfile', 'u+x,g+x')
     #
     # @api public
-    def chmod(relative_path, permissions, options = {})
+    def chmod(relative_path, permissions, **options)
       mode = ::File.lstat(relative_path).mode
       if permissions.to_s =~ /\d+/
         mode = permissions
@@ -191,9 +191,7 @@ module TTY
     #   end
     #
     # @api public
-    def create_file(relative_path, *args, &block)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-
+    def create_file(relative_path, *args, **options, &block)
       content = block_given? ? block[] : args.join
 
       CreateFile.new(self, relative_path, content, options).call
@@ -248,8 +246,13 @@ module TTY
 
     # Copy file metadata
     #
+    # @param [String] src_path
+    #   the source file path
+    # @param [String] dest_path
+    #   the destination file path
+    #
     # @api public
-    def copy_metadata(src_path, dest_path, options = {})
+    def copy_metadata(src_path, dest_path, **options)
       stats = ::File.lstat(src_path)
       ::File.utime(stats.atime, stats.mtime, dest_path)
       chmod(dest_path, stats.mode, options)
@@ -272,7 +275,7 @@ module TTY
     #   diff(file_a, file_b, format: :old)
     #
     # @api public
-    def diff(path_a, path_b, options = {})
+    def diff(path_a, path_b, **options)
       threshold = options[:threshold] || 10_000_000
       output = ''
 
@@ -333,8 +336,7 @@ module TTY
     #   end
     #
     # @api public
-    def download_file(uri, *args, &block)
-      options = args.last.is_a?(Hash) ? args.pop : {}
+    def download_file(uri, *args, **options, &block)
       dest_path = args.first || ::File.basename(uri)
 
       unless uri =~ %r{^https?\://}
@@ -352,6 +354,9 @@ module TTY
     end
     module_function :download_file
 
+    alias get_file download_file
+    module_function :get_file
+
     # Prepend to a file
     #
     # @param [String] relative_path
@@ -367,8 +372,7 @@ module TTY
     #   end
     #
     # @api public
-    def prepend_to_file(relative_path, *args, &block)
-      options = args.last.is_a?(Hash) ? args.pop : {}
+    def prepend_to_file(relative_path, *args, **options, &block)
       log_status(:prepend, relative_path, options.fetch(:verbose, true), :green)
       options.merge!(before: /\A/, verbose: false)
       inject_into_file(relative_path, *(args << options), &block)
@@ -390,8 +394,7 @@ module TTY
     #   end
     #
     # @api public
-    def append_to_file(relative_path, *args, &block)
-      options = args.last.is_a?(Hash) ? args.pop : {}
+    def append_to_file(relative_path, *args, **options, &block)
       log_status(:append, relative_path, options.fetch(:verbose, true), :green)
       options.merge!(after: /\z/, verbose: false)
       inject_into_file(relative_path, *(args << options), &block)
@@ -427,9 +430,7 @@ module TTY
     #   end
     #
     # @api public
-    def inject_into_file(relative_path, *args, &block)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-
+    def inject_into_file(relative_path, *args, **options, &block)
       replacement = block_given? ? block[] : args.join
 
       flag, match = if options.key?(:after)
@@ -471,12 +472,9 @@ module TTY
     #   end
     #
     # @api public
-    def replace_in_file(relative_path, *args, &block)
+    def replace_in_file(relative_path, *args, **options, &block)
       check_path(relative_path)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-
-      contents = IO.read(relative_path)
-
+      contents    = IO.read(relative_path)
       replacement = (block ? block[] : args[1..-1].join).gsub('\0', '')
 
       log_status(:replace, relative_path, options.fetch(:verbose, true), :green)
@@ -512,9 +510,7 @@ module TTY
     #   remove_file 'doc/README.md'
     #
     # @api public
-    def remove_file(relative_path, *args)
-      options = args.last.is_a?(Hash) ? args.pop : {}
-
+    def remove_file(relative_path, *args, **options)
       log_status(:remove, relative_path, options.fetch(:verbose, true), :red)
 
       return if options[:noop]
