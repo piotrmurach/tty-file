@@ -60,7 +60,7 @@ RSpec.describe TTY::File, '#diff' do
     file_b = tmp_path('diff/file_b')
 
     expect {
-      TTY::File.diff(file_a, file_b, verbose: true)
+      TTY::File.diff_files(file_a, file_b, verbose: true)
     }.to output(%r{diff(.*)/diff/file_a(.*)/diff/file_b}).to_stdout_from_any_process
   end
 

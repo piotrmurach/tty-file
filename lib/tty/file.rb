@@ -148,6 +148,9 @@ module TTY
     end
     module_function :create_file
 
+    alias add_file create_file
+    module_function :add_file
+
     # Copy file from the relative source to the relative
     # destination running it through ERB.
     #
@@ -252,7 +255,9 @@ module TTY
       output
     end
     module_function :diff
+
     alias diff_files diff
+    module_function :diff_files
 
     # Download the content from a given address and
     # save at the given relative destination. If block
@@ -289,7 +294,7 @@ module TTY
       content = DownloadFile.new(uri, dest_path, options).call
 
       if block_given?
-        content = (block.arity == 1 ? block[content] : block[])
+        content = (block.arity.nonzero? ? block[content] : block[])
       end
 
       create_file(dest_path, content, options)
