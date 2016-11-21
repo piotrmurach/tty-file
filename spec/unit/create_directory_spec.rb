@@ -46,4 +46,26 @@ RSpec.describe TTY::File, '#create_directory' do
 
     expect(::File.read(tmp_path('app/subdir/full_file_subdir'))).to eq('File with contents')
   end
+
+  it "creates tree of dirs in parent directory" do
+    app_dir = tmp_path('parent')
+
+    tree = {
+      'app' => [
+        ['file', "File multi\nline contents"],
+        'subdir' => ['file1', 'file2']
+      ]
+    }
+
+    TTY::File.create_dir(tree, app_dir, verbose: false)
+
+    expect(Find.find(app_dir).to_a).to eq([
+      tmp_path('parent'),
+      tmp_path('parent/app'),
+      tmp_path('parent/app/file'),
+      tmp_path('parent/app/subdir'),
+      tmp_path('parent/app/subdir/file1'),
+      tmp_path('parent/app/subdir/file2')
+    ])
+  end
 end
