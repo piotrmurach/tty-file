@@ -92,6 +92,9 @@ module TTY
     # @param [String] relative_path
     # @param [Integer,String] permisssions
     # @param [Hash[Symbol]] options
+    # @option options [Symbol] :noop
+    # @option options [Symbol] :verbose
+    # @option options [Symbol] :force
     #
     # @example
     #   chmod('Gemfile', 0755)
@@ -520,6 +523,8 @@ module TTY
     module_function :remove_file
 
     # Check if path exists
+    #
+    # @param [String] path
     #
     # @raise [ArgumentError]
     #
