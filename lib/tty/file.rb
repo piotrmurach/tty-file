@@ -262,6 +262,39 @@ module TTY
     end
     module_function :copy_metadata
 
+    # Copy directory from source to destination path
+    #
+    # @param [Hash[Symbol]] options
+    # @option options [Symbol] :preserve
+    #   If true, the owner, group, permissions and modified time
+    #   are preserved on the copied file, defaults to false.
+    # @option options [Symbol] :recursive
+    #   If true, copies all subdirectories as well, defaults to false.
+    #
+    # @example
+    #
+    #
+    # @api public
+    def copy_directory(source_path, *args, **options, &block)
+      check_path(source_path)
+      dest_path = args.first || source_path
+      pattern = options[:recursive] ? ::File.join(source_path, '**') : source_path
+      glob_pattern = ::File.join(pattern, '*')
+
+      Dir.glob(glob_pattern, ::File::FNM_DOTMATCH).sort.each do |file_source|
+        next if ::File.directory?(file_source)
+
+        dest = ::File.join(dest_path, file_source.gsub(source_path, '.'))
+        file_dest = Pathname.new(dest).cleanpath.to_s
+
+        copy_file(file_source, file_dest, **options, &block)
+      end
+    end
+    module_function :copy_directory
+
+    alias copy_dir copy_directory
+    module_function :copy_dir
+
     # Diff files line by line
     #
     # @param [String] path_a
@@ -531,7 +564,7 @@ module TTY
     # @api private
     def check_path(path)
       return if ::File.exist?(path)
-      raise ArgumentError, "File path #{path} does not exist."
+      raise ArgumentError, "File path \"#{path}\" does not exist."
     end
     private_module_function :check_path
 
