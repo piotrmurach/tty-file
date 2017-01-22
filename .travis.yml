@@ -1,7 +1,6 @@
 ---
 language: ruby
 sudo: required
-cache: bundler
 script:
   - bundle exec rake ci
 rvm:
