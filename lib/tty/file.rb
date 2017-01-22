@@ -292,9 +292,12 @@ module TTY
     #   are preserved on the copied file, defaults to false.
     # @option options [Symbol] :recursive
     #   If false, copies only top level files, defaults to true.
+    # @option options [Symbol] :exclude
+    #   A regex that specifies files to ignore when copying.
     #
     # @example
     #   copy_directory("app", "new_app", recursive: false)
+    #   copy_directory("app", "new_app", exclude: /docs/)
     #
     # @api public
     def copy_directory(source_path, *args, **options, &block)
@@ -307,6 +310,7 @@ module TTY
 
       Dir.glob(glob_pattern, ::File::FNM_DOTMATCH).sort.each do |file_source|
         next if ::File.directory?(file_source)
+        next if opts[:exclude] && file_source.match(opts[:exclude])
 
         dest = ::File.join(dest_path, file_source.gsub(source_path, '.'))
         file_dest = ::Pathname.new(dest).cleanpath.to_s

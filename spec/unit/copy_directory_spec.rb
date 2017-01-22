@@ -7,7 +7,8 @@ RSpec.describe TTY::File, '#copy_directory' do
 
     variables = OpenStruct.new
     variables[:name] = 'tty'
-    variables[:class_name] = 'TTY'
+    variables[:foo] = 'Foo'
+    variables[:bar] = 'Bar'
 
     TTY::File.copy_directory(app, apps, context: variables, verbose: false)
 
@@ -17,8 +18,14 @@ RSpec.describe TTY::File, '#copy_directory' do
       tmp_path('apps/command.rb'),
       tmp_path('apps/commands'),
       tmp_path('apps/commands/subcommand.rb'),
+      tmp_path('apps/excluded'),
+      tmp_path('apps/excluded/command.rb'),
+      tmp_path('apps/excluded/tty_cli.rb'),
       tmp_path('apps/tty_cli.rb')
     ])
+
+    expect(File.read(tmp_path('apps/command.rb'))).to eq("class FooCommand\nend\n")
+    expect(File.read(tmp_path('apps/excluded/command.rb'))).to eq("class BarCommand\nend\n")
   end
 
   it "copies top level directory of files and evalutes templates" do
@@ -27,9 +34,12 @@ RSpec.describe TTY::File, '#copy_directory' do
 
     variables = OpenStruct.new
     variables[:name] = 'tty'
-    variables[:class_name] = 'TTY'
+    variables[:foo] = 'Foo'
+    variables[:bar] = 'Bar'
 
-    TTY::File.copy_directory(app, apps, recursive: false, context: variables, verbose: false)
+    TTY::File.copy_directory(app, apps, recursive: false,
+                                        context: variables,
+                                        verbose: false)
 
     expect(Find.find(apps).to_a).to eq([
       tmp_path('apps'),
@@ -47,6 +57,29 @@ RSpec.describe TTY::File, '#copy_directory' do
     expect(Find.find(dest).to_a).to eq([
       tmp_path('foo1'),
       tmp_path('foo1/README.md')
+    ])
+  end
+
+  it "ignores excluded directories" do
+    src = tmp_path('cli_app')
+    dest = tmp_path('ignored')
+
+    variables = OpenStruct.new
+    variables[:name] = 'tty'
+    variables[:foo] = 'Foo'
+    variables[:bar] = 'Bar'
+
+    TTY::File.copy_directory(src, dest, context: variables,
+                                        exclude: %r{excluded/},
+                                        verbose: false)
+
+    expect(Find.find(dest).to_a).to eq([
+      tmp_path('ignored'),
+      tmp_path('ignored/README'),
+      tmp_path('ignored/command.rb'),
+      tmp_path('ignored/commands'),
+      tmp_path('ignored/commands/subcommand.rb'),
+      tmp_path('ignored/tty_cli.rb')
     ])
   end
 
