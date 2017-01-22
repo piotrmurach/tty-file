@@ -263,30 +263,50 @@ module TTY
     end
     module_function :copy_metadata
 
-    # Copy directory from source to destination path
+    # Copy directory recursively from source to destination path
+    #
+    # Any files names wrapped within % sign will be expanded by
+    # executing corresponding method and inserting its value.
+    # Assuming the following directory structure:
+    #
+    #  app/
+    #    %name%.rb
+    #    command.rb.erb
+    #    README.md
+    #
+    #  Invoking:
+    #    copy_directory("app", "new_app")
+    #  The following directory structure should be created where
+    #  name resolves to 'cli' value:
+    #
+    #  new_app/
+    #    cli.rb
+    #    command.rb
+    #    README
     #
     # @param [Hash[Symbol]] options
     # @option options [Symbol] :preserve
     #   If true, the owner, group, permissions and modified time
     #   are preserved on the copied file, defaults to false.
     # @option options [Symbol] :recursive
-    #   If true, copies all subdirectories as well, defaults to false.
+    #   If false, copies only top level files, defaults to true.
     #
     # @example
-    #
+    #   copy_directory("app", "new_app", recursive: false)
     #
     # @api public
     def copy_directory(source_path, *args, **options, &block)
       check_path(source_path)
       dest_path = args.first || source_path
-      pattern = options[:recursive] ? ::File.join(source_path, '**') : source_path
+      opts = {recursive: true}.merge(options)
+      pattern = opts[:recursive] ? ::File.join(source_path, '**') : source_path
       glob_pattern = ::File.join(pattern, '*')
 
       Dir.glob(glob_pattern, ::File::FNM_DOTMATCH).sort.each do |file_source|
         next if ::File.directory?(file_source)
 
         dest = ::File.join(dest_path, file_source.gsub(source_path, '.'))
-        file_dest = Pathname.new(dest).cleanpath.to_s
+        file_dest = ::Pathname.new(dest).cleanpath.to_s
 
         copy_file(file_source, file_dest, **options, &block)
       end
