@@ -297,9 +297,10 @@ module TTY
     # @api public
     def copy_directory(source_path, *args, **options, &block)
       check_path(source_path)
-      dest_path = args.first || source_path
+      source = escape_glob_path(source_path)
+      dest_path = args.first || source
       opts = {recursive: true}.merge(options)
-      pattern = opts[:recursive] ? ::File.join(source_path, '**') : source_path
+      pattern = opts[:recursive] ? ::File.join(source, '**') : source
       glob_pattern = ::File.join(pattern, '*')
 
       Dir.glob(glob_pattern, ::File::FNM_DOTMATCH).sort.each do |file_source|

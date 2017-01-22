@@ -39,6 +39,17 @@ RSpec.describe TTY::File, '#copy_directory' do
     ])
   end
 
+  it "handles glob characters in the path" do
+    src = tmp_path("foo[1]")
+    dest = tmp_path("foo1")
+    TTY::File.copy_directory(src, dest, verbose: false)
+
+    expect(Find.find(dest).to_a).to eq([
+      tmp_path('foo1'),
+      tmp_path('foo1/README.md')
+    ])
+  end
+
   it "raises error when source directory doesn't exist" do
     expect {
       TTY::File.copy_directory('unknown')
