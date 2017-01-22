@@ -1,8 +1,9 @@
 ---
 language: ruby
-sudo: false
+sudo: required
 cache: bundler
-script: "bundle exec rake ci"
+script:
+  - bundle exec rake ci
 rvm:
   - 2.0.0
   - 2.1.10
@@ -12,6 +13,9 @@ rvm:
   - ruby-head
   - rbx-3
   - jruby-9.1.5.0
+env:
+  global:
+    - JRUBY_OPTS='--dev -J-Xmx1024M'
 matrix:
   allow_failures:
     - rvm: ruby-head
