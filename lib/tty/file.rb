@@ -4,6 +4,7 @@ require 'pastel'
 require 'tty-prompt'
 require 'erb'
 require 'tempfile'
+require 'pathname'
 
 require 'tty/file/create_file'
 require 'tty/file/digest_file'
