@@ -588,7 +588,6 @@ module TTY
     #
     # @api public
     def escape_glob_path(path)
-      path = Pathname.new(path).cleanpath.to_s
       path.gsub(/[\\\{\}\[\]\*\?]/) { |x| "\\" + x }
     end
     module_function :escape_glob_path
