@@ -6,4 +6,5 @@ group :test do
   gem 'simplecov', '~> 0.12.0'
   gem 'coveralls', '~> 0.8.19'
   gem 'webmock',   '~> 2.3.0'
+  gem 'json', '>= 1.8', '< 3'
 end
