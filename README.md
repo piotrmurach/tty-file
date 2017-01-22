@@ -43,14 +43,15 @@ Or install it yourself as:
   * [2.3. chmod](#23-chmod)
   * [2.4. copy_file](#24-copy_file)
   * [2.5. create_file](#25-create_file)
-  * [2.6. create_dir](#26-create_dir)
-  * [2.7. diff](#27-diff)
-  * [2.8. download_file](#28-download_file)
-  * [2.9. inject_into_file](#29-inject_into_file)
-  * [2.10. replace_in_file](#30-replace_in_file)
-  * [2.11. append_to_file](#31-apend_to_file)
-  * [2.12. prepend_to_file](#32-prepend_to_file)
-  * [2.13. remove_file](#213-remove_file)
+  * [2.6. copy_dir](#26-copy_dir)
+  * [2.7. create_dir](#27-create_dir)
+  * [2.8. diff](#28-diff)
+  * [2.9. download_file](#29-download_file)
+  * [2.10. inject_into_file](#210-inject_into_file)
+  * [2.11. replace_in_file](#211-replace_in_file)
+  * [2.12. append_to_file](#212-apend_to_file)
+  * [2.13. prepend_to_file](#213-prepend_to_file)
+  * [2.14. remove_file](#214-remove_file)
 
 ## 1. Usage
 
@@ -171,7 +172,49 @@ On collision with already existing file, a menu is displayed:
 
 You can force to always overwrite file with `:force` option or always skip by providing `:skip`.
 
-### 2.6. create_dir
+### 2.6. copy_dir
+
+To recursively copy a directory of files from source to destination location use `copy_directory` or its alias 'copy_dir'.
+
+Assuming you have the following directory structure:
+
+```ruby
+# doc/
+#   subcommands/
+#     command.rb.erb
+#   README.md
+#   %name%.rb
+```
+
+you can copy `doc` folder to `docs` by invoking:
+
+```ruby
+TTY::File.copy_directory('doc', 'docs', context: ...)
+```
+
+The `context` needs to respond to `name` message and given it returns `foo` value the following directory gets created:
+
+```ruby
+# docs/
+#   subcommands/
+#     command.rb
+#   README.md
+#   foo.rb
+```
+
+If you only need to copy top level files use option `recursive: false`:
+
+```ruby
+TTY::File.copy_directory('doc', 'docs', recursive: false)
+```
+
+By passing `:exclude` option you can instruct the method to ignore any files including the given pattern:
+
+```ruby
+TTY::File.copy_directory('doc', 'docs', exclude: 'subcommands')
+```
+
+### 2.7. create_dir
 
 To create directory use `create_directory` or its alias `create_dir` passing as a first argument file path:
 
@@ -212,7 +255,7 @@ As a second argument you can provide a parent directory, otherwise current direc
 TTy::File.create_dir(tree, '/path/to/parent/dir')
 ```
 
-### 2.7. diff
+### 2.8. diff
 
 To compare files line by line in a system independent way use `diff`, or `diff_files`:
 
@@ -253,7 +296,7 @@ Equally, you can perform a comparison between a file content and a string conten
 TTY::File.diff('/path/to/file', 'some long text')
 ```
 
-### 2.8. download_file
+### 2.9. download_file
 
 To download a content from a given address and to save at a given relative location do:
 
@@ -276,7 +319,7 @@ TTY::File.download_file("https://gist.github.com/4701967", "doc/README.md", limi
 # => raises TTY::File::DownloadError
 ```
 
-### 2.9. inject_into_file
+### 2.10. inject_into_file
 
 Inject content into a file at a given location
 
@@ -288,7 +331,7 @@ end
 
 You can also use Regular Expressions in `:after` or `:before` to match file location. The `append_to_file` and `prepend_to_file` allow you to add content at the end and the begging of a file.
 
-### 2.10. replace_in_file
+### 2.11. replace_in_file
 
 Replace content of a file matching condition by calling `replace_in_file` or `gsub_file`
 
@@ -304,7 +347,7 @@ TTY::File.gsub_file 'filename.rb', /matching condition/ do
 end
 ```
 
-### 2.11. append_to_file
+### 2.12. append_to_file
 
 Appends text to a file. You can provide the text as a second argument:
 
@@ -320,7 +363,7 @@ TTY::File.append_to_file('Gemfile') do
 end
 ```
 
-### 2.12. prepend_to_file
+### 2.13. prepend_to_file
 
 Prepends text to a file. You can provide the text as a second argument:
 
@@ -336,7 +379,7 @@ TTY::File.prepend_to_file('Gemfile') do
 end
 ```
 
-### 2.13. remove_file
+### 2.14. remove_file
 
 To remove a file do:
 
@@ -366,4 +409,4 @@ The gem is available as open source under the terms of the [MIT License](http://
 
 ## Copyright
 
-Copyright (c) 2016 Piotr Murach. See LICENSE for further details.
+Copyright (c) 2016-2017 Piotr Murach. See LICENSE for further details.
