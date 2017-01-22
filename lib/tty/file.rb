@@ -18,6 +18,8 @@ module TTY
       module_function(method)
       private_class_method(method)
     end
+    # Invalid path erorr
+    InvalidPathError = Class.new(ArgumentError)
 
     # File permissions
     U_R = 0400
@@ -602,7 +604,7 @@ module TTY
     # @api private
     def check_path(path)
       return if ::File.exist?(path)
-      raise ArgumentError, "File path \"#{path}\" does not exist."
+      raise InvalidPathError, "File path \"#{path}\" does not exist."
     end
     private_module_function :check_path
 
