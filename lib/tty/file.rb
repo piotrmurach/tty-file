@@ -576,6 +576,23 @@ module TTY
     end
     module_function :remove_file
 
+    # Escape glob character in a path
+    #
+    # @param [String] path
+    #   the path to escape
+    #
+    # @example
+    #   escape_glob_path("foo[bar]") => "foo\\[bar\\]"
+    #
+    # @return [String]
+    #
+    # @api public
+    def escape_glob_path(path)
+      path = Pathname.new(path).cleanpath.to_s
+      path.gsub(/[\\\{\}\[\]\*\?]/) { |x| "\\" + x }
+    end
+    module_function :escape_glob_path
+
     # Check if path exists
     #
     # @param [String] path
