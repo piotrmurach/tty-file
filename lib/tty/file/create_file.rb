@@ -64,6 +64,7 @@ module TTY
             log_status(:identical, relative_path, options.fetch(:verbose, true), :blue)
           elsif options[:force]
             log_status(:force, relative_path, options.fetch(:verbose, true), :yellow)
+            yield unless options[:noop]
           elsif options[:skip]
             log_status(:skip, relative_path, options.fetch(:verbose, true), :yellow)
           else
