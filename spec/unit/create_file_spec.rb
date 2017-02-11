@@ -46,12 +46,22 @@ RSpec.describe TTY::File, '#create_file' do
     end
 
     context 'and is not identical' do
-      it "logs forced status if force is true" do
-        file = tmp_path('README.md')
-        TTY::File.create_file(file, '# Title', verbose: false)
-        expect {
-          TTY::File.create_file(file, '# Header', verbose: true, force: true)
-        }.to output(/force/).to_stdout_from_any_process
+      context 'and :force is true' do
+        it "logs forced status to stdout" do
+          file = tmp_path('README.md')
+          TTY::File.create_file(file, '# Title', verbose: false)
+          expect {
+            TTY::File.create_file(file, '# Header', verbose: true, force: true)
+          }.to output(/force/).to_stdout_from_any_process
+        end
+        
+        it 'overrides the previous file' do
+          file = tmp_path('README.md')
+          TTY::File.create_file(file, '# Title', verbose: false)
+          TTY::File.create_file(file, '# Header', force: true)
+          content = File.read(file)
+          expect(content).to eq('# Header')
+        end
       end
 
       it "displays collision menu and overwrites" do
