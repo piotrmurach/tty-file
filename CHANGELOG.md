@@ -1,5 +1,10 @@
 # Change log
 
+## [v0.2.1] - 2017-02-12
+
+### Fixed
+* Fix File::create_file when :force is true by Edoardo Tenani(@endorama)
+
 ## [v0.2.0] - 2017-01-22
 
 ### Added
@@ -21,5 +26,6 @@
 
 * Initial implementation and release
 
+[v0.2.1]: https://github.com/piotrmurach/tty-file/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/piotrmurach/tty-file/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://github.com/piotrmurach/tty-file/compare/v0.1.0
