@@ -54,11 +54,11 @@ RSpec.describe TTY::File, '#create_file' do
             TTY::File.create_file(file, '# Header', verbose: true, force: true)
           }.to output(/force/).to_stdout_from_any_process
         end
-        
+
         it 'overrides the previous file' do
           file = tmp_path('README.md')
           TTY::File.create_file(file, '# Title', verbose: false)
-          TTY::File.create_file(file, '# Header', force: true)
+          TTY::File.create_file(file, '# Header', force: true, verbose: false)
           content = File.read(file)
           expect(content).to eq('# Header')
         end
