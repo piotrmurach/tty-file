@@ -1,1 +1,3 @@
-require 'tty/file'
+# encoding: utf-8
+
+require_relative 'tty/file'

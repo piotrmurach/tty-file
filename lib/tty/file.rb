@@ -6,11 +6,11 @@ require 'erb'
 require 'tempfile'
 require 'pathname'
 
-require 'tty/file/create_file'
-require 'tty/file/digest_file'
-require 'tty/file/download_file'
-require 'tty/file/differ'
-require 'tty/file/version'
+require_relative 'file/create_file'
+require_relative 'file/digest_file'
+require_relative 'file/download_file'
+require_relative 'file/differ'
+require_relative 'file/version'
 
 module TTY
   module File
