@@ -639,7 +639,7 @@ module TTY
         cmd = cmd[0...i] + decorate(cmd[i..-1], color)
       end
 
-      message = "#{cmd} #{message}"
+      message = "#{cmd}  #{message}"
       message += "\n" unless message.end_with?("\n")
 
       @output.print(message)
