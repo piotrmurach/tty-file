@@ -39,6 +39,13 @@ RSpec.describe TTY::File, '#prepend_to_file' do
     file = tmp_path('Gemfile')
     expect {
       TTY::File.prepend_to_file(file, "gem 'tty'")
-    }.to output(/prepend.*Gemfile/).to_stdout_from_any_process
+    }.to output(/\e\[32mprepend\e\[0m.*Gemfile/).to_stdout_from_any_process
+  end
+
+  it "logs action without color" do
+    file = tmp_path('Gemfile')
+    expect {
+      TTY::File.prepend_to_file(file, "gem 'tty'", color: false)
+    }.to output(/\s+prepend.*Gemfile/).to_stdout_from_any_process
   end
 end

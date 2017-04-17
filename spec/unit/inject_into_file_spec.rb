@@ -67,7 +67,16 @@ RSpec.describe TTY::File, '#inject_into_file' do
     expect {
     TTY::File.inject_into_file(file, "gem 'tty'\n", "gem 'loaf'",
       after: "gem 'rack', '>=1.0'\n", verbose: true)
-    }.to output(/inject.*Gemfile/).to_stdout_from_any_process
+    }.to output(/\e\[32minject.*Gemfile/).to_stdout_from_any_process
+  end
+
+  it "logs action without color" do
+    file = tmp_path('Gemfile')
+
+    expect {
+    TTY::File.inject_into_file(file, "gem 'tty'\n", "gem 'loaf'",
+      after: "gem 'rack', '>=1.0'\n", verbose: true, color: false)
+    }.to output(/\s+inject.*Gemfile/).to_stdout_from_any_process
   end
 
   it "doesn't change content if already exists" do

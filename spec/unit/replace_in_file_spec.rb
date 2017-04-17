@@ -51,13 +51,31 @@ RSpec.describe TTY::File, '#replace_in_file' do
     }.to raise_error(ArgumentError, /File path (.)* does not exist/)
   end
 
-  it "allows for noop run" do
+  it "logs action" do
     content = "gem 'hanami'"
     file = tmp_path('Gemfile')
 
     expect {
       TTY::File.replace_in_file(file, /gem 'rails'/, content, noop: true)
-    }.to output(/replace/).to_stdout_from_any_process
+    }.to output(/\e\[32mreplace\e\[0m(.*)Gemfile/).to_stdout_from_any_process
+  end
+
+  it "logs action without color" do
+    content = "gem 'hanami'"
+    file = tmp_path('Gemfile')
+
+    expect {
+      TTY::File.replace_in_file(file, /gem 'rails'/, content,
+                                noop: true, color: false)
+    }.to output(/\s+replace(.*)Gemfile/).to_stdout_from_any_process
+  end
+
+  it "allows for noop run" do
+    content = "gem 'hanami'"
+    file = tmp_path('Gemfile')
+
+    TTY::File.replace_in_file(file, /gem 'rails'/, content,
+                              noop: true, verbose: false)
 
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",

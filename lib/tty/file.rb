@@ -122,7 +122,8 @@ module TTY
           end
         end
       end
-      log_status(:chmod, relative_path, options.fetch(:verbose, true), :green)
+      log_status(:chmod, relative_path, options.fetch(:verbose, true),
+                                        options.fetch(:color, :green))
       ::FileUtils.chmod_R(mode, relative_path) unless options[:noop]
     end
     module_function :chmod
@@ -162,7 +163,8 @@ module TTY
         path = parent.nil? ? dir : ::File.join(parent, dir)
         unless ::File.exist?(path)
           ::FileUtils.mkdir_p(path)
-          log_status(:create, path, options.fetch(:verbose, true), :green)
+          log_status(:create, path, options.fetch(:verbose, true),
+                                    options.fetch(:color, :green))
         end
 
         files.each do |filename, contents|
@@ -359,7 +361,7 @@ module TTY
           end
 
           log_status(:diff, "#{file_a.path} - #{file_b.path}",
-                     options.fetch(:verbose, true), :green)
+                     options.fetch(:verbose, true), options.fetch(:color, :green))
           return output if options[:noop]
 
           block_size = file_a.lstat.blksize
@@ -437,7 +439,8 @@ module TTY
     #
     # @api public
     def prepend_to_file(relative_path, *args, **options, &block)
-      log_status(:prepend, relative_path, options.fetch(:verbose, true), :green)
+      log_status(:prepend, relative_path, options.fetch(:verbose, true),
+                                          options.fetch(:color, :green))
       options.merge!(before: /\A/, verbose: false)
       inject_into_file(relative_path, *(args << options), &block)
     end
@@ -459,7 +462,8 @@ module TTY
     #
     # @api public
     def append_to_file(relative_path, *args, **options, &block)
-      log_status(:append, relative_path, options.fetch(:verbose, true), :green)
+      log_status(:append, relative_path, options.fetch(:verbose, true),
+                                         options.fetch(:color, :green))
       options.merge!(after: /\z/, verbose: false)
       inject_into_file(relative_path, *(args << options), &block)
     end
@@ -512,7 +516,8 @@ module TTY
 
       replace_in_file(relative_path, /#{match}/, content, options.merge(verbose: false))
 
-      log_status(:inject, relative_path, options.fetch(:verbose, true), :green)
+      log_status(:inject, relative_path, options.fetch(:verbose, true),
+                                         options.fetch(:color, :green))
     end
     module_function :inject_into_file
 
@@ -541,7 +546,8 @@ module TTY
       contents    = IO.read(relative_path)
       replacement = (block ? block[] : args[1..-1].join).gsub('\0', '')
 
-      log_status(:replace, relative_path, options.fetch(:verbose, true), :green)
+      log_status(:replace, relative_path, options.fetch(:verbose, true),
+                                          options.fetch(:color, :green))
 
       return if options[:noop]
 
@@ -575,7 +581,8 @@ module TTY
     #
     # @api public
     def remove_file(relative_path, *args, **options)
-      log_status(:remove, relative_path, options.fetch(:verbose, true), :red)
+      log_status(:remove, relative_path, options.fetch(:verbose, true),
+                                         options.fetch(:color, :red))
 
       return if options[:noop]
 

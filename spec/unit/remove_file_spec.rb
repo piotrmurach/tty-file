@@ -30,6 +30,14 @@ RSpec.describe TTY::File, '#remove_file' do
 
     expect {
       TTY::File.remove_file(src_path, noop: true)
-    }.to output(/remove(.*)Gemfile/).to_stdout_from_any_process
+    }.to output(/\e\[31mremove\e\[0m(.*)Gemfile/).to_stdout_from_any_process
+  end
+
+  it "logs status without color" do
+    src_path = tmp_path('Gemfile')
+
+    expect {
+      TTY::File.remove_file(src_path, noop: true, color: false)
+    }.to output(/\s+remove(.*)Gemfile/).to_stdout_from_any_process
   end
 end

@@ -17,6 +17,14 @@ RSpec.describe TTY::File, '#create_directory' do
     }.to output(%r{    \e\[32mcreate\e\[0m(.*)doc\n}).to_stdout_from_any_process
   end
 
+  it "logs status wihtout color" do
+    doc_dir = tmp_path('doc')
+
+    expect {
+      TTY::File.create_dir(doc_dir, verbose: true, color: false)
+    }.to output(%r{    create(.*)doc\n}).to_stdout_from_any_process
+  end
+
   it "creates tree of dirs and files" do
     app_dir = tmp_path('app')
 
