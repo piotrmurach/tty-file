@@ -72,7 +72,16 @@ RSpec.describe TTY::File, '#copy_file' do
 
     expect {
       TTY::File.copy_file(src, dest)
-    }.to output(/create.*Gemfile/).to_stdout_from_any_process
+    }.to output(/\e\[32mcreate\e\[0m.*Gemfile/).to_stdout_from_any_process
+  end
+
+  it "logs status without color" do
+    src  = tmp_path('Gemfile')
+    dest = tmp_path('app/Gemfile')
+
+    expect {
+      TTY::File.copy_file(src, dest, color: false)
+    }.to output(/\s+create.*Gemfile/).to_stdout_from_any_process
   end
 
   it "removes template .erb extension" do

@@ -61,20 +61,27 @@ module TTY
       def detect_collision
         if exist?
           if identical?
-            log_status(:identical, relative_path, options.fetch(:verbose, true), :blue)
+            notify(:identical, :blue)
           elsif options[:force]
-            log_status(:force, relative_path, options.fetch(:verbose, true), :yellow)
+            notify(:force, :yellow)
             yield unless options[:noop]
           elsif options[:skip]
-            log_status(:skip, relative_path, options.fetch(:verbose, true), :yellow)
+            notify(:skip, :yellow)
           else
-            log_status(:collision, relative_path, options.fetch(:verbose, true), :red)
+            notify(:collision, :red)
             yield if file_collision(relative_path, content)
           end
         else
-          log_status(:create, relative_path, options.fetch(:verbose, true), :green)
+          notify(:create, :green)
           yield unless options[:noop]
         end
+      end
+
+      # Notify console about performed action
+      # @api private
+      def notify(name, color)
+        log_status(name, relative_path, options.fetch(:verbose, true),
+                                        options.fetch(:color, color))
       end
 
       # Display conflict resolution menu and gather answer
