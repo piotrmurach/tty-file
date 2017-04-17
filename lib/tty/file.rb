@@ -627,7 +627,10 @@ module TTY
       return unless verbose
 
       cmd = cmd.to_s.rjust(12)
-      cmd = decorate(cmd, color) if color
+      if color
+        i = cmd.index(/[a-z]/)
+        cmd = cmd[0...i] + decorate(cmd[i..-1], color)
+      end
 
       message = "#{cmd} #{message}"
       message += "\n" unless message.end_with?("\n")

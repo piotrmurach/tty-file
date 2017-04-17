@@ -14,7 +14,7 @@ RSpec.describe TTY::File, '#create_directory' do
 
     expect {
       TTY::File.create_dir(doc_dir, verbose: true)
-    }.to output(%r{    create(.*)doc\n}).to_stdout_from_any_process
+    }.to output(%r{    \e\[32mcreate\e\[0m(.*)doc\n}).to_stdout_from_any_process
   end
 
   it "creates tree of dirs and files" do
