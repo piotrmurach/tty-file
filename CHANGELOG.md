@@ -1,5 +1,13 @@
 # Change log
 
+## [v0.4.0] - 2017-xx-xx
+
+### Changed
+* Change api calls to accept :color option for disabling/coloring log status
+
+### Fixed
+* Fix #log_status to properly handle wrapping of keywords in color
+
 ## [v0.3.0] - 2017-03-26
 
 ### Changed
