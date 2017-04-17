@@ -324,6 +324,12 @@ TTY::File.download_file("https://gist.github.com/4701967", "doc/README.md", limi
 Inject content into a file at a given location
 
 ```ruby
+TTY::File.inject_into_file 'filename.rb', "text to add", after: "Code below this line\n"
+```
+
+or using a block
+
+```ruby
 TTY::File.inject_into_file 'filename.rb', after: "Code below this line\n" do
   "text to add"
 end
