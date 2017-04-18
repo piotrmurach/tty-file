@@ -1,15 +1,10 @@
 # encoding: utf-8
 
-require 'forwardable'
-
 module TTY
   module File
     class CreateFile
-      extend Forwardable
 
-      attr_reader :relative_path, :content, :options, :prompt
-
-      def_delegators "@base", :log_status
+      attr_reader :base, :relative_path, :content, :options, :prompt
 
       def initialize(base, relative_path, content, options = {})
         @base    = base
@@ -80,8 +75,8 @@ module TTY
       # Notify console about performed action
       # @api private
       def notify(name, color)
-        log_status(name, relative_path, options.fetch(:verbose, true),
-                                        options.fetch(:color, color))
+        base.__send__(:log_status, name, relative_path,
+                      options.fetch(:verbose, true), options.fetch(:color, color))
       end
 
       # Display conflict resolution menu and gather answer
