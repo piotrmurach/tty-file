@@ -8,17 +8,15 @@ rvm:
   - 2.1.10
   - 2.2.5
   - 2.3.1
-  - 2.4.0
+  - 2.4.1
   - ruby-head
   - jruby-9.1.1.0
-  - rbx-3
 env:
   global:
     - JRUBY_OPTS=''
 matrix:
   allow_failures:
     - rvm: ruby-head
-    - rvm: rbx-3
     - rvm: jruby-9.1.1.0
   fast_finish: true
 branches:
