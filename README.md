@@ -1,6 +1,8 @@
 # TTY::File [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][gitter]
+
 [![Gem Version](https://badge.fury.io/rb/tty-file.svg)][gem]
 [![Build Status](https://secure.travis-ci.org/piotrmurach/tty-file.svg?branch=master)][travis]
+[![Build status](https://ci.appveyor.com/api/projects/status/og69rn550s4mt1q3?svg=true)][appveyor]
 [![Code Climate](https://codeclimate.com/github/piotrmurach/tty-file/badges/gpa.svg)][codeclimate]
 [![Coverage Status](https://coveralls.io/repos/github/piotrmurach/tty-file/badge.svg)][coverage]
 [![Inline docs](http://inch-ci.org/github/piotrmurach/tty-file.svg?branch=master)][inchpages]
@@ -8,6 +10,7 @@
 [gitter]: https://gitter.im/piotrmurach/tty
 [gem]: http://badge.fury.io/rb/tty-file
 [travis]: http://travis-ci.org/piotrmurach/tty-file
+[appveyor]: https://ci.appveyor.com/project/piotrmurach/tty-file
 [codeclimate]: https://codeclimate.com/github/piotrmurach/tty-file
 [coverage]: https://coveralls.io/github/piotrmurach/tty-file
 [inchpages]: http://inch-ci.org/github/piotrmurach/tty-file
