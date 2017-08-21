@@ -1,9 +1,13 @@
 # Change log
 
-## [v0.4.0] - 2017-xx-xx
+## [v0.4.0] - 2017-08-21
+
+### Added
+* Add tail_file for reading a given number of lines from end of a file
 
 ### Changed
 * Change api calls to accept :color option for disabling/coloring log status
+* Update tty-prompt dependency
 
 ### Fixed
 * Fix #log_status to properly handle wrapping of keywords in color
@@ -40,6 +44,7 @@
 
 * Initial implementation and release
 
+[v0.4.0]: https://github.com/piotrmurach/tty-file/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://github.com/piotrmurach/tty-file/compare/v0.2.1...v0.3.0
 [v0.2.1]: https://github.com/piotrmurach/tty-file/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/piotrmurach/tty-file/compare/v0.1.0...v0.2.0
