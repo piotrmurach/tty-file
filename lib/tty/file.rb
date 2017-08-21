@@ -10,6 +10,7 @@ require_relative 'file/create_file'
 require_relative 'file/digest_file'
 require_relative 'file/download_file'
 require_relative 'file/differ'
+require_relative 'file/read_backward_file'
 require_relative 'file/version'
 
 module TTY
@@ -589,6 +590,51 @@ module TTY
       ::FileUtils.rm_r(relative_path, force: options[:force], secure: true)
     end
     module_function :remove_file
+
+    # Provide the last number of lines from a file
+    #
+    # @param [String] relative_path
+    #   the relative path to a file
+    #
+    # @param [Integer] num_lines
+    #   the number of lines to return from file
+    #
+    # @example
+    #   tail_file 'filename'
+    #   # =>  ['line 19', 'line20', ... ]
+    #
+    # @example
+    #   tail_file 'filename', 15
+    #   # =>  ['line 19', 'line20', ... ]
+    #
+    # @return [Array[String]]
+    #
+    # @api public
+    def tail_file(relative_path, num_lines = 10, **options, &block)
+      file       = ::File.open(relative_path)
+      chunk_size = options.fetch(:chunk_size, 512)
+      line_sep   = ::File::ALT_SEPARATOR ? "\r\n" : "\n"
+      lines      = []
+      newline_count = 0
+
+      ReadBackwardFile.new(file, chunk_size).each_chunk do |chunk|
+        # look for newline index counting from right of chunk
+        while (nl_index = chunk.rindex(line_sep, (nl_index || chunk.size) - 1))
+          newline_count += 1
+          break if newline_count > num_lines || nl_index.zero?
+        end
+
+        if newline_count > num_lines
+          lines.insert(0, chunk[(nl_index + 1)..-1])
+          break
+        else
+          lines.insert(0, chunk)
+        end
+      end
+
+      lines.join.split(line_sep).each(&block).to_a
+    end
+    module_function :tail_file
 
     # Escape glob character in a path
     #
