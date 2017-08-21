@@ -55,6 +55,7 @@ Or install it yourself as:
   * [2.12. append_to_file](#212-apend_to_file)
   * [2.13. prepend_to_file](#213-prepend_to_file)
   * [2.14. remove_file](#214-remove_file)
+  * [2.15. tail_file](#215-tail_file)
 
 ## 1. Usage
 
@@ -400,6 +401,29 @@ You can also pass in `:force` to remove file ignoring any errors:
 
 ```ruby
 TTY::File.remove_file 'doc/README.md', force: true
+```
+
+### 2.15. tail_file
+
+To read the last 10 lines from a file do:
+
+```ruby
+TTY::File.tail_file 'doc/README.md'
+# => ['## Copyright', 'Copyright (c) 2016-2017', ...]
+```
+
+You can also pass a block:
+
+```ruby
+TTY::File.tail_file('doc/README.md') do |line|
+  puts line
+end
+```
+
+To change how many lines are read pass a second argument:
+
+```ruby
+TTY::File.tail_file('doc/README.md', 15)
 ```
 
 ## Development
