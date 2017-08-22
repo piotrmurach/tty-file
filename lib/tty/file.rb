@@ -613,7 +613,7 @@ module TTY
     def tail_file(relative_path, num_lines = 10, **options, &block)
       file       = ::File.open(relative_path)
       chunk_size = options.fetch(:chunk_size, 512)
-      line_sep   = ::File::ALT_SEPARATOR ? "\r\n" : "\n"
+      line_sep   = $/
       lines      = []
       newline_count = 0
 
