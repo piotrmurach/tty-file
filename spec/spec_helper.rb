@@ -46,8 +46,11 @@ RSpec.configure do |config|
   config.include(Helpers)
 
   config.before(:each) do
-    FileUtils.rm_rf(tmp_path)
     FileUtils.cp_r(fixtures_path, tmp_path)
+  end
+
+  config.after(:each) do
+    FileUtils.rm_rf(tmp_path)
   end
 
   config.expect_with :rspec do |expectations|
