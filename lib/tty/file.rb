@@ -53,7 +53,7 @@ module TTY
     # @api public
     def binary?(relative_path)
       bytes = ::File.stat(relative_path).blksize
-      bytes = 4096 if bytes > 4096
+      bytes = 2**12 if bytes > 2**12
       buffer = ::File.read(relative_path, bytes, 0) || ''
       buffer = buffer.force_encoding(Encoding.default_external)
       begin
