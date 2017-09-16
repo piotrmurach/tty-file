@@ -15,7 +15,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
   end
 
-  it "indentifies " do
+  it "indentifies text with hex as binary" do
     Tempfile.open('tty-file-binary-spec') do |file|
       file << "hi \xAD"
       file.close
@@ -31,7 +31,7 @@ RSpec.describe TTY::File, '#binary?' do
   end
 
   it "indetifies text file as non-binary" do
-    file = tmp_path('Gemfile')
+    file = fixtures_path('Gemfile')
 
     expect(TTY::File.binary?(file)).to eq(false)
   end
