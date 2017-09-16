@@ -1,6 +1,6 @@
 # Change log
 
-## [v0.4.0] - 2017-08-21
+## [v0.4.0] - 2017-09-16
 
 ### Added
 * Add tail_file for reading a given number of lines from end of a file
@@ -11,6 +11,7 @@
 
 ### Fixed
 * Fix #log_status to properly handle wrapping of keywords in color
+* Fix #binary? to work correctly on Windows
 
 ## [v0.3.0] - 2017-03-26
 
