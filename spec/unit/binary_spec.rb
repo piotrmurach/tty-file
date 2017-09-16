@@ -31,7 +31,7 @@ RSpec.describe TTY::File, '#binary?' do
   end
 
   it "indetifies text file as non-binary" do
-    file = fixtures_path('Gemfile')
+    file = tmp_path('Gemfile')
 
     expect(TTY::File.binary?(file)).to eq(false)
   end
