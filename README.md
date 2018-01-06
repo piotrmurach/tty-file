@@ -3,7 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/tty-file.svg)][gem]
 [![Build Status](https://secure.travis-ci.org/piotrmurach/tty-file.svg?branch=master)][travis]
 [![Build status](https://ci.appveyor.com/api/projects/status/og69rn550s4mt1q3?svg=true)][appveyor]
-[![Code Climate](https://codeclimate.com/github/piotrmurach/tty-file/badges/gpa.svg)][codeclimate]
+[![Maintainability](https://api.codeclimate.com/v1/badges/9ce2d164ea4835901ccd/maintainability)][codeclimate]
 [![Coverage Status](https://coveralls.io/repos/github/piotrmurach/tty-file/badge.svg)][coverage]
 [![Inline docs](http://inch-ci.org/github/piotrmurach/tty-file.svg?branch=master)][inchpages]
 
@@ -11,7 +11,7 @@
 [gem]: http://badge.fury.io/rb/tty-file
 [travis]: http://travis-ci.org/piotrmurach/tty-file
 [appveyor]: https://ci.appveyor.com/project/piotrmurach/tty-file
-[codeclimate]: https://codeclimate.com/github/piotrmurach/tty-file
+[codeclimate]: https://codeclimate.com/github/piotrmurach/tty-file/maintainability
 [coverage]: https://coveralls.io/github/piotrmurach/tty-file
 [inchpages]: http://inch-ci.org/github/piotrmurach/tty-file
 
@@ -442,4 +442,4 @@ The gem is available as open source under the terms of the [MIT License](http://
 
 ## Copyright
 
-Copyright (c) 2016-2017 Piotr Murach. See LICENSE for further details.
+Copyright (c) 2016-2018 Piotr Murach. See LICENSE for further details.
