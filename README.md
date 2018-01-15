@@ -19,7 +19,7 @@
 
 ## Motivation
 
-Though Ruby's `File` and `FileUtils` provide very robust apis for dealing with files, this library aims to provide level of abstraction that is much convenient with useful logging capabilities.
+Though Ruby's `File` and `FileUtils` libraries provide very robust apis for dealing with files, this library aims to provide a level of abstraction that is much more convenient, with useful logging capabilities.
 
 ## Installation
 
@@ -65,7 +65,7 @@ TTY::File.replace_in_file('Gemfile', /gem 'rails'/, "gem 'hanami'")
 
 ## 2. Interface
 
-The following are methods available for creating and manipulating files.
+The following methods are available for creating and manipulating files.
 
 If you wish to silence verbose output use `verbose: false`. Similarly if you wish to run action without actually triggering any action use `noop: true`.
 
@@ -79,14 +79,14 @@ TTY::File.binary?('image.png') # => true
 
 ### 2.2. checksum_file
 
-To generate checksum for a file, IO object or String use `checksum_file`. By default `MD5` algorithm is used which can be changed by passing second argument.
+To generate a checksum for a file, IO object, or String, use `checksum_file`. By default the `MD5` algorithm is used, which can be changed by passing a second argument.
 
-Among supported message digest algorithms are:
+Among the supported message digest algorithms are:
 
 * `sha`, `sha1`, `sha224`, `sha256`, `sha384`, `sha512`
 * `md2`, `md4`, `md5`
 
-For example, to create digest for string using `SHA1` do:
+For example, to create a digest for a string using `SHA1` do:
 
 ```ruby
 TTY::File.checksum_file("Some content\nThe end", 'sha1')
@@ -95,19 +95,19 @@ TTY::File.checksum_file("Some content\nThe end", 'sha1')
 
 ### 2.3. chmod
 
-To change file modes use `chmod` like so:
+To change file modes use `chmod`, like so:
 
 ```ruby
 TTY::File.chmod('filename.rb', 0777)
 ```
 
-There are number of constants available to represent common mode bits such as `TTY::File::U_R`, `TTY::File::O_X` and can be used as follows:
+There are a number of constants available to represent common mode bits such as `TTY::File::U_R` and `TTY::File::O_X`, and they can be used as follows:
 
 ```ruby
 TTY::File.chmod('filename.rb', TTY::File::U_R | TTY::File::O_X)
 ```
 
-Apart from traditional octal number definition for file permissions, you can use more convenient permission notation accepted by Unix `chmod` command:
+Apart from traditional octal number definition for file permissions, you can use the more convenient permission notation used by the Unix `chmod` command:
 
 ```ruby
 TTY::File.chmod('filename.rb', 'u=wrx,g+x')
@@ -117,7 +117,7 @@ The `u`, `g`, and `o` specify the user, group, and other parts of the mode bits.
 
 ### 2.4. copy_file
 
-Copies a file content from relative source to relative destination.
+Copies a file's contents from a relative source to a relative destination.
 
 ```ruby
 TTY::File.copy_file 'Gemfile', 'Gemfile.bak'
@@ -131,7 +131,7 @@ TTY::File.copy_file('Gemfile', 'app/Gemfile') do |content|
 end
 ```
 
-If the source file is an `ERB` template then you can provide `:context` in which the file gets evaluted or if `TTY::File` gets included as a module then approprite object context will be used by default. To use `:context` do:
+If the source file is an `ERB` template then you can provide a `:context` in which the file gets evaluated, or if `TTY::File` gets included as a module then appropriate object context will be used by default. To use `:context` do:
 
 ```ruby
 variables = OpenStruct.new
@@ -140,7 +140,7 @@ variables[:foo] = 'bar'
 TTY::File.copy_file('templates/application.html.erb', context: variables)
 ```
 
-You can also specifie template name surrounding any dynamic variables with `%` to be evaluted:
+You can also specify the template name surrounding any dynamic variables with `%` to be evaluted:
 
 ```ruby
 variables = OpenStruct.new
