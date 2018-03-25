@@ -1,5 +1,11 @@
 # Change log
 
+## [v0.6.0] - 2018-03-xx
+
+### Changd
+* Update tty-prompt dependency
+* Change identical files conflict from blue to cyan for readability
+
 ## [v0.5.0] - 2018-01-06
 
 ### Changed
@@ -51,6 +57,7 @@
 
 * Initial implementation and release
 
+[v0.6.0]: https://github.com/piotrmurach/tty-file/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://github.com/piotrmurach/tty-file/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://github.com/piotrmurach/tty-file/compare/v0.3.0...v0.4.0
 [v0.3.0]: https://github.com/piotrmurach/tty-file/compare/v0.2.1...v0.3.0
