@@ -56,7 +56,7 @@ module TTY
       def detect_collision
         if exist?
           if identical?
-            notify(:identical, :blue)
+            notify(:identical, :cyan)
           elsif options[:force]
             notify(:force, :yellow)
             yield unless options[:noop]
