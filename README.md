@@ -325,7 +325,7 @@ TTY::File.download_file("https://gist.github.com/4701967", "doc/README.md", limi
 
 ### 2.10. inject_into_file
 
-Inject content into a file at a given location
+Inject content into a file at a given location and return `true` when performed successfully, `false` otherwise.
 
 ```ruby
 TTY::File.inject_into_file 'filename.rb', "text to add", after: "Code below this line\n"
@@ -343,7 +343,7 @@ You can also use Regular Expressions in `:after` or `:before` to match file loca
 
 ### 2.11. replace_in_file
 
-Replace content of a file matching condition by calling `replace_in_file` or `gsub_file`
+Replace content of a file matching condition by calling `replace_in_file` or `gsub_file`, which returns `true` when substitutions are performed successfully, `false` otherwise.
 
 ```ruby
 TTY::File.replace_in_file 'filename.rb', /matching condition/, 'replacement'
@@ -359,7 +359,7 @@ end
 
 ### 2.12. append_to_file
 
-Appends text to a file. You can provide the text as a second argument:
+Appends text to a file and returns `true` when performed successfully, `false` otherwise. You can provide the text as a second argument:
 
 ```ruby
 TTY::File.append_to_file('Gemfile', "gem 'tty'")
@@ -375,7 +375,7 @@ end
 
 ### 2.13. prepend_to_file
 
-Prepends text to a file. You can provide the text as a second argument:
+Prepends text to a file and returns `true` when performed successfully, `false` otherwise. You can provide the text as a second argument:
 
 ```ruby
 TTY::File.prepend_to_file('Gemfile', "gem 'tty'")
