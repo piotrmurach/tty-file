@@ -557,7 +557,7 @@ module TTY
 
       status = contents.gsub!(*args, &block)
       if !status.nil? || options[:force]
-        ::File.open(relative_path, 'wb') do |file|
+        ::File.open(relative_path, 'w') do |file|
           file.write(contents)
         end
       end
