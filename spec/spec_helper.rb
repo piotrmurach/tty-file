@@ -25,7 +25,8 @@ module Helpers
   end
 
   def tmp_path(filename = nil)
-    File.join(File.dirname(__FILE__), '..', 'tmp', filename.to_s)
+    root_path = ::File.expand_path(File.dirname(__FILE__), '..')
+    File.join(root_path, 'tmp', filename.to_s)
   end
 
   def exists_and_identical?(source, dest)
