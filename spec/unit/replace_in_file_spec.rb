@@ -29,11 +29,11 @@ RSpec.describe TTY::File, '#replace_in_file' do
   end
 
   it "doesn't match file content" do
-    content = 'content'
     file = tmp_path('Gemfile')
-    expect {
-      TTY::File.replace_in_file(file, /unknown/, content, verbose: false)
-    }.to raise_error(RuntimeError, /\/unknown\/ not found in/)
+    content = ::File.read(file)
+    result = TTY::File.replace_in_file(file, /unknown/, 'Hello', verbose: false)
+    expect(result).to eq(false)
+    expect(::File.read(file)).to eq(content)
   end
 
   it "silences verbose output" do
@@ -88,14 +88,17 @@ RSpec.describe TTY::File, '#replace_in_file' do
     content = "gem 'hanami'"
     file = tmp_path('Gemfile')
 
-    TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
+    result = TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
+    expect(result).to eq(true)
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'hanami', '5.0.0'\n",
       "gem 'rack', '>=1.0'\n"
     ].join)
 
-    TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
+    result = TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
+    expect(result).to eq(false)
+
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'hanami', '5.0.0'\n",

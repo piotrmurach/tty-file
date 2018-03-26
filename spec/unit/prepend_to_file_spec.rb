@@ -3,7 +3,8 @@
 RSpec.describe TTY::File, '#prepend_to_file' do
   it "appends to file" do
     file = tmp_path('Gemfile')
-    TTY::File.prepend_to_file(file, "gem 'tty'\n", verbose: false)
+    result = TTY::File.prepend_to_file(file, "gem 'tty'\n", verbose: false)
+    expect(result).to eq(true)
     expect(File.read(file)).to eq([
       "gem 'tty'\n",
       "gem 'nokogiri'\n",

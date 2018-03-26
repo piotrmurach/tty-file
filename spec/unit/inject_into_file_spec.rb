@@ -79,7 +79,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
     }.to output(/\s+inject.*Gemfile/).to_stdout_from_any_process
   end
 
-  it "doesn't change content if already exists" do
+  it "continues injecting new content if matching" do
     file = tmp_path('Gemfile')
     TTY::File.inject_into_file(file, "gem 'tty'",
       after: "gem 'rack', '>=1.0'\n", verbose: false)
@@ -98,7 +98,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
       "gem 'nokogiri'\n",
       "gem 'rails', '5.0.0'\n",
       "gem 'rack', '>=1.0'\n",
-      "gem 'tty'"
+      "gem 'tty'gem 'tty'"
     ].join)
   end
 

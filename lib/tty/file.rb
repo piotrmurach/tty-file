@@ -500,6 +500,7 @@ module TTY
     #
     # @api public
     def inject_into_file(relative_path, *args, **options, &block)
+      check_path(relative_path)
       replacement = block_given? ? block[] : args.join
 
       flag, match = if options.key?(:after)
@@ -515,17 +516,18 @@ module TTY
                   replacement + '\0'
                 end
 
-      replace_in_file(relative_path, /#{match}/, content, options.merge(verbose: false))
-
       log_status(:inject, relative_path, options.fetch(:verbose, true),
                                          options.fetch(:color, :green))
+      replace_in_file(relative_path, /#{match}/, content,
+                      options.merge(verbose: false))
     end
     module_function :inject_into_file
 
     alias insert_into_file inject_into_file
     module_function :insert_into_file
 
-    # Replace content of a file matching string
+    # Replace content of a file matching string, returning false
+    # when no substitutions were performed, true otherwise.
     #
     # @options [Hash[String]] options
     # @option options [Symbol] :force
@@ -541,26 +543,25 @@ module TTY
     #     match = "gem 'hanami'"
     #   end
     #
+    # @return [Boolean]
+    #   true when replaced content, false otherwise
+    #
     # @api public
     def replace_in_file(relative_path, *args, **options, &block)
       check_path(relative_path)
-      contents    = IO.read(relative_path)
-      replacement = (block ? block[] : args[1..-1].join).gsub('\0', '')
+      contents = IO.read(relative_path)
 
       log_status(:replace, relative_path, options.fetch(:verbose, true),
                                           options.fetch(:color, :green))
+      return false if options[:noop]
 
-      return if options[:noop]
-
-      if options[:force] || !contents.include?(replacement)
-        if !contents.gsub!(*args, &block)
-          find = args[0]
-          raise "#{find.inspect} not found in #{relative_path}"
-        end
+      status = contents.gsub!(*args, &block)
+      if !status.nil? || options[:force]
         ::File.open(relative_path, 'wb') do |file|
           file.write(contents)
         end
       end
+      !status.nil?
     end
     module_function :replace_in_file
 
