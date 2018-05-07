@@ -20,13 +20,22 @@ require 'find'
 require "webmock/rspec"
 
 module Helpers
+  def gem_root
+    File.expand_path(File.join(File.dirname(__FILE__), ".."))
+  end
+
+  def dir_path(*args)
+    path = File.join(gem_root, *args)
+    FileUtils.mkdir_p(path) unless ::File.exist?(path)
+    File.realpath(path)
+  end
+
   def fixtures_path(filename = nil)
-    File.join(File.dirname(__FILE__), 'fixtures', filename.to_s)
+    File.join(dir_path('spec/fixtures'), filename.to_s)
   end
 
   def tmp_path(filename = nil)
-    root_path = ::File.expand_path(File.dirname(__FILE__), '..')
-    File.join(root_path, 'tmp', filename.to_s)
+    File.join(gem_root, 'tmp', filename.to_s)
   end
 
   def exists_and_identical?(source, dest)
