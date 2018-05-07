@@ -1,12 +1,16 @@
 # Change log
 
-## [v0.6.0] - 2018-03-xx
+## [v0.6.0] - 2018-05-xx
 
 ### Changed
-* Update tty-prompt dependency
-* Change identical files conflict from blue to cyan for readability
+* Change identical files conflict message from blue to cyan for readability
 * Change replace_in_file to stop raising error and allow forcing file overwrite
-* Change replace_in_file, inject_into_file, prepend_to_file, append_to_file to return true when operation is performed successfully, false otherwise
+* Change replace_in_file, inject_into_file, prepend_to_file, append_to_file to return true
+  when operation is performed successfully, false otherwise
+* Update tty-prompt dependency
+
+### Fixed
+* Fix replace_in_file to preserve file original encoding
 
 ## [v0.5.0] - 2018-01-06
 
