@@ -550,15 +550,20 @@ module TTY
     def replace_in_file(relative_path, *args, **options, &block)
       check_path(relative_path)
       contents = IO.read(relative_path)
+      replacement = (block ? block[] : args[1..-1].join).gsub('\0', '')
+      match = Regexp.escape(replacement)
+      status = nil
 
       log_status(:replace, relative_path, options.fetch(:verbose, true),
                                           options.fetch(:color, :green))
       return false if options[:noop]
 
-      status = contents.gsub!(*args, &block)
-      if !status.nil? || options[:force]
-        ::File.open(relative_path, 'w') do |file|
-          file.write(contents)
+      if !(contents =~ /^#{match}(\r?\n)*/m) || options[:force]
+        status = contents.gsub!(*args, &block)
+        if !status.nil?
+          ::File.open(relative_path, 'w') do |file|
+            file.write(contents)
+          end
         end
       end
       !status.nil?

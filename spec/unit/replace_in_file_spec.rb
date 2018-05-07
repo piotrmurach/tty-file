@@ -1,12 +1,14 @@
 # encoding: utf-8
 
 RSpec.describe TTY::File, '#replace_in_file' do
-  it "replaces file content" do
-    content = "gem 'hanami'"
+  it "replaces file content with a matching string" do
     file = tmp_path('Gemfile')
+    status = nil
     expect {
-      TTY::File.replace_in_file(file, /gem 'rails'/, content)
+      status = TTY::File.replace_in_file(file, /gem 'rails'/, "gem 'hanami'")
     }.to output(/replace/).to_stdout_from_any_process
+
+    expect(status).to eq(true)
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'hanami', '5.0.0'\n",
@@ -14,13 +16,16 @@ RSpec.describe TTY::File, '#replace_in_file' do
     ].join)
   end
 
-  it "replaces file content in block" do
+  it "replaces file content with a matching block value" do
     file = tmp_path('Gemfile')
+    status = nil
     expect {
-      TTY::File.replace_in_file(file, /gem 'rails'/, verbose: false) do |match|
+      status =TTY::File.replace_in_file(file, /gem 'rails'/, verbose: false) do |match|
         match = "gem 'hanami'"
       end
     }.to_not output(/replace/).to_stdout_from_any_process
+
+    expect(status).to eq(true)
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'hanami', '5.0.0'\n",
@@ -31,8 +36,9 @@ RSpec.describe TTY::File, '#replace_in_file' do
   it "doesn't match file content" do
     file = tmp_path('Gemfile')
     content = ::File.read(file)
-    result = TTY::File.replace_in_file(file, /unknown/, 'Hello', verbose: false)
-    expect(result).to eq(false)
+    status = TTY::File.replace_in_file(file, /unknown/, 'Hello', verbose: false)
+
+    expect(status).to eq(false)
     expect(::File.read(file)).to eq(content)
   end
 
@@ -44,7 +50,7 @@ RSpec.describe TTY::File, '#replace_in_file' do
     }.to_not output(/replace/).to_stdout_from_any_process
   end
 
-  it "fails to replace non existent file" do
+  it "fails to replace content when missing correct file path" do
     expect {
       TTY::File.replace_in_file('/non-existent-path',
         /gem 'rails'/, "gem 'hanami'", verbose: false)
@@ -84,20 +90,20 @@ RSpec.describe TTY::File, '#replace_in_file' do
     ].join)
   end
 
-  it "doesn't replace content if already present" do
+  it "doesn't replace content when no match found" do
     content = "gem 'hanami'"
     file = tmp_path('Gemfile')
 
-    result = TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
-    expect(result).to eq(true)
+    status = TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
+    expect(status).to eq(true)
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'hanami', '5.0.0'\n",
       "gem 'rack', '>=1.0'\n"
     ].join)
 
-    result = TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
-    expect(result).to eq(false)
+    status = TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
+    expect(status).to eq(false)
 
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",

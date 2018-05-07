@@ -36,6 +36,42 @@ RSpec.describe TTY::File, '#prepend_to_file' do
     ].join)
   end
 
+  it "doesn't prepend if already present" do
+    file = tmp_path('Gemfile')
+    TTY::File.prepend_to_file(file, "gem 'nokogiri'\n", verbose: false)
+    expect(::File.read(file)).to eq([
+      "gem 'nokogiri'\n",
+      "gem 'rails', '5.0.0'\n",
+      "gem 'rack', '>=1.0'\n",
+    ].join)
+  end
+
+  it "doesn't prepend if already present for multiline content" do
+    file = tmp_path('Gemfile')
+    TTY::File.prepend_to_file(file, "gem 'nokogiri'\n", force: true, verbose: false)
+    TTY::File.prepend_to_file(file, "gem 'nokogiri'\n", "gem 'nokogiri'\n", verbose: false)
+    expect(::File.read(file)).to eq([
+      "gem 'nokogiri'\n",
+      "gem 'nokogiri'\n",
+      "gem 'rails', '5.0.0'\n",
+      "gem 'rack', '>=1.0'\n",
+    ].join)
+  end
+
+  it "prepends multiple times if forced" do
+    file = tmp_path('Gemfile')
+    TTY::File.prepend_to_file(file, "gem 'nokogiri'\n", force: true, verbose: false)
+    TTY::File.prepend_to_file(file, "gem 'nokogiri'\n", "gem 'nokogiri'\n", force: true, verbose: false)
+    expect(::File.read(file)).to eq([
+      "gem 'nokogiri'\n",
+      "gem 'nokogiri'\n",
+      "gem 'nokogiri'\n",
+      "gem 'nokogiri'\n",
+      "gem 'rails', '5.0.0'\n",
+      "gem 'rack', '>=1.0'\n"
+    ].join)
+  end
+
   it "logs action" do
     file = tmp_path('Gemfile')
     expect {
