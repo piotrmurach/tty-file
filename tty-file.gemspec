@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.0.0'
 
   spec.add_dependency 'pastel',     '~> 0.7.2'
-  spec.add_dependency 'tty-prompt', '~> 0.16.0'
+  spec.add_dependency 'tty-prompt', '~> 0.16.1'
   spec.add_dependency 'diff-lcs',   '~> 1.3.0'
 
   spec.add_development_dependency 'bundler', '~> 1.5'
