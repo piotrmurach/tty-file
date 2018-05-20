@@ -36,7 +36,7 @@ module TTY
 
         Net::HTTP.start(uri.host, uri.port,
                         use_ssl: uri.scheme == 'https') do |http|
-          http.request_get(uri.path) do |response|
+          http.request_get(uri.request_uri) do |response|
             case response
             when Net::HTTPSuccess
               response.read_body do |seg|
