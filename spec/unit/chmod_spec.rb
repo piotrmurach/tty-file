@@ -2,7 +2,9 @@
 
 RSpec.describe TTY::File, '#chmod' do
   context 'when octal permisssions' do
-    it "adds permissions to file - user executable" do
+    it "adds permissions to file - user executable",
+      unless: RSpec::Support::OS.windows? do
+
       file = tmp_path('script.sh')
       mode = File.lstat(file).mode
       expect(File.executable?(file)).to eq(false)
@@ -12,7 +14,9 @@ RSpec.describe TTY::File, '#chmod' do
       expect(File.lstat(file).mode).to eq(mode | TTY::File::U_X)
     end
 
-    it "logs status when :verbose flag is true" do
+    it "logs status when :verbose flag is true",
+      unless: RSpec::Support::OS.windows? do
+
       file = tmp_path('script.sh')
       mode = File.lstat(file).mode
       expect(File.executable?(file)).to eq(false)
@@ -36,7 +40,9 @@ RSpec.describe TTY::File, '#chmod' do
   end
 
   context 'when human readable permissions' do
-    it "adds permisions to file - user executable" do
+    it "adds permisions to file - user executable",
+      unless: RSpec::Support::OS.windows? do
+
       file = tmp_path('script.sh')
       mode = File.lstat(file).mode
       expect(File.executable?(file)).to eq(false)
@@ -57,7 +63,9 @@ RSpec.describe TTY::File, '#chmod' do
       expect(File.writable?(file)).to eq(false)
     end
 
-    it "adds multiple permissions separated by comma" do
+    it "adds multiple permissions separated by comma",
+      unless: RSpec::Support::OS.windows? do
+
       file = tmp_path('script.sh')
       mode = File.lstat(file).mode
       expect(File.executable?(file)).to eq(false)
