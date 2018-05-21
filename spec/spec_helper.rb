@@ -21,7 +21,7 @@ require "webmock/rspec"
 
 module Helpers
   def gem_root
-    File.expand_path(File.join(File.dirname(__FILE__), ".."))
+    File.join(File.dirname(__FILE__), "..")
   end
 
   def dir_path(*args)
