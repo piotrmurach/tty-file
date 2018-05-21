@@ -561,7 +561,7 @@ module TTY
       if !(contents =~ /^#{match}(\r?\n)*/m) || options[:force]
         status = contents.gsub!(*args, &block)
         if !status.nil?
-          ::File.open(relative_path, 'w') do |file|
+          ::File.open(relative_path, 'w:UTF-8') do |file|
             file.write(contents)
           end
         end
