@@ -1,6 +1,6 @@
 # Change log
 
-## [v0.6.0] - 2018-05-xx
+## [v0.6.0] - 2018-05-21
 
 ### Changed
 * Change identical files conflict message from blue to cyan for readability
@@ -8,6 +8,7 @@
 * Change replace_in_file, inject_into_file, prepend_to_file, append_to_file to return true
   when operation is performed successfully, false otherwise
 * Update tty-prompt dependency
+* Change download_file to preserve query parameters
 
 ### Fixed
 * Fix replace_in_file to preserve file original encoding
