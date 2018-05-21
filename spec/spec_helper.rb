@@ -35,7 +35,7 @@ module Helpers
   end
 
   def tmp_path(filename = nil)
-    File.join(gem_root, 'tmp', filename.to_s)
+    File.join(dir_path, 'tmp', filename.to_s)
   end
 
   def exists_and_identical?(source, dest)
