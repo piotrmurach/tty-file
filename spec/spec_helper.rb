@@ -21,21 +21,21 @@ require "webmock/rspec"
 
 module Helpers
   def gem_root
-    File.join(File.dirname(__FILE__), "..")
+    ::File.join(File.dirname(__FILE__), "..")
   end
 
   def dir_path(*args)
-    path = File.join(gem_root, *args)
-    FileUtils.mkdir_p(path) unless ::File.exist?(path)
-    File.realpath(path)
+    path = ::File.join(gem_root, *args)
+    ::FileUtils.mkdir_p(path) unless ::File.exist?(path)
+    ::File.realpath(path)
   end
 
   def fixtures_path(filename = nil)
-    File.join(dir_path('spec/fixtures'), filename.to_s)
+    ::File.join(dir_path('spec', 'fixtures'), filename.to_s)
   end
 
   def tmp_path(filename = nil)
-    File.join(dir_path, 'tmp', filename.to_s)
+    ::File.join(dir_path('tmp'), filename.to_s)
   end
 
   def exists_and_identical?(source, dest)
@@ -56,7 +56,7 @@ RSpec.configure do |config|
   config.include(Helpers)
 
   config.before(:each) do
-    FileUtils.cp_r(fixtures_path, tmp_path)
+    FileUtils.cp_r(fixtures_path('/.'), tmp_path)
   end
 
   config.after(:each) do
