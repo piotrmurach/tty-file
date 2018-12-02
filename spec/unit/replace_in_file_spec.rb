@@ -117,7 +117,7 @@ RSpec.describe TTY::File, '#replace_in_file' do
     file = tmp_path('Gemfile')
 
     TTY::File.gsub_file(file, /gem 'rails'/, content, verbose: false)
-    expect(File.read(file)).to eq([
+    expect(File.open(file, 'r:UTF-8', &:read)).to eq([
       "gem 'nokogiri'\n",
       "#{content}, '5.0.0'\n",
       "gem 'rack', '>=1.0'\n"
