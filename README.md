@@ -1,3 +1,7 @@
+<div align="center">
+  <a href="https://piotrmurach.github.io/tty" target="_blank"><img width="130" src="https://cdn.rawgit.com/piotrmurach/tty/master/images/tty.png" alt="tty logo" /></a>
+</div>
+
 # TTY::File [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][gitter]
 
 [![Gem Version](https://badge.fury.io/rb/tty-file.svg)][gem]
@@ -52,7 +56,7 @@ Or install it yourself as:
   * [2.9. download_file](#29-download_file)
   * [2.10. inject_into_file](#210-inject_into_file)
   * [2.11. replace_in_file](#211-replace_in_file)
-  * [2.12. append_to_file](#212-apend_to_file)
+  * [2.12. append_to_file](#212-append_to_file)
   * [2.13. prepend_to_file](#213-prepend_to_file)
   * [2.14. remove_file](#214-remove_file)
   * [2.15. tail_file](#215-tail_file)
@@ -140,7 +144,7 @@ variables[:foo] = 'bar'
 TTY::File.copy_file('templates/application.html.erb', context: variables)
 ```
 
-You can also specify the template name surrounding any dynamic variables with `%` to be evaluted:
+You can also specify the template name surrounding any dynamic variables with `%` to be evaluated:
 
 ```ruby
 variables = OpenStruct.new
@@ -190,7 +194,7 @@ Assuming you have the following directory structure:
 #   %name%.rb
 ```
 
-you can copy `doc` folder to `docs` by invoking:
+You can copy `doc` folder to `docs` by invoking:
 
 ```ruby
 TTY::File.copy_directory('doc', 'docs', context: ...)
@@ -223,10 +227,10 @@ TTY::File.copy_directory('doc', 'docs', exclude: 'subcommands')
 To create directory use `create_directory` or its alias `create_dir` passing as a first argument file path:
 
 ```ruby
-TTY::File.create_dir(/path/to/directory)
+TTY::File.create_dir('/path/to/directory')
 ```
 
-or a data structure describing the directory tree including any files with or without content:
+Or a data structure describing the directory tree including any files with or without content:
 
 ```ruby
 tree =
@@ -256,7 +260,7 @@ TTY::File.create_dir(tree)
 As a second argument you can provide a parent directory, otherwise current directory will be assumed:
 
 ```ruby
-TTy::File.create_dir(tree, '/path/to/parent/dir')
+TTY::File.create_dir(tree, '/path/to/parent/dir')
 ```
 
 ### 2.8. diff
@@ -331,7 +335,7 @@ Inject content into a file at a given location and return `true` when performed 
 TTY::File.inject_into_file 'filename.rb', "text to add", after: "Code below this line\n"
 ```
 
-or using a block
+Or using a block:
 
 ```ruby
 TTY::File.inject_into_file 'filename.rb', after: "Code below this line\n" do
@@ -365,7 +369,7 @@ Appends text to a file and returns `true` when performed successfully, `false` o
 TTY::File.append_to_file('Gemfile', "gem 'tty'")
 ```
 
-or inside a block:
+Or inside a block:
 
 ```ruby
 TTY::File.append_to_file('Gemfile') do
@@ -381,7 +385,7 @@ Prepends text to a file and returns `true` when performed successfully, `false` 
 TTY::File.prepend_to_file('Gemfile', "gem 'tty'")
 ```
 
-or inside a block:
+Or inside a block:
 
 ```ruby
 TTY::File.prepend_to_file('Gemfile') do
@@ -442,4 +446,4 @@ The gem is available as open source under the terms of the [MIT License](http://
 
 ## Copyright
 
-Copyright (c) 2016-2018 Piotr Murach. See LICENSE for further details.
+Copyright (c) 2016 Piotr Murach. See LICENSE for further details.
