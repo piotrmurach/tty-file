@@ -23,4 +23,4 @@ environment:
     - ruby_version: "25-x64"
 matrix:
   allow_failures:
-    - ruby_version: "25"
+    - ruby_version: "21"
