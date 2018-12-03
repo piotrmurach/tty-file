@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'pastel'
 require 'tty-prompt'
@@ -344,7 +344,7 @@ module TTY
     # @api public
     def diff(path_a, path_b, **options)
       threshold = options[:threshold] || 10_000_000
-      output = ''
+      output = []
 
       open_tempfile_if_missing(path_a) do |file_a|
         if ::File.size(file_a) > threshold
@@ -363,7 +363,7 @@ module TTY
 
           log_status(:diff, "#{file_a.path} - #{file_b.path}",
                      options.fetch(:verbose, true), options.fetch(:color, :green))
-          return output if options[:noop]
+          return output.join if options[:noop]
 
           block_size = file_a.lstat.blksize
           while !file_a.eof? && !file_b.eof?
@@ -373,7 +373,7 @@ module TTY
           end
         end
       end
-      output
+      output.join
     end
     module_function :diff
 
