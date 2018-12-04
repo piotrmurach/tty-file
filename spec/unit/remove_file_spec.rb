@@ -1,7 +1,7 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 RSpec.describe TTY::File, '#remove_file' do
-  it "removes a given file" do
+  it "removes a given file", unless: RSpec::Support::OS.windows? do
     src_path = tmp_path('Gemfile')
 
     TTY::File.remove_file(src_path, verbose: false)
