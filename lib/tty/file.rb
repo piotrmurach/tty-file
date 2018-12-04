@@ -549,7 +549,7 @@ module TTY
     # @api public
     def replace_in_file(relative_path, *args, **options, &block)
       check_path(relative_path)
-      contents = IO.read(relative_path)
+      contents = ::File.binread(relative_path)
       replacement = (block ? block[] : args[1..-1].join).gsub('\0', '')
       match = Regexp.escape(replacement)
       status = nil
@@ -561,7 +561,7 @@ module TTY
       if !(contents =~ /^#{match}(\r?\n)*/m) || options[:force]
         status = contents.gsub!(*args, &block)
         if !status.nil?
-          ::File.open(relative_path, 'w') do |file|
+          ::File.open(relative_path, 'wb') do |file|
             file.write(contents)
           end
         end
