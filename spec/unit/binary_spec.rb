@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 RSpec.describe TTY::File, '#binary?' do
   let(:ascii) { "This is a text file.\nWith more than one line.\nAnd a \tTab.\nAnd other printable chars too: ~!@\#$%^&*()`:\"<>?{}|_+,./;'[]\\-=\n" }

@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 RSpec.describe TTY::File, '#create_file' do
   context 'when new file' do

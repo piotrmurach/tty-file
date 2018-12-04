@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 RSpec.describe TTY::File, '#copy_directory' do
   it "copies directory of files recursively" do
