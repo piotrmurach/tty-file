@@ -591,7 +591,7 @@ module TTY
       log_status(:remove, relative_path, options.fetch(:verbose, true),
                                          options.fetch(:color, :red))
 
-      return if options[:noop]
+      return if options[:noop] || !::File.exist?(relative_path)
 
       ::FileUtils.rm_r(relative_path, force: options[:force], secure: true)
     end
