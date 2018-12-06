@@ -59,7 +59,7 @@ module TTY
 
       # @api public
       def format_hunks(hunks)
-        output = ""
+        output = []
         hunks.each_cons(2) do |prev_hunk, current_hunk|
           begin
             if current_hunk.overlaps?(prev_hunk)
@@ -72,6 +72,7 @@ module TTY
           end
         end
         output << hunks.last.diff(@format) << "\n" if hunks.last
+        output.join
       end
     end # Differ
   end # File
