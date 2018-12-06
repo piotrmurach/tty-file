@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'pastel'
-require 'tty-prompt'
 require 'erb'
 require 'tempfile'
 require 'pathname'

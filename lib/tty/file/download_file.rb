@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require 'uri'
 require 'net/http'
@@ -32,7 +32,7 @@ module TTY
       # @api private
       def download(uri, path, limit)
         raise DownloadError, 'Redirect limit reached!' if limit.zero?
-        content = ''
+        content = []
 
         Net::HTTP.start(uri.host, uri.port,
                         use_ssl: uri.scheme == 'https') do |http|
@@ -49,7 +49,7 @@ module TTY
             end
           end
         end
-        content
+        content.join
       end
     end # DownloadFile
   end # File
