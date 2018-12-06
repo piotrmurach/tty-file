@@ -581,6 +581,8 @@ module TTY
     #   remove file ignoring errors
     # @option options [Symbol] :verbose
     #   log status
+    # @option options [Symbol] :secure
+    #   for secure removing
     #
     # @example
     #   remove_file 'doc/README.md'
@@ -592,7 +594,8 @@ module TTY
 
       return if options[:noop] || !::File.exist?(relative_path)
 
-      ::FileUtils.rm_r(relative_path, force: options[:force], secure: true)
+      ::FileUtils.rm_r(relative_path, force: options[:force],
+                       secure: options.fetch(:secure, true))
     end
     module_function :remove_file
 

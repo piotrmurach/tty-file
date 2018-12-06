@@ -25,6 +25,16 @@ RSpec.describe TTY::File, '#remove_file' do
     expect(::File.exist?(src_path)).to be(true)
   end
 
+  it "removes files in secure mode" do
+    src_path = tmp_path('Gemfile')
+    allow(::FileUtils).to receive(:rm_r)
+
+    TTY::File.remove_file(src_path, verbose: false, secure: false)
+
+    expect(::FileUtils).to have_received(:rm_r).
+      with(src_path.to_s, force: nil, secure: false)
+  end
+
   it "logs status" do
     src_path = tmp_path('Gemfile')
 
