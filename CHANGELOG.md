@@ -1,5 +1,18 @@
 # Change log
 
+## [v0.7.0] - 2018-12-x
+
+### Added
+* Add :secure option to #remove_file call
+
+### Changed
+* Change to load gemspec files directly
+* Change to update tty-prompt
+* Change to freeze strings
+
+### Fixed
+* Fixed windows tests
+
 ## [v0.6.0] - 2018-05-21
 
 ### Changed
