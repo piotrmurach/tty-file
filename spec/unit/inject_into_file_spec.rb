@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 RSpec.describe TTY::File, '#inject_into_file' do
   it "injects content into file :before" do
@@ -92,7 +92,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
     ].join)
 
     TTY::File.inject_into_file(file, "gem 'tty'",
-      after: "gem 'rack', '>=1.0'\n", verbose: false)
+      after: "gem 'rack', '>=1.0'\n", force: false, verbose: false)
 
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",

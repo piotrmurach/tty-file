@@ -557,7 +557,7 @@ module TTY
                                           options.fetch(:color, :green))
       return false if options[:noop]
 
-      if !(contents =~ /^#{match}(\r?\n)*/m) || options[:force]
+      if options.fetch(:force, true) || !(contents =~ /^#{match}(\r?\n)*/m)
         status = contents.gsub!(*args, &block)
         if !status.nil?
           ::File.open(relative_path, 'wb') do |file|
