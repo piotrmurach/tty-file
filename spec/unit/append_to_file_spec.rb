@@ -45,7 +45,18 @@ RSpec.describe TTY::File, '#append_to_file' do
     ].join)
   end
 
-  it "appends multiple times if forced" do
+  it "appends safely checking if content already present" do
+    file = tmp_path('Gemfile')
+    TTY::File.safe_append_to_file(file, "gem 'rack', '>=1.0'\n", verbose: false)
+
+    expect(::File.read(file)).to eq([
+      "gem 'nokogiri'\n",
+      "gem 'rails', '5.0.0'\n",
+      "gem 'rack', '>=1.0'\n",
+    ].join)
+  end
+
+  it "appends multiple times by default" do
     file = tmp_path('Gemfile')
     TTY::File.append_to_file(file, "gem 'tty'\n", verbose: false)
     TTY::File.append_to_file(file, "gem 'tty'\n", verbose: false)

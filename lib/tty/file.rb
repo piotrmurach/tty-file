@@ -472,6 +472,14 @@ module TTY
     alias add_to_file append_to_file
     module_function :add_to_file
 
+    # Safely append to file checking if content is not already present
+    #
+    # @api public
+    def safe_append_to_file(relative_path, *args, **options, &block)
+      append_to_file(relative_path, *args, **(options.merge(force: false)), &block)
+    end
+    module_function :safe_append_to_file
+
     # Inject content into file at a given location
     #
     # @param [String] relative_path
