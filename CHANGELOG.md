@@ -1,14 +1,17 @@
 # Change log
 
-## [v0.7.0] - 2018-12-x
+## [v0.7.0] - 2018-12-17
 
 ### Added
 * Add :secure option to #remove_file call
+* Add #safe_append_to_file, #safe_prepend_to_file, #safe_inject_into_file
 
 ### Changed
+* Change #replace_in_file, #append_to_file, #prepend_to_file, and #inject_into_file to perform operation unsafely without checking prior content
 * Change to load gemspec files directly
 * Change to update tty-prompt
 * Change to freeze strings
+* Change to relax tty-prompt & diff-lcs version constraints
 
 ### Fixed
 * Fixed windows tests
@@ -18,8 +21,7 @@
 ### Changed
 * Change identical files conflict message from blue to cyan for readability
 * Change replace_in_file to stop raising error and allow forcing file overwrite
-* Change replace_in_file, inject_into_file, prepend_to_file, append_to_file to return true
-  when operation is performed successfully, false otherwise
+* Change replace_in_file, inject_into_file, prepend_to_file, append_to_file to return true when operation is performed successfully, false otherwise
 * Update tty-prompt dependency
 * Change download_file to preserve query parameters
 
@@ -77,6 +79,7 @@
 
 * Initial implementation and release
 
+[v0.7.0]: https://github.com/piotrmurach/tty-file/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://github.com/piotrmurach/tty-file/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://github.com/piotrmurach/tty-file/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://github.com/piotrmurach/tty-file/compare/v0.3.0...v0.4.0
