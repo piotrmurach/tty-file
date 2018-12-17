@@ -343,7 +343,21 @@ TTY::File.inject_into_file 'filename.rb', after: "Code below this line\n" do
 end
 ```
 
-You can also use Regular Expressions in `:after` or `:before` to match file location. The [append_to_file](#212-append_to_file) and [prepend_to_file](#213-prepend_to_file) allow you to add content at the end and the begging of a file.
+You can also use Regular Expressions in `:after` or `:before` to match file location.
+
+By default, this method will always inject content into file, regardless whether it is already present or not. To change this pass `:force` set to `false` to perform check before actually inserting text:
+
+```ruby
+TTY::File.inject_into_file('filename.rb', "text to add", after: "Code below this line\n"
+```
+
+Alternatively, use `safe_inject_into_file` to check if the text can be safely inserted.
+
+```ruby
+TTY::File.safe_inject_into_file('Gemfile', "gem 'tty'")
+```
+
+The [append_to_file](#212-append_to_file) and [prepend_to_file](#213-prepend_to_file) allow you to add content at the end and the begging of a file.
 
 ### 2.11. replace_in_file
 
@@ -383,6 +397,12 @@ By default, this method will always append content regardless whether it is alre
 TTY::File.append_to_file('Gemfile', "gem 'tty'", force: false)
 ```
 
+Alternatively, use `safe_append_to_file` to check if the text can be safely appended.
+
+```ruby
+TTY::File.safe_append_to_file('Gemfile', "gem 'tty'")
+```
+
 ### 2.13. prepend_to_file
 
 Prepends text to a file and returns `true` when performed successfully, `false` otherwise. You can provide the text as a second argument:
@@ -403,6 +423,12 @@ By default, this method will always prepend content regardless whether it is alr
 
 ```ruby
 TTY::File.prepend_to_file('Gemfile', "gem 'tty'", force: false)
+```
+
+Alternatively, use `safe_prepend_to_file` to check if the text can be safely appended.
+
+```ruby
+TTY::File.safe_prepend_to_file('Gemfile', "gem 'tty'")
 ```
 
 ### 2.14. remove_file
