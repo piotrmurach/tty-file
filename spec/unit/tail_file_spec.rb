@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 RSpec.describe TTY::File, '#tail_file' do
   it "tails file for lines with chunks smaller than file size" do
