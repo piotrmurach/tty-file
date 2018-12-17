@@ -52,7 +52,7 @@ Or install it yourself as:
   * [2.5. create_file](#25-create_file)
   * [2.6. copy_dir](#26-copy_dir)
   * [2.7. create_dir](#27-create_dir)
-  * [2.8. diff](#28-diff)
+  * [2.8. diff_files](#28-diff_files)
   * [2.9. download_file](#29-download_file)
   * [2.10. inject_into_file](#210-inject_into_file)
   * [2.11. replace_in_file](#211-replace_in_file)
@@ -263,12 +263,12 @@ As a second argument you can provide a parent directory, otherwise current direc
 TTY::File.create_dir(tree, '/path/to/parent/dir')
 ```
 
-### 2.8. diff
+### 2.8. diff_files
 
 To compare files line by line in a system independent way use `diff`, or `diff_files`:
 
 ```ruby
-TTY::File.diff('file_a', 'file_b')
+TTY::File.diff_files('file_a', 'file_b')
 # =>
 #  @@ -1,4 +1,4 @@
 #   aaa
@@ -286,7 +286,7 @@ The `:context_lines` specifies how many extra lines around the differing lines t
 The `:threshold` sets maximum file size in bytes, by default files larger than `10Mb` are not processed.
 
 ```ruby
-TTY::File.diff('file_a', 'file_b', format: :old)
+TTY::File.diff_files('file_a', 'file_b', format: :old)
 # =>
 #  1,4c1,4
 #  < aaa
@@ -301,7 +301,7 @@ TTY::File.diff('file_a', 'file_b', format: :old)
 Equally, you can perform a comparison between a file content and a string content like so:
 
 ```ruby
-TTY::File.diff('/path/to/file', 'some long text')
+TTY::File.diff_files('/path/to/file', 'some long text')
 ```
 
 ### 2.9. download_file
