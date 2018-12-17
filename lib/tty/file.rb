@@ -541,6 +541,14 @@ module TTY
     alias insert_into_file inject_into_file
     module_function :insert_into_file
 
+    # Safely prepend to file checking if content is not already present
+    #
+    # @api public
+    def safe_inject_into_file(relative_path, *args, **options, &block)
+      inject_into_file(relative_path, *args, **(options.merge(force: false)), &block)
+    end
+    module_function :safe_inject_into_file
+
     # Replace content of a file matching string, returning false
     # when no substitutions were performed, true otherwise.
     #

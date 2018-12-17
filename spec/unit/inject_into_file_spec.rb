@@ -82,7 +82,7 @@ RSpec.describe TTY::File, '#inject_into_file' do
   it "doesn't inject new content if already present" do
     file = tmp_path('Gemfile')
     TTY::File.inject_into_file(file, "gem 'tty'",
-      after: "gem 'rack', '>=1.0'\n", verbose: false)
+                               after: "gem 'rack', '>=1.0'\n", verbose: false)
 
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
@@ -92,9 +92,22 @@ RSpec.describe TTY::File, '#inject_into_file' do
     ].join)
 
     TTY::File.inject_into_file(file, "gem 'tty'",
-      after: "gem 'rack', '>=1.0'\n", force: false, verbose: false)
+                               after: "gem 'rack', '>=1.0'\n",
+                               force: false, verbose: false)
 
     expect(File.read(file)).to eq([
+      "gem 'nokogiri'\n",
+      "gem 'rails', '5.0.0'\n",
+      "gem 'rack', '>=1.0'\n",
+      "gem 'tty'"
+    ].join)
+  end
+
+  it "checks if a content can be safely injected" do
+    file = tmp_path('Gemfile')
+    TTY::File.safe_inject_into_file(file, "gem 'tty'",
+                                    after: "gem 'rack', '>=1.0'\n", verbose: false)
+    expect(::File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'rails', '5.0.0'\n",
       "gem 'rack', '>=1.0'\n",
