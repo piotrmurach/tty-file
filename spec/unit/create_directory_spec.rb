@@ -29,7 +29,7 @@ RSpec.describe TTY::File, '#create_directory' do
     app_dir = tmp_path('app')
 
     tree = {
-      tmp_path('app') => [
+      app_dir => [
         'empty_file',
         ['full_file', 'File with contents'],
         'subdir' => [
