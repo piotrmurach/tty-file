@@ -24,14 +24,26 @@ RSpec.describe TTY::File, '#binary?' do
     end
   end
 
-  it "identifies image as binary" do
+  it "identifies image file as binary" do
     file = tmp_path('blackhole.png')
+
+    expect(TTY::File.binary?(file)).to eq(true)
+  end
+
+  it 'identifies image file provided by a Pathname instance as binary' do
+    file = tmp_pathname('blackhole.png')
 
     expect(TTY::File.binary?(file)).to eq(true)
   end
 
   it "indetifies text file as non-binary" do
     file = tmp_path('Gemfile')
+
+    expect(TTY::File.binary?(file)).to eq(false)
+  end
+
+  it 'identifies text file provided by a Pathname instance as non-binary' do
+    file = tmp_pathname('Gemfile')
 
     expect(TTY::File.binary?(file)).to eq(false)
   end

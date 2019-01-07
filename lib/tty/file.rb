@@ -37,7 +37,7 @@ module TTY
 
     # Check if file is binary
     #
-    # @param [String] relative_path
+    # @param [String, Pathname] relative_path
     #   the path to file to check
     #
     # @example
@@ -66,7 +66,7 @@ module TTY
 
     # Create checksum for a file, io or string objects
     #
-    # @param [File,IO,String] source
+    # @param [File, IO, String, Pathname] source
     #   the source to generate checksum for
     # @param [String] mode
     # @param [Hash[Symbol]] options
@@ -92,7 +92,7 @@ module TTY
 
     # Change file permissions
     #
-    # @param [String] relative_path
+    # @param [String, Pathname] relative_path
     # @param [Integer,String] permisssions
     # @param [Hash[Symbol]] options
     # @option options [Symbol] :noop
@@ -130,7 +130,7 @@ module TTY
 
     # Create directory structure
     #
-    # @param [String, Hash] destination
+    # @param [String, Pathname, Hash] destination
     #   the path or data structure describing directory tree
     #
     # @example
@@ -155,8 +155,8 @@ module TTY
     # @api public
     def create_directory(destination, *args, **options)
       parent = args.size.nonzero? ? args.pop : nil
-      if destination.is_a?(String)
-        destination = { destination => [] }
+      if destination.is_a?(String) || destination.is_a?(Pathname)
+        destination = { destination.to_s => [] }
       end
 
       destination.each do |dir, files|
@@ -183,7 +183,7 @@ module TTY
 
     # Create new file if doesn't exist
     #
-    # @param [String] relative_path
+    # @param [String, Pathname] relative_path
     # @param [String|nil] content
     #   the content to add to file
     # @param [Hash] options
@@ -200,6 +200,7 @@ module TTY
     #
     # @api public
     def create_file(relative_path, *args, **options, &block)
+      relative_path = relative_path.to_s
       content = block_given? ? block[] : args.join
 
       CreateFile.new(self, relative_path, content, options).call
@@ -220,6 +221,7 @@ module TTY
     #   vars[:name] = 'foo'
     #   copy_file 'templates/%name%.rb', 'app/%name%.rb', context: vars
     #
+    # @param [String, Pathname] source_path
     # @param [Hash] options
     # @option options [Symbol] :context
     #   the binding to use for the template
@@ -233,7 +235,8 @@ module TTY
     #
     # @api public
     def copy_file(source_path, *args, **options, &block)
-      dest_path = (args.first || source_path).sub(/\.erb$/, '')
+      source_path = source_path.to_s
+      dest_path = (args.first || source_path).to_s.sub(/\.erb$/, '')
 
       ctx = if (vars = options[:context])
               vars.instance_eval('binding')
@@ -288,6 +291,7 @@ module TTY
     #    command.rb
     #    README
     #
+    # @param [String, Pathname] source_path
     # @param [Hash[Symbol]] options
     # @option options [Symbol] :preserve
     #   If true, the owner, group, permissions and modified time
@@ -303,9 +307,10 @@ module TTY
     #
     # @api public
     def copy_directory(source_path, *args, **options, &block)
+      source_path = source_path.to_s
       check_path(source_path)
       source = escape_glob_path(source_path)
-      dest_path = args.first || source
+      dest_path = (args.first || source).to_s
       opts = {recursive: true}.merge(options)
       pattern = opts[:recursive] ? ::File.join(source, '**') : source
       glob_pattern = ::File.join(pattern, '*')
@@ -327,8 +332,8 @@ module TTY
 
     # Diff files line by line
     #
-    # @param [String] path_a
-    # @param [String] path_b
+    # @param [String, Pathname] path_a
+    # @param [String, Pathname] path_b
     # @param [Hash[Symbol]] options
     # @option options [Symbol] :format
     #   the diffining output format
@@ -384,9 +389,9 @@ module TTY
     # is provided in place of destination, the content of
     # of the uri is yielded.
     #
-    # @param [String] uri
+    # @param [String, Pathname] uri
     #   the URI address
-    # @param [String] dest
+    # @param [String, Pathname] dest
     #   the relative path to save
     # @param [Hash[Symbol]] options
     # @param options [Symbol] :limit
@@ -403,7 +408,8 @@ module TTY
     #
     # @api public
     def download_file(uri, *args, **options, &block)
-      dest_path = args.first || ::File.basename(uri)
+      uri = uri.to_s
+      dest_path = (args.first || ::File.basename(uri)).to_s
 
       unless uri =~ %r{^https?\://}
         copy_file(uri, dest_path, options)
@@ -425,7 +431,7 @@ module TTY
 
     # Prepend to a file
     #
-    # @param [String] relative_path
+    # @param [String, Pathname] relative_path
     # @param [Array[String]] content
     #   the content to preped to file
     #
@@ -456,7 +462,7 @@ module TTY
 
     # Append to a file
     #
-    # @param [String] relative_path
+    # @param [String, Pathname] relative_path
     # @param [Array[String]] content
     #   the content to append to file
     #
@@ -490,7 +496,7 @@ module TTY
 
     # Inject content into file at a given location
     #
-    # @param [String] relative_path
+    # @param [String, Pathname] relative_path
     #
     # @param [Hash] options
     # @option options [Symbol] :before
@@ -552,6 +558,7 @@ module TTY
     # Replace content of a file matching string, returning false
     # when no substitutions were performed, true otherwise.
     #
+    # @param [String, Pathname] relative_path
     # @options [Hash[String]] options
     # @option options [Symbol] :force
     #   replace content even if present
@@ -598,6 +605,7 @@ module TTY
 
     # Remove a file or a directory at specified relative path.
     #
+    # @param [String, Pathname] relative_path
     # @param [Hash[:Symbol]] options
     # @option options [Symbol] :noop
     #   pretend removing file
@@ -613,6 +621,7 @@ module TTY
     #
     # @api public
     def remove_file(relative_path, *args, **options)
+      relative_path = relative_path.to_s
       log_status(:remove, relative_path, options.fetch(:verbose, true),
                                          options.fetch(:color, :red))
 
@@ -625,7 +634,7 @@ module TTY
 
     # Provide the last number of lines from a file
     #
-    # @param [String] relative_path
+    # @param [String, Pathname] relative_path
     #   the relative path to a file
     #
     # @param [Integer] num_lines

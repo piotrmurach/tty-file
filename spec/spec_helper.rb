@@ -38,6 +38,10 @@ module Helpers
     ::File.join(dir_path('tmp'), filename.to_s)
   end
 
+  def tmp_pathname(filename = nil)
+    Pathname.new(tmp_path(filename))
+  end
+
   def exists_and_identical?(source, dest)
     dest_path = tmp_path(dest)
     expect(::File.exist?(dest_path)).to be(true)
