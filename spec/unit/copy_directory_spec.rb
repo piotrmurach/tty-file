@@ -12,7 +12,7 @@ RSpec.shared_context "#copy_directory" do
 
     TTY::File.copy_directory(app, apps, context: variables, verbose: false)
 
-    expect(Find.find(apps).to_a).to eq([
+    expect(Find.find(apps.to_s).to_a).to eq([
       tmp_path('apps'),
       tmp_path('apps/README'),
       tmp_path('apps/command.rb'),
@@ -41,7 +41,7 @@ RSpec.shared_context "#copy_directory" do
                                         context: variables,
                                         verbose: false)
 
-    expect(Find.find(apps).to_a).to eq([
+    expect(Find.find(apps.to_s).to_a).to eq([
       tmp_path('apps'),
       tmp_path('apps/README'),
       tmp_path('apps/command.rb'),
@@ -54,7 +54,7 @@ RSpec.shared_context "#copy_directory" do
     dest = path_factory.call("foo1")
     TTY::File.copy_directory(src, dest, verbose: false)
 
-    expect(Find.find(dest).to_a).to eq([
+    expect(Find.find(dest.to_s).to_a).to eq([
       tmp_path('foo1'),
       tmp_path('foo1/README.md')
     ])
@@ -73,7 +73,7 @@ RSpec.shared_context "#copy_directory" do
                                         exclude: %r{excluded/},
                                         verbose: false)
 
-    expect(Find.find(dest).to_a).to eq([
+    expect(Find.find(dest.to_s).to_a).to eq([
       tmp_path('ignored'),
       tmp_path('ignored/README'),
       tmp_path('ignored/command.rb'),

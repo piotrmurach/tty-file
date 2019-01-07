@@ -42,7 +42,7 @@ RSpec.shared_context "#create_directory" do
 
     TTY::File.create_directory(tree, verbose: false)
 
-    expect(Find.find(app_dir).to_a).to eq([
+    expect(Find.find(app_dir.to_s).to_a).to eq([
       tmp_path('app'),
       tmp_path('app/empty'),
       tmp_path('app/empty_file'),
@@ -67,7 +67,7 @@ RSpec.shared_context "#create_directory" do
 
     TTY::File.create_dir(tree, app_dir, verbose: false)
 
-    expect(Find.find(app_dir).to_a).to eq([
+    expect(Find.find(app_dir.to_s).to_a).to eq([
       tmp_path('parent'),
       tmp_path('parent/app'),
       tmp_path('parent/app/file'),
