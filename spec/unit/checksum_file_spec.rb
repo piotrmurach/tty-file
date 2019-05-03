@@ -10,6 +10,15 @@ RSpec.describe TTY::File, '#checksum_file' do
     expect(checksum).to eq(expected)
   end
 
+  it "generates checksum for a Pathname instance" do
+    file = tmp_pathname('checksum/README.md')
+
+    checksum = TTY::File.checksum_file(file)
+    expected = '76ba1beb6c611fa32624ed253444138cdf23eb938a3812137f8a399c5b375bfe'
+
+    expect(checksum).to eq(expected)
+  end
+
   it "generates checksum for IO object" do
     io = StringIO.new("Some content\nThe end")
 

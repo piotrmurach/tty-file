@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File, '#create_directory' do
+RSpec.shared_context "#create_directory" do
   it "creates empty directory" do
-    app_dir = tmp_path('app')
+    app_dir = path_factory.call('app')
 
     TTY::File.create_directory(app_dir, verbose: false)
 
@@ -10,7 +10,7 @@ RSpec.describe TTY::File, '#create_directory' do
   end
 
   it "logs status" do
-    doc_dir = tmp_path('doc')
+    doc_dir = path_factory.call('doc')
 
     expect {
       TTY::File.create_dir(doc_dir, verbose: true)
@@ -18,7 +18,7 @@ RSpec.describe TTY::File, '#create_directory' do
   end
 
   it "logs status wihtout color" do
-    doc_dir = tmp_path('doc')
+    doc_dir = path_factory.call('doc')
 
     expect {
       TTY::File.create_dir(doc_dir, verbose: true, color: false)
@@ -26,10 +26,10 @@ RSpec.describe TTY::File, '#create_directory' do
   end
 
   it "creates tree of dirs and files" do
-    app_dir = tmp_path('app')
+    app_dir = path_factory.call('app')
 
     tree = {
-      tmp_path('app') => [
+      app_dir => [
         'empty_file',
         ['full_file', 'File with contents'],
         'subdir' => [
@@ -42,7 +42,7 @@ RSpec.describe TTY::File, '#create_directory' do
 
     TTY::File.create_directory(tree, verbose: false)
 
-    expect(Find.find(app_dir).to_a).to eq([
+    expect(Find.find(app_dir.to_s).to_a).to eq([
       tmp_path('app'),
       tmp_path('app/empty'),
       tmp_path('app/empty_file'),
@@ -56,7 +56,7 @@ RSpec.describe TTY::File, '#create_directory' do
   end
 
   it "creates tree of dirs in parent directory" do
-    app_dir = tmp_path('parent')
+    app_dir = path_factory.call('parent')
 
     tree = {
       'app' => [
@@ -67,7 +67,7 @@ RSpec.describe TTY::File, '#create_directory' do
 
     TTY::File.create_dir(tree, app_dir, verbose: false)
 
-    expect(Find.find(app_dir).to_a).to eq([
+    expect(Find.find(app_dir.to_s).to_a).to eq([
       tmp_path('parent'),
       tmp_path('parent/app'),
       tmp_path('parent/app/file'),
@@ -75,5 +75,21 @@ RSpec.describe TTY::File, '#create_directory' do
       tmp_path('parent/app/subdir/file1'),
       tmp_path('parent/app/subdir/file2')
     ])
+  end
+end
+
+module TTY::File
+  RSpec.describe "#create_directory" do
+    context "when passed a String instance for the directory argument" do
+      let(:path_factory) { method(:tmp_path) }
+
+      it_behaves_like "#create_directory"
+    end
+
+    context "when passed a Pathname instance for the directory argument" do
+      let(:path_factory) { method(:tmp_pathname) }
+
+      it_behaves_like "#create_directory"
+    end
   end
 end

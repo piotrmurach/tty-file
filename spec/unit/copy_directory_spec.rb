@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File, '#copy_directory' do
+RSpec.shared_context "#copy_directory" do
   it "copies directory of files recursively" do
-    app = tmp_path('cli_app')
-    apps = tmp_path('apps')
+    app  = path_factory.call('cli_app')
+    apps = path_factory.call('apps')
 
     variables = OpenStruct.new
     variables[:name] = 'tty'
@@ -12,7 +12,7 @@ RSpec.describe TTY::File, '#copy_directory' do
 
     TTY::File.copy_directory(app, apps, context: variables, verbose: false)
 
-    expect(Find.find(apps).to_a).to eq([
+    expect(Find.find(apps.to_s).to_a).to eq([
       tmp_path('apps'),
       tmp_path('apps/README'),
       tmp_path('apps/command.rb'),
@@ -29,8 +29,8 @@ RSpec.describe TTY::File, '#copy_directory' do
   end
 
   it "copies top level directory of files and evalutes templates" do
-    app  = tmp_path('cli_app')
-    apps = tmp_path('apps')
+    app  = path_factory.call('cli_app')
+    apps = path_factory.call('apps')
 
     variables = OpenStruct.new
     variables[:name] = 'tty'
@@ -41,7 +41,7 @@ RSpec.describe TTY::File, '#copy_directory' do
                                         context: variables,
                                         verbose: false)
 
-    expect(Find.find(apps).to_a).to eq([
+    expect(Find.find(apps.to_s).to_a).to eq([
       tmp_path('apps'),
       tmp_path('apps/README'),
       tmp_path('apps/command.rb'),
@@ -50,19 +50,19 @@ RSpec.describe TTY::File, '#copy_directory' do
   end
 
   it "handles glob characters in the path" do
-    src = tmp_path("foo[1]")
-    dest = tmp_path("foo1")
+    src  = path_factory.call("foo[1]")
+    dest = path_factory.call("foo1")
     TTY::File.copy_directory(src, dest, verbose: false)
 
-    expect(Find.find(dest).to_a).to eq([
+    expect(Find.find(dest.to_s).to_a).to eq([
       tmp_path('foo1'),
       tmp_path('foo1/README.md')
     ])
   end
 
   it "ignores excluded directories" do
-    src = tmp_path('cli_app')
-    dest = tmp_path('ignored')
+    src  = path_factory.call('cli_app')
+    dest = path_factory.call('ignored')
 
     variables = OpenStruct.new
     variables[:name] = 'tty'
@@ -73,7 +73,7 @@ RSpec.describe TTY::File, '#copy_directory' do
                                         exclude: %r{excluded/},
                                         verbose: false)
 
-    expect(Find.find(dest).to_a).to eq([
+    expect(Find.find(dest.to_s).to_a).to eq([
       tmp_path('ignored'),
       tmp_path('ignored/README'),
       tmp_path('ignored/command.rb'),
@@ -90,8 +90,8 @@ RSpec.describe TTY::File, '#copy_directory' do
   end
 
   it "logs status" do
-    app  = tmp_path('cli_app')
-    apps = tmp_path('apps')
+    app  = path_factory.call('cli_app')
+    apps = path_factory.call('apps')
 
     variables = OpenStruct.new
     variables[:name] = 'tty'
@@ -102,5 +102,21 @@ RSpec.describe TTY::File, '#copy_directory' do
     }.to output(
       %r{create(.*)apps/tty_cli.rb\n(.*)create(.*)apps/README\n(.*)create(.*)apps/command.rb\n}m
     ).to_stdout_from_any_process
+  end
+end
+
+module TTY::File
+  RSpec.describe "#copy_directory" do
+    context "when passed String instances for the file arguments" do
+      let(:path_factory) { method(:tmp_path) }
+
+      it_behaves_like "#copy_directory"
+    end
+
+    context "when passed Pathname instances for the file arguments" do
+      let(:path_factory) { method(:tmp_pathname) }
+
+      it_behaves_like "#copy_directory"
+    end
   end
 end

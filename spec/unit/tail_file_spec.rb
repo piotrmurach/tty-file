@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File, '#tail_file' do
+RSpec.shared_context '#tail_file' do
   it "tails file for lines with chunks smaller than file size" do
-    file = tmp_path('tail/lines')
+    file = path_factory.call('tail/lines')
 
     lines = TTY::File.tail_file(file, 5, chunk_size: 2**3)
 
@@ -16,7 +16,7 @@ RSpec.describe TTY::File, '#tail_file' do
   end
 
   it "tails file for lines with chunks equal file size" do
-    file = tmp_path('tail/lines')
+    file = path_factory.call('tail/lines')
 
     lines = TTY::File.tail_file(file, 5, chunk_size: file.size)
 
@@ -31,7 +31,7 @@ RSpec.describe TTY::File, '#tail_file' do
   end
 
   it "tails file for lines with chunks larger than file size" do
-    file = tmp_path('tail/lines')
+    file = path_factory.call('tail/lines')
 
     lines = TTY::File.tail_file(file, 5, chunk_size: 2**9)
 
@@ -45,7 +45,7 @@ RSpec.describe TTY::File, '#tail_file' do
   end
 
   it "tails file and yields lines" do
-    file = tmp_path('tail/lines')
+    file = path_factory.call('tail/lines')
     lines = []
 
     TTY::File.tail_file(file, 5, chunk_size: 8) do |line|
@@ -59,5 +59,21 @@ RSpec.describe TTY::File, '#tail_file' do
       "line15",
       "line16"
     ])
+  end
+end
+
+module TTY::File
+  RSpec.describe "#tail_file" do
+    context "when passed a String instance for the file argument" do
+      let(:path_factory) { method(:tmp_path) }
+
+      it_behaves_like "#tail_file"
+    end
+
+    context "when passed a Pathname instance for the file argument" do
+      let(:path_factory) { method(:tmp_pathname) }
+
+      it_behaves_like "#tail_file"
+    end
   end
 end
