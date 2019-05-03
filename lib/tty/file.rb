@@ -245,7 +245,12 @@ module TTY
             end
 
       create_file(dest_path, options) do
-        template = ERB.new(::File.binread(source_path), nil, "-", "@output_buffer")
+        version = ERB.version.scan(/\d+\.\d+\.\d+/)[0]
+        template = if version.to_f >= 2.2
+                    ERB.new(::File.binread(source_path), trim_mode: "-", eoutvar: "@output_buffer")
+                   else
+                    ERB.new(::File.binread(source_path), nil, "-", "@output_buffer")
+                   end
         content = template.result(ctx)
         content = block[content] if block
         content
