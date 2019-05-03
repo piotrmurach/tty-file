@@ -1,5 +1,14 @@
 # Change log
 
+## [v0.7.1] - 2019-05-03
+
+### Changed
+* Change all methods to accept Pathname instances as argument by Chris Hoffman(@yarmiganosca)
+
+### Fixed
+* Fix Ruby 2.6.0 ERB#new arguments deprecation warnings
+* Fix #replace_in_file to handle character encoding
+
 ## [v0.7.0] - 2018-12-17
 
 ### Added
