@@ -3,7 +3,9 @@
 RSpec.shared_context "#append_to_file" do
   it "appends to file" do
     file = path_factory.call('Gemfile')
+
     TTY::File.append_to_file(file, "gem 'tty'", verbose: false)
+
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'rails', '5.0.0'\n",
@@ -14,7 +16,9 @@ RSpec.shared_context "#append_to_file" do
 
   it "appends multiple lines to file" do
     file = path_factory.call('Gemfile')
+
     TTY::File.append_to_file(file, "gem 'tty'\n", "gem 'rake'", verbose: false)
+
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'rails', '5.0.0'\n",
@@ -26,7 +30,9 @@ RSpec.shared_context "#append_to_file" do
 
   it "appends content in a block" do
     file = path_factory.call('Gemfile')
+
     TTY::File.append_to_file(file, verbose: false) { "gem 'tty'"}
+
     expect(File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'rails', '5.0.0'\n",
@@ -37,7 +43,9 @@ RSpec.shared_context "#append_to_file" do
 
   it "doesn't append if already present" do
     file = path_factory.call('Gemfile')
+
     TTY::File.append_to_file(file, "gem 'rack', '>=1.0'\n", force: false, verbose: false)
+
     expect(::File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'rails', '5.0.0'\n",
@@ -47,6 +55,7 @@ RSpec.shared_context "#append_to_file" do
 
   it "appends safely checking if content already present" do
     file = path_factory.call('Gemfile')
+
     TTY::File.safe_append_to_file(file, "gem 'rack', '>=1.0'\n", verbose: false)
 
     expect(::File.read(file)).to eq([
@@ -58,8 +67,10 @@ RSpec.shared_context "#append_to_file" do
 
   it "appends multiple times by default" do
     file = path_factory.call('Gemfile')
+
     TTY::File.append_to_file(file, "gem 'tty'\n", verbose: false)
     TTY::File.append_to_file(file, "gem 'tty'\n", verbose: false)
+
     expect(::File.read(file)).to eq([
       "gem 'nokogiri'\n",
       "gem 'rails', '5.0.0'\n",
