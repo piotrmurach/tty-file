@@ -1,6 +1,6 @@
 # Change log
 
-## [v0.7.1] - 2019-05-03
+## [v0.7.1] - 2019-05-06
 
 ### Changed
 * Change all methods to accept Pathname instances as argument by Chris Hoffman(@yarmiganosca)
@@ -88,6 +88,7 @@
 
 * Initial implementation and release
 
+[v0.7.1]: https://github.com/piotrmurach/tty-file/compare/v0.7.0...v0.7.1
 [v0.7.0]: https://github.com/piotrmurach/tty-file/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://github.com/piotrmurach/tty-file/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://github.com/piotrmurach/tty-file/compare/v0.4.0...v0.5.0
