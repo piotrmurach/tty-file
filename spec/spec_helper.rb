@@ -30,16 +30,16 @@ module Helpers
     ::File.realpath(path)
   end
 
-  def fixtures_path(filename = nil)
-    ::File.join(dir_path('spec', 'fixtures'), filename.to_s)
+  def fixtures_path(*args)
+    ::File.join(dir_path('spec', 'fixtures'), *args)
   end
 
-  def tmp_path(filename = nil)
-    ::File.join(dir_path('tmp'), filename.to_s)
+  def tmp_path(*args)
+    ::File.join(dir_path('tmp'), *args)
   end
 
-  def tmp_pathname(filename = nil)
-    Pathname.new(tmp_path(filename))
+  def tmp_pathname(*args)
+    Pathname.new(tmp_path(*args))
   end
 
   def exists_and_identical?(source, dest)
