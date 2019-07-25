@@ -54,7 +54,7 @@ RSpec.describe TTY::File, '#binary?' do
     expect(TTY::File.binary?(file)).to eq(false)
   end
 
-  it "indentifies a file as non-binary when greater than 4096 bytes with unicode chars" do
+  it "indentifies a file as non-binary when greater than 4096 bytes with unicode chars", unless: RSpec::Support::OS.windows? do
     file = tmp_pathname("binary", "unicode.txt")
 
     expect(TTY::File.binary?(file)).to eq(false)
