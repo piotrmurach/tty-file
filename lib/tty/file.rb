@@ -53,8 +53,8 @@ module TTY
     def binary?(relative_path)
       bytes = ::File.new(relative_path).size
       bytes = 2**12 if bytes > 2**12
-      buffer = ::File.read(relative_path, bytes, 0) || ''
-      buffer = buffer.force_encoding(Encoding.default_external)
+      buffer = read_to_char(relative_path, bytes, 0)
+
       begin
         return buffer !~ /\A[\s[[:print:]]]*\z/m
       rescue ArgumentError => error

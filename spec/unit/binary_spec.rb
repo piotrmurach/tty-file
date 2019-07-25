@@ -54,6 +54,12 @@ RSpec.describe TTY::File, '#binary?' do
     expect(TTY::File.binary?(file)).to eq(false)
   end
 
+  it "indentifies a file as non-binary when greater than 4096 bytes with unicode chars" do
+    file = tmp_pathname("binary", "unicode.txt")
+
+    expect(TTY::File.binary?(file)).to eq(false)
+  end
+
   it "indetifies a null-terminated string file as binary" do
     Tempfile.open('tty-file-binary-spec') do |file|
       file.write("Binary content.\0")
