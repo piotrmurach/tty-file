@@ -1,5 +1,13 @@
 # Change log
 
+## [v0.8.0] - 2019-07-25
+
+### Added
+* Add #read_to_char for reading file content limited by bytes until a valid char
+
+### Fixed
+* Fix #binary? to correctly identify large UTF-8 files as non-binary
+
 ## [v0.7.1] - 2019-05-06
 
 ### Changed
@@ -88,6 +96,7 @@
 
 * Initial implementation and release
 
+[v0.8.0]: https://github.com/piotrmurach/tty-file/compare/v0.7.1...v0.8.0
 [v0.7.1]: https://github.com/piotrmurach/tty-file/compare/v0.7.0...v0.7.1
 [v0.7.0]: https://github.com/piotrmurach/tty-file/compare/v0.6.0...v0.7.0
 [v0.6.0]: https://github.com/piotrmurach/tty-file/compare/v0.5.0...v0.6.0
