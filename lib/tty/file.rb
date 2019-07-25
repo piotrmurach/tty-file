@@ -64,6 +64,35 @@ module TTY
     end
     module_function :binary?
 
+    # Read bytes from a file up to valid character
+    #
+    # @param [String, Pathname] relative_path
+    #   the path to file
+    #
+    # @param [Integer] bytes
+    #
+    # @example
+    #   TTY::File.read_to_char()
+    #
+    # @return [String]
+    #
+    # @api public
+    def read_to_char(relative_path, bytes = nil, offset = nil)
+      buffer = ""
+      ::File.open(relative_path) do |file|
+        buffer = file.read(bytes) || ""
+        buffer = buffer.dup.force_encoding(Encoding.default_external)
+
+        while !file.eof? && !buffer.valid_encoding? &&
+              (buffer.bytesize < bytes + 10)
+
+          buffer += file.read(1).force_encoding(Encoding.default_external)
+        end
+      end
+      buffer
+    end
+    module_function :read_to_char
+
     # Create checksum for a file, io or string objects
     #
     # @param [File, IO, String, Pathname] source
