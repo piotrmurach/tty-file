@@ -8,7 +8,7 @@ module TTY
     class DigestFile
       attr_reader :source
 
-      def initialize(source, mode, options)
+      def initialize(source, mode)
         @source = source
         @digest = OpenSSL::Digest.new(mode)
       end

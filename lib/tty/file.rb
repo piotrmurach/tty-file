@@ -114,7 +114,7 @@ module TTY
     # @api public
     def checksum_file(source, *args, **options)
       mode     = args.size.zero? ? 'sha256' : args.pop
-      digester = DigestFile.new(source, mode, options)
+      digester = DigestFile.new(source, mode)
       digester.call unless options[:noop]
     end
     module_function :checksum_file
@@ -198,9 +198,9 @@ module TTY
 
         files.each do |filename, contents|
           if filename.respond_to?(:each_pair)
-            create_directory(filename, path, options)
+            create_directory(filename, path, **options)
           else
-            create_file(::File.join(path, filename), contents, options)
+            create_file(::File.join(path, filename), contents, **options)
           end
         end
       end
@@ -273,7 +273,7 @@ module TTY
               instance_eval('binding')
             end
 
-      create_file(dest_path, options) do
+      create_file(dest_path, **options) do
         version = ERB.version.scan(/\d+\.\d+\.\d+/)[0]
         template = if version.to_f >= 2.2
                     ERB.new(::File.binread(source_path), trim_mode: "-", eoutvar: "@output_buffer")
@@ -285,7 +285,7 @@ module TTY
         content
       end
       return unless options[:preserve]
-      copy_metadata(source_path, dest_path, options)
+      copy_metadata(source_path, dest_path, **options)
     end
     module_function :copy_file
 
@@ -300,7 +300,7 @@ module TTY
     def copy_metadata(src_path, dest_path, **options)
       stats = ::File.lstat(src_path)
       ::File.utime(stats.atime, stats.mtime, dest_path)
-      chmod(dest_path, stats.mode, options)
+      chmod(dest_path, stats.mode, **options)
     end
     module_function :copy_metadata
 
@@ -446,7 +446,7 @@ module TTY
       dest_path = (args.first || ::File.basename(uri)).to_s
 
       unless uri =~ %r{^https?\://}
-        copy_file(uri, dest_path, options)
+        copy_file(uri, dest_path, **options)
         return
       end
 
@@ -456,7 +456,7 @@ module TTY
         content = (block.arity.nonzero? ? block[content] : block[])
       end
 
-      create_file(dest_path, content, options)
+      create_file(dest_path, content, **options)
     end
     module_function :download_file
 
@@ -482,7 +482,7 @@ module TTY
       log_status(:prepend, relative_path, options.fetch(:verbose, true),
                                           options.fetch(:color, :green))
       options.merge!(before: /\A/, verbose: false)
-      inject_into_file(relative_path, *(args << options), &block)
+      inject_into_file(relative_path, *args, **options, &block)
     end
     module_function :prepend_to_file
 
@@ -513,7 +513,7 @@ module TTY
       log_status(:append, relative_path, options.fetch(:verbose, true),
                                          options.fetch(:color, :green))
       options.merge!(after: /\z/, verbose: false)
-      inject_into_file(relative_path, *(args << options), &block)
+      inject_into_file(relative_path, *args, **options, &block)
     end
     module_function :append_to_file
 
@@ -574,7 +574,7 @@ module TTY
       log_status(:inject, relative_path, options.fetch(:verbose, true),
                                          options.fetch(:color, :green))
       replace_in_file(relative_path, /#{match}/, content,
-                      options.merge(verbose: false))
+                      **options.merge(verbose: false))
     end
     module_function :inject_into_file
 
