@@ -139,21 +139,9 @@ module TTY
     #
     # @api public
     def chmod(relative_path, permissions, **options)
-      mode = ::File.lstat(relative_path).mode
-      if permissions.to_s =~ /\d+/
-        mode = permissions
-      else
-        permissions.scan(/[ugoa][+-=][rwx]+/) do |setting|
-          who, action = setting[0], setting[1]
-          setting[2..setting.size].each_byte do |perm|
-            mask = const_get("#{who.upcase}_#{perm.chr.upcase}")
-            (action == '+') ? mode |= mask : mode ^= mask
-          end
-        end
-      end
       log_status(:chmod, relative_path, options.fetch(:verbose, true),
                                         options.fetch(:color, :green))
-      ::FileUtils.chmod_R(mode, relative_path) unless options[:noop]
+      ::FileUtils.chmod_R(permissions, relative_path) unless options[:noop]
     end
     module_function :chmod
 
