@@ -1,5 +1,15 @@
 # Change log
 
+## [v0.9.0] - 2020-01-08
+
+### Changed
+* Change #chmod custom permission implementation for built-in FileUtils one
+* Change to update tty-prompt dependency
+* Change gemspec to include metadata and stop loading test artefacts
+
+### Fixed
+* Fix Ruby 2.7 hash to keywords conversion warnings
+
 ## [v0.8.0] - 2019-07-25
 
 ### Added
@@ -96,6 +106,7 @@
 
 * Initial implementation and release
 
+[v0.9.0]: https://github.com/piotrmurach/tty-file/compare/v0.8.0...v0.9.0
 [v0.8.0]: https://github.com/piotrmurach/tty-file/compare/v0.7.1...v0.8.0
 [v0.7.1]: https://github.com/piotrmurach/tty-file/compare/v0.7.0...v0.7.1
 [v0.7.0]: https://github.com/piotrmurach/tty-file/compare/v0.6.0...v0.7.0
