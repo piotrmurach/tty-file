@@ -1,6 +1,6 @@
 # Change log
 
-## [v0.9.0] - 2020-01-08
+## [v0.9.0] - 2020-04-28
 
 ### Changed
 * Change #chmod custom permission implementation for built-in FileUtils one
