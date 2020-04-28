@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'pastel'
-require 'erb'
-require 'tempfile'
-require 'pathname'
+require "pastel"
+require "erb"
+require "tempfile"
+require "pathname"
 
-require_relative 'file/create_file'
-require_relative 'file/digest_file'
-require_relative 'file/download_file'
-require_relative 'file/differ'
-require_relative 'file/read_backward_file'
-require_relative 'file/version'
+require_relative "file/create_file"
+require_relative "file/digest_file"
+require_relative "file/download_file"
+require_relative "file/differ"
+require_relative "file/read_backward_file"
+require_relative "file/version"
 
 module TTY
   module File
@@ -41,10 +41,10 @@ module TTY
     #   the path to file to check
     #
     # @example
-    #   binary?('Gemfile') # => false
+    #   binary?("Gemfile") # => false
     #
     # @example
-    #   binary?('image.jpg') # => true
+    #   binary?("image.jpg") # => true
     #
     # @return [Boolean]
     #   Returns `true` if the file is binary, `false` otherwise
@@ -103,17 +103,17 @@ module TTY
     #   No operation
     #
     # @example
-    #   checksum_file('/path/to/file')
+    #   checksum_file("/path/to/file")
     #
     # @example
-    #   checksum_file('Some string content', 'md5')
+    #   checksum_file("Some string content", "md5")
     #
     # @return [String]
     #   the generated hex value
     #
     # @api public
     def checksum_file(source, *args, **options)
-      mode     = args.size.zero? ? 'sha256' : args.pop
+      mode     = args.size.zero? ? "sha256" : args.pop
       digester = DigestFile.new(source, mode)
       digester.call unless options[:noop]
     end
@@ -129,18 +129,18 @@ module TTY
     # @option options [Symbol] :force
     #
     # @example
-    #   chmod('Gemfile', 0755)
+    #   chmod("Gemfile", 0755)
     #
     # @example
-    #   chmod('Gemilfe', TTY::File::U_R | TTY::File::U_W)
+    #   chmod("Gemilfe", TTY::File::U_R | TTY::File::U_W)
     #
     # @example
-    #   chmod('Gemfile', 'u+x,g+x')
+    #   chmod("Gemfile", "u+x,g+x")
     #
     # @api public
     def chmod(relative_path, permissions, **options)
       log_status(:chmod, relative_path, options.fetch(:verbose, true),
-                                        options.fetch(:color, :green))
+                 options.fetch(:color, :green))
       ::FileUtils.chmod_R(permissions, relative_path) unless options[:noop]
     end
     module_function :chmod
@@ -151,18 +151,18 @@ module TTY
     #   the path or data structure describing directory tree
     #
     # @example
-    #   create_directory('/path/to/dir')
+    #   create_directory("/path/to/dir")
     #
     # @example
     #   tree =
-    #     'app' => [
-    #       'README.md',
-    #       ['Gemfile', "gem 'tty-file'"],
-    #       'lib' => [
-    #         'cli.rb',
-    #         ['file_utils.rb', "require 'tty-file'"]
+    #     "app" => [
+    #       "README.md",
+    #       ["Gemfile", "gem "tty-file""],
+    #       "lib" => [
+    #         "cli.rb",
+    #         ["file_utils.rb", "require "tty-file""]
     #       ]
-    #       'spec' => []
+    #       "spec" => []
     #     ]
     #
     #   create_directory(tree)
@@ -208,11 +208,11 @@ module TTY
     #   forces ovewrite if conflict present
     #
     # @example
-    #   create_file('doc/README.md', '# Title header')
+    #   create_file("doc/README.md", "# Title header")
     #
     # @example
-    #   create_file 'doc/README.md' do
-    #     '# Title Header'
+    #   create_file "doc/README.md" do
+    #     "# Title Header"
     #   end
     #
     # @api public
@@ -231,12 +231,12 @@ module TTY
     # destination running it through ERB.
     #
     # @example
-    #   copy_file 'templates/test.rb', 'app/test.rb'
+    #   copy_file "templates/test.rb", "app/test.rb"
     #
     # @example
     #   vars = OpenStruct.new
-    #   vars[:name] = 'foo'
-    #   copy_file 'templates/%name%.rb', 'app/%name%.rb', context: vars
+    #   vars[:name] = "foo"
+    #   copy_file "templates/%name%.rb", "app/%name%.rb", context: vars
     #
     # @param [String, Pathname] source_path
     # @param [Hash] options
@@ -253,12 +253,12 @@ module TTY
     # @api public
     def copy_file(source_path, *args, **options, &block)
       source_path = source_path.to_s
-      dest_path = (args.first || source_path).to_s.sub(/\.erb$/, '')
+      dest_path = (args.first || source_path).to_s.sub(/\.erb$/, "")
 
       ctx = if (vars = options[:context])
-              vars.instance_eval('binding')
+              vars.instance_eval("binding")
             else
-              instance_eval('binding')
+              instance_eval("binding")
             end
 
       create_file(dest_path, **options) do
@@ -273,6 +273,7 @@ module TTY
         content
       end
       return unless options[:preserve]
+
       copy_metadata(source_path, dest_path, **options)
     end
     module_function :copy_file
@@ -306,7 +307,7 @@ module TTY
     #  Invoking:
     #    copy_directory("app", "new_app")
     #  The following directory structure should be created where
-    #  name resolves to 'cli' value:
+    #  name resolves to "cli" value:
     #
     #  new_app/
     #    cli.rb
@@ -333,15 +334,15 @@ module TTY
       check_path(source_path)
       source = escape_glob_path(source_path)
       dest_path = (args.first || source).to_s
-      opts = {recursive: true}.merge(options)
-      pattern = opts[:recursive] ? ::File.join(source, '**') : source
-      glob_pattern = ::File.join(pattern, '*')
+      opts = { recursive: true }.merge(options)
+      pattern = opts[:recursive] ? ::File.join(source, "**") : source
+      glob_pattern = ::File.join(pattern, "*")
 
       Dir.glob(glob_pattern, ::File::FNM_DOTMATCH).sort.each do |file_source|
         next if ::File.directory?(file_source)
         next if opts[:exclude] && file_source.match(opts[:exclude])
 
-        dest = ::File.join(dest_path, file_source.gsub(source_path, '.'))
+        dest = ::File.join(dest_path, file_source.gsub(source_path, "."))
         file_dest = ::Pathname.new(dest).cleanpath.to_s
 
         copy_file(file_source, file_dest, **options, &block)
@@ -458,17 +459,17 @@ module TTY
     #   the content to preped to file
     #
     # @example
-    #   prepend_to_file('Gemfile', "gem 'tty'")
+    #   prepend_to_file("Gemfile", "gem "tty"")
     #
     # @example
-    #   prepend_to_file('Gemfile') do
+    #   prepend_to_file("Gemfile") do
     #     "gem 'tty'"
     #   end
     #
     # @api public
     def prepend_to_file(relative_path, *args, **options, &block)
       log_status(:prepend, relative_path, options.fetch(:verbose, true),
-                                          options.fetch(:color, :green))
+                 options.fetch(:color, :green))
       options.merge!(before: /\A/, verbose: false)
       inject_into_file(relative_path, *args, **options, &block)
     end
@@ -489,17 +490,17 @@ module TTY
     #   the content to append to file
     #
     # @example
-    #   append_to_file('Gemfile', "gem 'tty'")
+    #   append_to_file("Gemfile", "gem 'tty'")
     #
     # @example
-    #   append_to_file('Gemfile') do
+    #   append_to_file("Gemfile") do
     #     "gem 'tty'"
     #   end
     #
     # @api public
     def append_to_file(relative_path, *args, **options, &block)
       log_status(:append, relative_path, options.fetch(:verbose, true),
-                                         options.fetch(:color, :green))
+                 options.fetch(:color, :green))
       options.merge!(after: /\z/, verbose: false)
       inject_into_file(relative_path, *args, **options, &block)
     end
@@ -531,13 +532,13 @@ module TTY
     #   log status
     #
     # @example
-    #   inject_into_file('Gemfile', "gem 'tty'", after: "gem 'rack'\n")
+    #   inject_into_file("Gemfile", "gem 'tty'", after: "gem 'rack'\n")
     #
     # @example
-    #   inject_into_file('Gemfile', "gem 'tty'\n", "gem 'loaf'", after: "gem 'rack'\n")
+    #   inject_into_file("Gemfile", "gem 'tty'\n", "gem 'loaf'", after: "gem 'rack'\n")
     #
     # @example
-    #   inject_into_file('Gemfile', after: "gem 'rack'\n") do
+    #   inject_into_file("Gemfile", after: "gem 'rack'\n") do
     #     "gem 'tty'\n"
     #   end
     #
@@ -588,10 +589,10 @@ module TTY
     #   log status
     #
     # @example
-    #   replace_in_file('Gemfile', /gem 'rails'/, "gem 'hanami'")
+    #   replace_in_file("Gemfile", /gem 'rails'/, "gem 'hanami'")
     #
     # @example
-    #   replace_in_file('Gemfile', /gem 'rails'/) do |match|
+    #   replace_in_file("Gemfile", /gem 'rails'/) do |match|
     #     match = "gem 'hanami'"
     #   end
     #
@@ -602,7 +603,7 @@ module TTY
     def replace_in_file(relative_path, *args, **options, &block)
       check_path(relative_path)
       contents = ::File.read(relative_path)
-      replacement = (block ? block[] : args[1..-1].join).gsub('\0', '')
+      replacement = (block ? block[] : args[1..-1].join).gsub('\0', "")
       match = Regexp.escape(replacement)
       status = nil
 
@@ -613,7 +614,7 @@ module TTY
       if options.fetch(:force, true) || !(contents =~ /^#{match}(\r?\n)*/m)
         status = contents.gsub!(*args, &block)
         if !status.nil?
-          ::File.open(relative_path, 'w') do |file|
+          ::File.open(relative_path, "w") do |file|
             file.write(contents)
           end
         end
@@ -639,7 +640,7 @@ module TTY
     #   for secure removing
     #
     # @example
-    #   remove_file 'doc/README.md'
+    #   remove_file "doc/README.md"
     #
     # @api public
     def remove_file(relative_path, *args, **options)
@@ -663,12 +664,12 @@ module TTY
     #   the number of lines to return from file
     #
     # @example
-    #   tail_file 'filename'
-    #   # =>  ['line 19', 'line20', ... ]
+    #   tail_file "filename"
+    #   # =>  ["line 19", "line20", ... ]
     #
     # @example
-    #   tail_file 'filename', 15
-    #   # =>  ['line 19', 'line20', ... ]
+    #   tail_file "filename", 15
+    #   # =>  ["line 19", "line20", ... ]
     #
     # @return [Array[String]]
     #
@@ -724,6 +725,7 @@ module TTY
     # @api private
     def check_path(path)
       return if ::File.exist?(path)
+
       raise InvalidPathError, "File path \"#{path}\" does not exist."
     end
     private_module_function :check_path
@@ -767,7 +769,7 @@ module TTY
       if ::FileTest.file?(object)
         ::File.open(object, &block)
       else
-        tempfile = Tempfile.new('tty-file-diff')
+        tempfile = Tempfile.new("tty-file-diff")
         tempfile << object
         tempfile.rewind
 
