@@ -1,12 +1,12 @@
-lib = File.expand_path("../lib", __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "tty/file/version"
+# frozen_string_literal: true
+
+require_relative "lib/tty/file/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "tty-file"
   spec.version       = TTY::File::VERSION
   spec.authors       = ["Piotr Murach"]
-  spec.email         = ["me@piotrmurach.com"]
+  spec.email         = ["piotr@piotrmurach.com"]
   spec.summary       = %q{File manipulation utility methods.}
   spec.description   = %q{File manipulation utility methods.}
   spec.homepage      = "https://piotrmurach.github.io/tty"
@@ -20,10 +20,8 @@ Gem::Specification.new do |spec|
     spec.metadata["source_code_uri"] = "https://github.com/piotrmurach/tty-file"
   end
 
-  spec.files         = Dir["lib/**/*.rb", "tty-file.gemspec"]
-  spec.files        += Dir["README.md", "CHANGELOG.md", "LICENSE.txt"]
-  spec.bindir        = "exe"
-  spec.executables   = []
+  spec.files         = Dir["lib/**/*.rb"]
+  spec.extra_rdoc_files = Dir["README.md", "CHANGELOG.md", "LICENSE.txt"]
   spec.require_paths = ["lib"]
   spec.required_ruby_version = ">= 2.0.0"
 
