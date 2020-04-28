@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'tty-prompt'
+require "tty-prompt"
 
 module TTY
   module File
@@ -34,7 +34,7 @@ module TTY
       def call
         detect_collision do
           FileUtils.mkdir_p(::File.dirname(relative_path))
-          ::File.open(relative_path, 'wb') { |f| f.write(content) }
+          ::File.open(relative_path, "wb") { |f| f.write(content) }
         end
         relative_path
       end
@@ -86,9 +86,9 @@ module TTY
       # @api private
       def file_collision(relative_path, content)
         choices = [
-          { key: 'y', name: 'yes, overwrite', value: :yes },
-          { key: 'n', name: 'no, do not overwrite', value: :no },
-          { key: 'q', name: 'quit, abort', value: :quit }
+          { key: "y", name: "yes, overwrite", value: :yes },
+          { key: "n", name: "no, do not overwrite", value: :no },
+          { key: "q", name: "quit, abort", value: :quit }
         ]
         answer = prompt.expand("Overwrite #{relative_path}?", choices)
         interpret_answer(answer)

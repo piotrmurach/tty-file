@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'diff/lcs'
-require 'diff/lcs/hunk'
-require 'enumerator'
+require "diff/lcs"
+require "diff/lcs/hunk"
+require "enumerator"
 
 module TTY
   module File
@@ -26,7 +26,8 @@ module TTY
       # @api public
       def call
         diffs  = Diff::LCS.diff(string_a_lines, string_b_lines)
-        return '' if diffs.empty?
+        return "" if diffs.empty?
+
         hunks  = extract_hunks(diffs)
         format_hunks(hunks)
       end

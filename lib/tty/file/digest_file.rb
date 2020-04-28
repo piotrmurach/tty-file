@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'stringio'
-require 'openssl'
+require "stringio"
+require "openssl"
 
 module TTY
   module File
@@ -15,7 +15,7 @@ module TTY
 
       def call
         if ::FileTest.file?(source.to_s)
-          ::File.open(source, 'rb') { |f| checksum_io(f, @digest) }
+          ::File.open(source, "rb") { |f| checksum_io(f, @digest) }
         else
           non_file = source
           if non_file.is_a?(String)
