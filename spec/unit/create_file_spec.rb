@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require "tty/prompt/test"
+
 RSpec.describe TTY::File, "#create_file" do
   shared_context "creating files" do
-    context 'when new file' do
+    context "when new file" do
       it "creates file" do
         expect {
           TTY::File.create_file(path_factory.call('doc/README.md'))
@@ -66,51 +68,53 @@ RSpec.describe TTY::File, "#create_file" do
         end
 
         it "displays collision menu and overwrites" do
-          test_prompt = TTY::TestPrompt.new
+          test_prompt = TTY::Prompt::Test.new
           test_prompt.input << "\n"
           test_prompt.input.rewind
           allow(TTY::Prompt).to receive(:new).and_return(test_prompt)
 
-          file = path_factory.call('README.md')
-          TTY::File.create_file(file, '# Title', verbose: false)
+          file = path_factory.call("README.md")
+          TTY::File.create_file(file, "# Title", verbose: false)
 
           expect {
-            TTY::File.create_file(file, '# Header', verbose: true)
-          }.to output(/collision/).to_stdout_from_any_process
+            TTY::File.create_file(file, "# Header", verbose: true)
+          }.to output(/\e\[31mcollision\e\[0m  #{file}/).to_stdout_from_any_process
+          expect(test_prompt.output.string).to match(/Overwrite #{file}\?/)
 
-          expect(File.read(file)).to eq('# Header')
+          expect(File.read(file)).to eq("# Header")
         end
 
         it "displays collision menu and doesn't overwrite" do
-          test_prompt = TTY::TestPrompt.new
+          test_prompt = TTY::Prompt::Test.new
           test_prompt.input << "n\n"
           test_prompt.input.rewind
           allow(TTY::Prompt).to receive(:new).and_return(test_prompt)
 
-          file = path_factory.call('README.md')
-          TTY::File.create_file(file, '# Title', verbose: false)
+          file = path_factory.call("README.md")
+          TTY::File.create_file(file, "# Title", verbose: false)
 
           expect {
-            TTY::File.create_file(file, '# Header', verbose: true)
-          }.to output(/collision/).to_stdout_from_any_process
+            TTY::File.create_file(file, "# Header", verbose: true)
+          }.to output(/\e\[31mcollision\e\[0m  #{file}/).to_stdout_from_any_process
+          expect(test_prompt.output.string).to match(/Overwrite #{file}\?/)
 
-          expect(File.read(file)).to eq('# Title')
+          expect(File.read(file)).to eq("# Title")
         end
 
         it "displays collision menu and aborts" do
-          test_prompt = TTY::TestPrompt.new
+          test_prompt = TTY::Prompt::Test.new
           test_prompt.input << "q\n"
           test_prompt.input.rewind
           allow(TTY::Prompt).to receive(:new).and_return(test_prompt)
 
-          file = path_factory.call('README.md')
-          TTY::File.create_file(file, '# Title', verbose: false)
+          file = path_factory.call("README.md")
+          TTY::File.create_file(file, "# Title", verbose: false)
 
           expect {
-            TTY::File.create_file(file, '# Header', verbose: false)
+            TTY::File.create_file(file, "# Header", verbose: false)
           }.to raise_error(SystemExit)
 
-          expect(File.read(file)).to eq('# Title')
+          expect(File.read(file)).to eq("# Title")
         end
       end
     end
