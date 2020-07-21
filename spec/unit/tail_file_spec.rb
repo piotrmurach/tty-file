@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File, '#tail_file' do
+RSpec.describe TTY::File, "#tail_file" do
   shared_context "tailing a file" do
     it "tails file for lines with chunks smaller than file size" do
-      file = path_factory.call('tail/lines')
+      file = path_factory.call("tail/lines")
 
       lines = TTY::File.tail_file(file, 5, chunk_size: 2**3)
 
@@ -17,7 +17,7 @@ RSpec.describe TTY::File, '#tail_file' do
     end
 
     it "tails file for lines with chunks equal file size" do
-      file = path_factory.call('tail/lines')
+      file = path_factory.call("tail/lines")
 
       lines = TTY::File.tail_file(file, 5, chunk_size: file.size)
 
@@ -32,7 +32,7 @@ RSpec.describe TTY::File, '#tail_file' do
     end
 
     it "tails file for lines with chunks larger than file size" do
-      file = path_factory.call('tail/lines')
+      file = path_factory.call("tail/lines")
 
       lines = TTY::File.tail_file(file, 5, chunk_size: 2**9)
 
@@ -46,7 +46,7 @@ RSpec.describe TTY::File, '#tail_file' do
     end
 
     it "tails file and yields lines" do
-      file = path_factory.call('tail/lines')
+      file = path_factory.call("tail/lines")
       lines = []
 
       TTY::File.tail_file(file, 5, chunk_size: 8) do |line|

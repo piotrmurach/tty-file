@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File, '#escape_glob_path' do
+RSpec.describe TTY::File, "#escape_glob_path" do
   {
     "foo?" => "foo\\?",
     "*foo" => "\\*foo",

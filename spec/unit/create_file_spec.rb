@@ -7,63 +7,63 @@ RSpec.describe TTY::File, "#create_file" do
     context "when new file" do
       it "creates file" do
         expect {
-          TTY::File.create_file(path_factory.call('doc/README.md'))
+          TTY::File.create_file(path_factory.call("doc/README.md"))
         }.to output(/create/).to_stdout_from_any_process
 
-        expect(File.exist?(tmp_path('doc/README.md'))).to eq(true)
+        expect(File.exist?(tmp_path("doc/README.md"))).to eq(true)
       end
 
       it "creates file with content" do
-        file = path_factory.call('doc/README.md')
-        TTY::File.create_file(file, '# Title', verbose: false)
+        file = path_factory.call("doc/README.md")
+        TTY::File.create_file(file, "# Title", verbose: false)
 
-        expect(File.read(file)).to eq('# Title')
+        expect(File.read(file)).to eq("# Title")
       end
 
       it "creates file with content in a block" do
-        file = path_factory.call('doc/README.md')
+        file = path_factory.call("doc/README.md")
         TTY::File.create_file(file, verbose: false) do
           "# Title"
         end
 
-        expect(File.read(file)).to eq('# Title')
+        expect(File.read(file)).to eq("# Title")
       end
 
       it "doesn't create file if :noop is true" do
-        file = path_factory.call('doc/README.md')
-        TTY::File.create_file(file, '# Title', noop: true, verbose: false)
+        file = path_factory.call("doc/README.md")
+        TTY::File.create_file(file, "# Title", noop: true, verbose: false)
 
         expect(File.exist?(file)).to eq(false)
       end
     end
 
-    context 'when file exists' do
-      context 'and is identical' do
+    context "when file exists" do
+      context "and is identical" do
         it "logs identical status" do
-          file = path_factory.call('README.md')
-          TTY::File.create_file(file, '# Title', verbose: false)
+          file = path_factory.call("README.md")
+          TTY::File.create_file(file, "# Title", verbose: false)
           expect {
-            TTY::File.create_file(file, '# Title', verbose: true)
+            TTY::File.create_file(file, "# Title", verbose: true)
           }.to output(/identical/).to_stdout_from_any_process
         end
       end
 
-      context 'and is not identical' do
-        context 'and :force is true' do
+      context "and is not identical" do
+        context "and :force is true" do
           it "logs forced status to stdout" do
-            file = path_factory.call('README.md')
-            TTY::File.create_file(file, '# Title', verbose: false)
+            file = path_factory.call("README.md")
+            TTY::File.create_file(file, "# Title", verbose: false)
             expect {
-              TTY::File.create_file(file, '# Header', verbose: true, force: true)
+              TTY::File.create_file(file, "# Header", verbose: true, force: true)
             }.to output(/force/).to_stdout_from_any_process
           end
 
-          it 'overrides the previous file' do
-            file = path_factory.call('README.md')
-            TTY::File.create_file(file, '# Title', verbose: false)
-            TTY::File.create_file(file, '# Header', force: true, verbose: false)
+          it "overrides the previous file" do
+            file = path_factory.call("README.md")
+            TTY::File.create_file(file, "# Title", verbose: false)
+            TTY::File.create_file(file, "# Header", force: true, verbose: false)
             content = File.read(file)
-            expect(content).to eq('# Header')
+            expect(content).to eq("# Header")
           end
         end
 
@@ -120,13 +120,13 @@ RSpec.describe TTY::File, "#create_file" do
     end
   end
 
-  context 'when passed a String instance as the file argument' do
+  context "when passed a String instance as the file argument" do
     let(:path_factory) { method(:tmp_path) }
 
     include_context "creating files"
   end
 
-  context 'when passed a Pathname instance as the file argument' do
+  context "when passed a Pathname instance as the file argument" do
     let(:path_factory) { method(:tmp_pathname) }
 
     include_context "creating files"

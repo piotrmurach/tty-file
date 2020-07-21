@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File::Differ, '#call' do
+RSpec.describe TTY::File::Differ, "#call" do
   it "diffs identical content" do
     string_a = "aaa bbb ccc"
 
     diff = TTY::File::Differ.new(string_a, string_a).call
 
-    expect(diff).to eq('')
+    expect(diff).to eq("")
   end
 
   it "diffs two files with single line content" do
@@ -50,8 +50,8 @@ RSpec.describe TTY::File::Differ, '#call' do
   end
 
   it "handles differently encoded files" do
-    string_a = "wikipedia".encode('us-ascii')
-    string_b = "ウィキペディア".encode('UTF-8')
+    string_a = "wikipedia".encode("us-ascii")
+    string_b = "ウィキペディア".encode("UTF-8")
 
     diff = TTY::File::Differ.new(string_a, string_b).call
 

@@ -3,8 +3,8 @@
 RSpec.describe TTY::File, "#diff" do
   shared_context "diffing files" do
     it "diffs two files" do
-      file_a = path_factory.call('diff/file_a')
-      file_b = path_factory.call('diff/file_b')
+      file_a = path_factory.call("diff/file_a")
+      file_b = path_factory.call("diff/file_b")
 
       diff = TTY::File.diff(file_a, file_b, verbose: false)
 
@@ -19,13 +19,13 @@ RSpec.describe TTY::File, "#diff" do
     end
 
     it "diffs identical files" do
-      src_a = path_factory.call('diff/file_a')
+      src_a = path_factory.call("diff/file_a")
 
-      expect(TTY::File.diff(src_a, src_a, verbose: false)).to eq('')
+      expect(TTY::File.diff(src_a, src_a, verbose: false)).to eq("")
     end
 
     it "diffs a file and a string" do
-      src_a = path_factory.call('diff/file_a')
+      src_a = path_factory.call("diff/file_a")
       src_b = "aaa\nxxx\nccc\n"
 
       diff = TTY::File.diff(src_a, src_b, verbose: false)
@@ -57,8 +57,8 @@ RSpec.describe TTY::File, "#diff" do
     end
 
     it "logs status" do
-      file_a = path_factory.call('diff/file_a')
-      file_b = path_factory.call('diff/file_b')
+      file_a = path_factory.call("diff/file_a")
+      file_b = path_factory.call("diff/file_b")
 
       expect {
         TTY::File.diff_files(file_a, file_b, verbose: true)
@@ -66,17 +66,17 @@ RSpec.describe TTY::File, "#diff" do
     end
 
     it "doesn't diff files when :noop option is given" do
-      file_a = path_factory.call('diff/file_a')
-      file_b = path_factory.call('diff/file_b')
+      file_a = path_factory.call("diff/file_a")
+      file_b = path_factory.call("diff/file_b")
 
       diff = TTY::File.diff(file_a, file_b, verbose: false, noop: true)
 
-      expect(diff).to eq('')
+      expect(diff).to eq("")
     end
 
     it "doesn't diff if first file is too large" do
-      file_a = path_factory.call('diff/file_a')
-      file_b = path_factory.call('diff/file_b')
+      file_a = path_factory.call("diff/file_a")
+      file_b = path_factory.call("diff/file_b")
 
       expect {
         TTY::File.diff(file_a, file_b, threshold: 10)
@@ -84,8 +84,8 @@ RSpec.describe TTY::File, "#diff" do
     end
 
     it "doesn't diff binary files" do
-      file_a = path_factory.call('blackhole.png')
-      file_b = path_factory.call('diff/file_b')
+      file_a = path_factory.call("blackhole.png")
+      file_b = path_factory.call("diff/file_b")
 
       expect {
         TTY::File.diff(file_a, file_b)

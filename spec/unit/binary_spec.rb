@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File, '#binary?' do
+RSpec.describe TTY::File, "#binary?" do
   let(:ascii) { "This is a text file.\nWith more than one line.\nAnd a \tTab.\nAnd other printable chars too: ~!@\#$%^&*()`:\"<>?{}|_+,./;'[]\\-=\n" }
 
   let(:utf_8) { "Testing utf-8 unicode...\n\n\non a new line: \xE2\x80\x93\n" }
@@ -10,13 +10,13 @@ RSpec.describe TTY::File, '#binary?' do
   let(:shift_jis) { "And some kanjis:\n #{0x83.chr}#{0x80.chr}.\n" }
 
   it "identifies zero-length file as non-binary" do
-    Tempfile.open('tty-file-binary-spec') do |file|
+    Tempfile.open("tty-file-binary-spec") do |file|
       expect(TTY::File.binary?(file)).to eq(false)
     end
   end
 
   it "indentifies text with hex as binary" do
-    Tempfile.open('tty-file-binary-spec') do |file|
+    Tempfile.open("tty-file-binary-spec") do |file|
       file << "hi \xAD"
       file.close
 
@@ -25,31 +25,31 @@ RSpec.describe TTY::File, '#binary?' do
   end
 
   it "identifies image file as binary" do
-    file = tmp_path('blackhole.png')
+    file = tmp_path("blackhole.png")
 
     expect(TTY::File.binary?(file)).to eq(true)
   end
 
   it "identifies an image file given as a pathname as binary" do
-    file = tmp_pathname('blackhole.png')
+    file = tmp_pathname("blackhole.png")
 
     expect(TTY::File.binary?(file)).to eq(true)
   end
 
-  it 'identifies image file provided by a Pathname instance as binary' do
-    file = tmp_pathname('blackhole.png')
+  it "identifies image file provided by a Pathname instance as binary" do
+    file = tmp_pathname("blackhole.png")
 
     expect(TTY::File.binary?(file)).to eq(true)
   end
 
   it "indetifies text file as non-binary" do
-    file = tmp_path('Gemfile')
+    file = tmp_path("Gemfile")
 
     expect(TTY::File.binary?(file)).to eq(false)
   end
 
-  it 'identifies text file provided by a Pathname instance as non-binary' do
-    file = tmp_pathname('Gemfile')
+  it "identifies text file provided by a Pathname instance as non-binary" do
+    file = tmp_pathname("Gemfile")
 
     expect(TTY::File.binary?(file)).to eq(false)
   end
@@ -61,7 +61,7 @@ RSpec.describe TTY::File, '#binary?' do
   end
 
   it "indetifies a null-terminated string file as binary" do
-    Tempfile.open('tty-file-binary-spec') do |file|
+    Tempfile.open("tty-file-binary-spec") do |file|
       file.write("Binary content.\0")
       file.close
 
@@ -70,7 +70,7 @@ RSpec.describe TTY::File, '#binary?' do
   end
 
   it "indetifies a null-terminated multi-line string file as binary" do
-    Tempfile.open('tty-file-binary-spec') do |file|
+    Tempfile.open("tty-file-binary-spec") do |file|
       file.write("Binary content.\non manylnes\nreally\0")
       file.close
 
@@ -92,7 +92,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "identifies ASCII as non-binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << ascii
         file.close
 
@@ -101,7 +101,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "identifies UTF-8 as non-binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << utf_8
         file.close
 
@@ -110,7 +110,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "indentifies Latin-1 as invalid UTF-8 and hence as binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << latin_1
         file.close
 
@@ -119,7 +119,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "identifies Shift-JIS as invalid UTF-8 and hence as binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << shift_jis
         file.close
 
@@ -142,7 +142,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "identifies ASCII as non-binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << ascii
         file.close
 
@@ -151,7 +151,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "identifies UTF-8 as invalid Latin-1 and hence binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << utf_8
         file.close
 
@@ -160,7 +160,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "indentifies Latin-1 as non-binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << latin_1
         file.close
 
@@ -169,7 +169,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "identifies Shift-JIS as invalid Latin-1 and hence as binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << shift_jis
         file.close
 
@@ -192,7 +192,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "identifies ASCII as non-binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << ascii
         file.close
 
@@ -201,7 +201,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "identifies UTF-8 as invalid Shift-JIS and hence as binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << utf_8
         file.close
 
@@ -210,7 +210,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "indentifies Latin-1 as invalid Shift-JIS and hence as binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << latin_1
         file.close
 
@@ -219,7 +219,7 @@ RSpec.describe TTY::File, '#binary?' do
     end
 
     it "identifies Shift-JIS as non-binary" do
-      Tempfile.open('tty-file-binary-spec') do |file|
+      Tempfile.open("tty-file-binary-spec") do |file|
         file << shift_jis
         file.close
 

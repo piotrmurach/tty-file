@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ostruct'
+require "ostruct"
 
 RSpec.describe TTY::File, "#copy_file" do
   def exists_and_identical?(source, dest)
@@ -11,36 +11,36 @@ RSpec.describe TTY::File, "#copy_file" do
     expect(::FileUtils).to be_identical(source_path, dest_path)
   end
 
-  shared_context 'copying files' do
+  shared_context "copying files" do
     it "copies file without destination" do
-      src = path_factory.call('Gemfile')
+      src = path_factory.call("Gemfile")
 
       TTY::File.copy_file(src, verbose: false)
 
-      exists_and_identical?('Gemfile', 'Gemfile')
+      exists_and_identical?("Gemfile", "Gemfile")
     end
 
     it "copies file to the destination" do
-      src  = path_factory.call('Gemfile')
-      dest = path_factory.call('app/Makefile')
+      src  = path_factory.call("Gemfile")
+      dest = path_factory.call("app/Makefile")
 
       TTY::File.copy_file(src, dest, verbose: false)
 
-      exists_and_identical?('Gemfile', 'app/Makefile')
+      exists_and_identical?("Gemfile", "app/Makefile")
     end
 
     it "copies file to existing destination" do
-      src  = path_factory.call('Gemfile')
-      dest = path_factory.call('app/Gemfile')
+      src  = path_factory.call("Gemfile")
+      dest = path_factory.call("app/Gemfile")
 
       TTY::File.copy_file(src, dest, verbose: false)
 
-      exists_and_identical?('Gemfile', 'app/Gemfile')
+      exists_and_identical?("Gemfile", "app/Gemfile")
     end
 
     it "copies file with block content" do
-      src  = path_factory.call('Gemfile')
-      dest = path_factory.call('app/Gemfile')
+      src  = path_factory.call("Gemfile")
+      dest = path_factory.call("app/Gemfile")
 
       TTY::File.copy_file(src, dest, verbose: false) do |content|
         "https://rubygems.org\n" + content
@@ -49,19 +49,19 @@ RSpec.describe TTY::File, "#copy_file" do
     end
 
     it "copies file and preservs metadata" do
-      src  = path_factory.call('Gemfile')
-      dest = path_factory.call('app/Gemfile')
+      src  = path_factory.call("Gemfile")
+      dest = path_factory.call("app/Gemfile")
 
       expect {
         TTY::File.copy_file(src, dest, verbose: false, preserve: true)
-      }.to output('').to_stdout_from_any_process
+      }.to output("").to_stdout_from_any_process
 
       expect(File.stat(src)).to eq(File.stat(dest))
     end
 
     it "doesn't copy file if :noop is true" do
-      src  = path_factory.call('Gemfile')
-      dest = path_factory.call('app/Gemfile')
+      src  = path_factory.call("Gemfile")
+      dest = path_factory.call("app/Gemfile")
 
       TTY::File.copy_file(src, dest, verbose: false, noop: true)
 
@@ -69,8 +69,8 @@ RSpec.describe TTY::File, "#copy_file" do
     end
 
     it "logs status" do
-      src  = path_factory.call('Gemfile')
-      dest = path_factory.call('app/Gemfile')
+      src  = path_factory.call("Gemfile")
+      dest = path_factory.call("app/Gemfile")
 
       expect {
         TTY::File.copy_file(src, dest)
@@ -78,8 +78,8 @@ RSpec.describe TTY::File, "#copy_file" do
     end
 
     it "logs status without color" do
-      src  = path_factory.call('Gemfile')
-      dest = path_factory.call('app/Gemfile')
+      src  = path_factory.call("Gemfile")
+      dest = path_factory.call("app/Gemfile")
 
       expect {
         TTY::File.copy_file(src, dest, color: false)
@@ -87,39 +87,39 @@ RSpec.describe TTY::File, "#copy_file" do
     end
 
     it "removes template .erb extension" do
-      src = path_factory.call('templates/application.html.erb')
+      src = path_factory.call("templates/application.html.erb")
 
       TTY::File.copy_file(src, verbose: false)
 
-      exists_and_identical?('templates/application.html.erb',
-                            'templates/application.html')
+      exists_and_identical?("templates/application.html.erb",
+                            "templates/application.html")
     end
 
     it "converts filename based on context" do
-      src  = path_factory.call('templates/%file_name%.rb')
-      dest = path_factory.call('app/%file_name%.rb')
+      src  = path_factory.call("templates/%file_name%.rb")
+      dest = path_factory.call("app/%file_name%.rb")
 
       variables = OpenStruct.new
-      variables[:foo] = 'bar'
-      variables[:file_name] = 'expected'
+      variables[:foo] = "bar"
+      variables[:file_name] = "expected"
 
       TTY::File.copy_file(src, dest, context: variables, verbose: false)
 
-      expected = tmp_path('app/expected.rb')
+      expected = tmp_path("app/expected.rb")
       expect(File.read(expected)).to eq("bar\n")
     end
 
     it "converts filename based on class context" do
-      src  = path_factory.call('templates/%file_name%.rb')
-      dest = path_factory.call('templates/expected.rb')
+      src  = path_factory.call("templates/%file_name%.rb")
+      dest = path_factory.call("templates/expected.rb")
 
-      stub_const('TestCase', Class.new {
+      stub_const("TestCase", Class.new {
         def foo
-          'bar'
+          "bar"
         end
 
         def file_name
-          'expected'
+          "expected"
         end
       })
       TestCase.send(:include, TTY::File)
@@ -130,12 +130,12 @@ RSpec.describe TTY::File, "#copy_file" do
     end
 
     it "copies file with custom class context" do
-      src  = path_factory.call('templates/unit_test.rb')
-      dest = path_factory.call('test/unit_test.rb')
+      src  = path_factory.call("templates/unit_test.rb")
+      dest = path_factory.call("test/unit_test.rb")
 
-      stub_const('TestCase', Class.new {
+      stub_const("TestCase", Class.new {
         def self.class_name
-          'Example'
+          "Example"
         end
       })
       TestCase.extend(TTY::File)
@@ -146,11 +146,11 @@ RSpec.describe TTY::File, "#copy_file" do
     end
 
     it "copies template with custom context binding" do
-      src  = path_factory.call('templates/unit_test.rb')
-      dest = path_factory.call('test/unit_test.rb')
+      src  = path_factory.call("templates/unit_test.rb")
+      dest = path_factory.call("test/unit_test.rb")
 
       variables = OpenStruct.new
-      variables[:class_name] = 'Example'
+      variables[:class_name] = "Example"
 
       TTY::File.copy_file(src, dest, context: variables, verbose: false)
 
