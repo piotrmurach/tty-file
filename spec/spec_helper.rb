@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-if ENV['COVERAGE'] || ENV['TRAVIS']
-  require 'simplecov'
-  require 'coveralls'
+if ENV["COVERAGE"] || ENV["TRAVIS"]
+  require "simplecov"
+  require "coveralls"
 
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
     SimpleCov::Formatter::HTMLFormatter,
@@ -10,13 +10,13 @@ if ENV['COVERAGE'] || ENV['TRAVIS']
   ]
 
   SimpleCov.start do
-    command_name 'spec'
-    add_filter 'spec'
+    command_name "spec"
+    add_filter "spec"
   end
 end
 
-require 'tty/file'
-require 'find'
+require "tty/file"
+require "find"
 require "webmock/rspec"
 
 module Helpers
@@ -31,11 +31,11 @@ module Helpers
   end
 
   def fixtures_path(*args)
-    ::File.join(dir_path('spec', 'fixtures'), *args)
+    ::File.join(dir_path("spec", "fixtures"), *args)
   end
 
   def tmp_path(*args)
-    ::File.join(dir_path('tmp'), *args)
+    ::File.join(dir_path("tmp"), *args)
   end
 
   def tmp_pathname(*args)
@@ -52,7 +52,7 @@ module Helpers
 
   def strip_heredoc(content)
     indent = content.scan(/^[ \t]*(?=\S)/).min.size || 0
-    content.gsub(/^[ \t]{#{indent}}/, '')
+    content.gsub(/^[ \t]{#{indent}}/, "")
   end
 end
 
@@ -60,7 +60,7 @@ RSpec.configure do |config|
   config.include(Helpers)
 
   config.before(:each) do
-    FileUtils.cp_r(fixtures_path('/.'), tmp_path)
+    FileUtils.cp_r(fixtures_path("/."), tmp_path)
   end
 
   config.after(:each) do
@@ -69,6 +69,7 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+    expectations.max_formatted_output_length = nil
   end
 
   config.mock_with :rspec do |mocks|
@@ -83,7 +84,7 @@ RSpec.configure do |config|
   config.warnings = true
 
   if config.files_to_run.one?
-    config.default_formatter = 'doc'
+    config.default_formatter = "doc"
   end
 
   config.profile_examples = 2
