@@ -16,7 +16,7 @@ RSpec.describe TTY::File::Differ, '#call' do
     diff = TTY::File::Differ.new(string_a, string_b).call
 
     expect(diff).to eq(strip_heredoc(<<-EOS
-      @@ -1,2 +1,2 @@
+      @@ -1 +1 @@
       -aaa bbb ccc
       +aaa xxx ccc
     EOS
@@ -56,7 +56,7 @@ RSpec.describe TTY::File::Differ, '#call' do
     diff = TTY::File::Differ.new(string_a, string_b).call
 
     expect(diff).to eq(strip_heredoc(<<-EOS
-      @@ -1,2 +1,2 @@
+      @@ -1 +1 @@
       -wikipedia
       +ウィキペディア
     EOS
