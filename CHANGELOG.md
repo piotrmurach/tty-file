@@ -1,5 +1,10 @@
 # Change log
 
+## [v0.10.0] - 2020-07-xx
+
+### Changed
+* Change to update tty-prompt & pastel dependencies
+
 ## [v0.9.0] - 2020-04-28
 
 ### Changed
@@ -106,6 +111,7 @@
 
 * Initial implementation and release
 
+[v0.10.0]: https://github.com/piotrmurach/tty-file/compare/v0.9.0...v0.10.0
 [v0.9.0]: https://github.com/piotrmurach/tty-file/compare/v0.8.0...v0.9.0
 [v0.8.0]: https://github.com/piotrmurach/tty-file/compare/v0.7.1...v0.8.0
 [v0.7.1]: https://github.com/piotrmurach/tty-file/compare/v0.7.0...v0.7.1
