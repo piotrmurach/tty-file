@@ -402,10 +402,11 @@ module TTY
                      verbose: verbose, color: color)
           return output.join if noop
 
+          differ = Differ.new(format: format, context_lines: context_lines)
+
           block_size = file_a.lstat.blksize
           while !file_a.eof? && !file_b.eof?
-            output << Differ.new(file_a.read(block_size), file_b.read(block_size),
-                                 format: format, context_lines: context_lines).call
+            output << differ.(file_a.read(block_size), file_b.read(block_size))
           end
         end
       end

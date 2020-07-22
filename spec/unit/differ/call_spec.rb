@@ -4,16 +4,16 @@ RSpec.describe TTY::File::Differ, "#call" do
   it "diffs identical content" do
     string_a = "aaa bbb ccc"
 
-    diff = TTY::File::Differ.new(string_a, string_a).call
+    diff = TTY::File::Differ.new
 
-    expect(diff).to eq("")
+    expect(diff.(string_a, string_a)).to eq("")
   end
 
   it "diffs two files with single line content" do
     string_a = "aaa bbb ccc"
     string_b = "aaa xxx ccc"
 
-    diff = TTY::File::Differ.new(string_a, string_b).call
+    diff = TTY::File::Differ.new.(string_a, string_b)
 
     expect(diff).to eq(strip_heredoc(<<-EOS
       @@ -1 +1 @@
@@ -27,7 +27,7 @@ RSpec.describe TTY::File::Differ, "#call" do
     string_a = "aaa\nbbb\nccc\nddd\neee\nfff\nggg\nhhh\niii\njjj\nkkk\nlll\n"
     string_b = "aaa\nbbb\nzzz\nddd\neee\nfff\nggg\nhhh\niii\njjj\nwww\n"
 
-    diff = TTY::File::Differ.new(string_a, string_b).call
+    diff = TTY::File::Differ.new.(string_a, string_b)
 
     expect(diff).to eq(strip_heredoc(<<-EOS
       @@ -1,6 +1,6 @@
@@ -53,7 +53,7 @@ RSpec.describe TTY::File::Differ, "#call" do
     string_a = "wikipedia".encode("us-ascii")
     string_b = "ウィキペディア".encode("UTF-8")
 
-    diff = TTY::File::Differ.new(string_a, string_b).call
+    diff = TTY::File::Differ.new.(string_a, string_b)
 
     expect(diff).to eq(strip_heredoc(<<-EOS
       @@ -1 +1 @@
@@ -67,7 +67,7 @@ RSpec.describe TTY::File::Differ, "#call" do
     string_a = "aaa\nbbb\nccc\n"
     string_b = "aaa\nxxx\nccc\n"
 
-    diff = TTY::File::Differ.new(string_a, string_b, format: :old).call
+    diff = TTY::File::Differ.new(format: :old).(string_a, string_b)
 
     expect(diff).to eq(strip_heredoc(<<-EOS
       1,4c1,4
@@ -87,7 +87,7 @@ RSpec.describe TTY::File::Differ, "#call" do
     string_a = "aaa\nbbb\nccc\nddd\neee\nfff"
     string_b = "aaa\nbbb\nccc\nddd\nxxx\nfff"
 
-    diff = TTY::File::Differ.new(string_a, string_b, context_lines: 1).call
+    diff = TTY::File::Differ.new(context_lines: 1).(string_a, string_b)
 
     expect(diff).to eq(strip_heredoc(<<-EOS
       @@ -4,3 +4,3 @@

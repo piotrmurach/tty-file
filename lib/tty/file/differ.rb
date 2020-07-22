@@ -10,10 +10,8 @@ module TTY
       # Create a Differ
       #
       # @api public
-      def initialize(string_a, string_b, format: :unified, context_lines: 3)
-        @string_a      = string_a
-        @string_b      = string_b
-        @format        = format
+      def initialize(format: :unified, context_lines: 3)
+        @format = format
         @context_lines = context_lines
       end
 
@@ -24,11 +22,13 @@ module TTY
       #   difference found
       #
       # @api public
-      def call
+      def call(string_a, string_b)
+        string_a_lines = convert_to_lines(string_a)
+        string_b_lines = convert_to_lines(string_b)
         diffs = Diff::LCS.diff(string_a_lines, string_b_lines)
         return "" if diffs.empty?
 
-        hunks = extract_hunks(diffs)
+        hunks = extract_hunks(diffs, string_a_lines, string_b_lines)
         format_hunks(hunks)
       end
 
@@ -38,16 +38,8 @@ module TTY
         string.split(/\n/).map(&:chomp)
       end
 
-      def string_a_lines
-        convert_to_lines(@string_a)
-      end
-
-      def string_b_lines
-        convert_to_lines(@string_b)
-      end
-
       # @api public
-      def extract_hunks(diffs)
+      def extract_hunks(diffs, string_a_lines, string_b_lines)
         file_length_difference = 0
 
         diffs.map do |piece|
