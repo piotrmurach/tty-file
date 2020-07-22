@@ -393,19 +393,10 @@ module TTY
       output = []
 
       open_tempfile_if_missing(path_a) do |file_a|
-        if ::File.size(file_a) > threshold
-          raise ArgumentError, "(file size of #{file_a.path} exceeds #{threshold} bytes, diff output suppressed)"
-        end
-        if binary?(file_a)
-          raise ArgumentError, "(#{file_a.path} is binary, diff output suppressed)"
-        end
+        check_binary_or_large(file_a, threshold)
+
         open_tempfile_if_missing(path_b) do |file_b|
-          if binary?(file_b)
-            raise ArgumentError, "(#{file_a.path} is binary, diff output suppressed)"
-          end
-          if ::File.size(file_b) > threshold
-            return "(file size of #{file_b.path} exceeds #{threshold} bytes, diff output suppressed)"
-          end
+          check_binary_or_large(file_b, threshold)
 
           log_status(:diff, "#{file_a.path} - #{file_b.path}",
                      verbose: verbose, color: color)
@@ -421,6 +412,19 @@ module TTY
       output.join
     end
     module_function :diff
+
+    # Check if file is binary or exceeds threshold size
+    #
+    # @api private
+    def check_binary_or_large(file, threshold)
+      if binary?(file)
+        raise ArgumentError, "(#{file.path} is binary, diff output suppressed)"
+      elsif ::File.size(file) > threshold
+        raise ArgumentError, "(file size of #{file.path} exceeds #{threshold} " \
+                             "bytes, diff output suppressed)"
+      end
+    end
+    private_module_function :check_binary_or_large
 
     alias diff_files diff
     module_function :diff_files
