@@ -389,22 +389,37 @@ module TTY
     #
     # @api public
     def diff(path_a, path_b, threshold: 10_000_00, format: :unified,
-             context_lines: 3, verbose: true, color: :green, noop: false)
+             header: true, context_lines: 3, verbose: true,
+             color: :green, noop: false)
       output = []
 
-      open_tempfile_if_missing(path_a) do |file_a|
+      open_tempfile_if_missing(path_a) do |file_a, temp_a|
         check_binary_or_large(file_a, threshold)
 
-        open_tempfile_if_missing(path_b) do |file_b|
+        open_tempfile_if_missing(path_b) do |file_b, temp_b|
           check_binary_or_large(file_b, threshold)
+          file_a_path = relative_path(file_a.path)
+          file_b_path = relative_path(file_b.path)
 
-          log_status(:diff, "#{file_a.path} - #{file_b.path}",
+          log_status(:diff, "#{file_a_path} and #{file_b_path}",
                      verbose: verbose, color: color)
-          return output.join if noop
+          return "" if noop
 
           differ = Differ.new(format: format, context_lines: context_lines)
-
           block_size = file_a.lstat.blksize
+          file_a_chunk = file_a.read(block_size)
+          file_b_chunk = file_b.read(block_size)
+          hunks = differ.(file_a_chunk, file_b_chunk)
+
+          return "" if file_a_chunk.empty? && file_b_chunk.empty?
+          return "No differences found\n" if hunks.empty?
+
+          if %i[unified context old].include?(format) && header
+            output << "#{differ.delete_char * 3} #{temp_a ? temp_a : file_a_path}\n"
+            output << "#{differ.add_char * 3} #{temp_b ? temp_b : file_b_path}\n"
+          end
+
+          output << hunks
           while !file_a.eof? && !file_b.eof?
             output << differ.(file_a.read(block_size), file_b.read(block_size))
           end
@@ -746,6 +761,19 @@ module TTY
     end
     private_module_function :check_path
 
+    # Change absolute path to relative
+    #
+    # @param [String] path
+    #
+    # @api private
+    def relative_path(path)
+      path = Pathname(path)
+      return path if path.relative?
+      path.relative_path_from(Pathname.pwd)
+    end
+    private_module_function :relative_path
+
+
     @output = $stdout
     @pastel = Pastel.new(enabled: true)
 
@@ -789,7 +817,7 @@ module TTY
         tempfile << object
         tempfile.rewind
 
-        block[tempfile]
+        block[tempfile, ::File.basename(tempfile)]
 
         unless tempfile.nil?
           tempfile.close

@@ -32,13 +32,42 @@ module TTY
         format_hunks(hunks)
       end
 
+      # Diff add char
+      #
+      # @api public
+      def add_char
+        case @format
+        when :old
+          ">"
+        when :unified
+          "+"
+        else
+          "*"
+        end
+      end
+
+      # Diff delete char
+      #
+      # @api public
+      def delete_char
+        case @format
+        when :old
+          "<"
+        when :unified
+          "-"
+        else
+          "*"
+        end
+      end
+
       private
 
+      # @api private
       def convert_to_lines(string)
         string.split(/\n/).map(&:chomp)
       end
 
-      # @api public
+      # @api private
       def extract_hunks(diffs, string_a_lines, string_b_lines)
         file_length_difference = 0
 
@@ -50,7 +79,7 @@ module TTY
         end
       end
 
-      # @api public
+      # @api private
       def format_hunks(hunks)
         output = []
         hunks.each_cons(2) do |prev_hunk, current_hunk|

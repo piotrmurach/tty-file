@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe TTY::File, "#diff" do
+  let(:sep) { ::File::SEPARATOR }
+
   shared_context "diffing files" do
     it "diffs two files" do
       file_a = path_factory.call("diff/file_a")
@@ -9,6 +11,8 @@ RSpec.describe TTY::File, "#diff" do
       diff = TTY::File.diff(file_a, file_b, verbose: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
+        --- tmp#{sep}diff#{sep}file_a
+        +++ tmp#{sep}diff#{sep}file_b
         @@ -1,4 +1,4 @@
          aaa
         -bbb
@@ -21,14 +25,15 @@ RSpec.describe TTY::File, "#diff" do
     it "diffs identical files" do
       src_a = path_factory.call("diff/file_a")
 
-      expect(TTY::File.diff(src_a, src_a, verbose: false)).to eq("")
+      expect(TTY::File.diff(src_a, src_a, verbose: false)).
+        to eq("No differences found\n")
     end
 
     it "diffs a file and a string" do
       src_a = path_factory.call("diff/file_a")
       src_b = "aaa\nxxx\nccc\n"
 
-      diff = TTY::File.diff(src_a, src_b, verbose: false)
+      diff = TTY::File.diff(src_a, src_b, verbose: false, header: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
         @@ -1,4 +1,4 @@
@@ -44,7 +49,7 @@ RSpec.describe TTY::File, "#diff" do
       file_a = "aaa\nbbb\nccc\n"
       file_b = "aaa\nxxx\nccc\n"
 
-      diff = TTY::File.diff(file_a, file_b, verbose: false)
+      diff = TTY::File.diff(file_a, file_b, verbose: false, header: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
         @@ -1,4 +1,4 @@
