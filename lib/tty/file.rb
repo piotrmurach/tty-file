@@ -434,8 +434,7 @@ module TTY
     #   the URI address
     # @param [String, Pathname] dest
     #   the relative path to save
-    # @param [Hash[Symbol]] options
-    # @param options [Symbol] :limit
+    # @param [Symbol] :limit
     #   the limit of redirects
     #
     # @example
@@ -457,7 +456,7 @@ module TTY
         return
       end
 
-      content = DownloadFile.new(uri, dest_path, options).call
+      content = DownloadFile.new(uri, dest_path, limit: options[:limit]).call
 
       if block_given?
         content = (block.arity.nonzero? ? block[content] : block[])

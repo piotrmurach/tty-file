@@ -14,10 +14,10 @@ module TTY
 
       # @options
       #
-      def initialize(url, dest_path, options = {})
+      def initialize(url, dest_path, limit: nil)
         @uri       = URI.parse(url)
         @dest_path = dest_path
-        @limit     = options.fetch(:limit) { DEFAULT_REDIRECTS }
+        @limit     = limit || DEFAULT_REDIRECTS
       end
 
       # Download a file
