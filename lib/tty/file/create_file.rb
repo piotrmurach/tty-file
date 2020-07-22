@@ -6,18 +6,20 @@ module TTY
   module File
     class CreateFile
 
-      attr_reader :base, :relative_path, :content, :options, :prompt
+      attr_reader :base, :relative_path, :content, :prompt, :context
 
-      def initialize(base, relative_path, content, options = {})
+      def initialize(base, relative_path, content, context: nil, force: false,
+                     skip: false, verbose: true, noop: false, color: :green)
         @base    = base
         @content = content
-        @options = options
+        @context = context || @base
+        @force   = force
+        @skip    = skip
+        @noop    = noop
+        @verbose = verbose
+        @color   = color
         @relative_path = convert_encoded_path(relative_path)
         @prompt  = TTY::Prompt.new
-      end
-
-      def context
-        options[:context] || @base
       end
 
       def exist?
@@ -59,10 +61,10 @@ module TTY
         if exist?
           if identical?
             notify(:identical, :cyan)
-          elsif options[:force]
+          elsif @force
             notify(:force, :yellow)
-            yield unless options[:noop]
-          elsif options[:skip]
+            yield unless @noop
+          elsif @skip
             notify(:skip, :yellow)
           else
             notify(:collision, :red)
@@ -70,15 +72,16 @@ module TTY
           end
         else
           notify(:create, :green)
-          yield unless options[:noop]
+          yield unless @noop
         end
       end
 
       # Notify console about performed action
+      #
       # @api private
       def notify(name, color)
         base.__send__(:log_status, name, relative_path,
-                      options.fetch(:verbose, true), options.fetch(:color, color))
+                      verbose: @verbose, color: @color ? color : false)
       end
 
       # Display conflict resolution menu and gather answer

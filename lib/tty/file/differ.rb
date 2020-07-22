@@ -10,8 +10,7 @@ module TTY
       # Create a Differ
       #
       # @api public
-      def initialize(string_a, string_b, format: :unified, context_lines: 3,
-                     verbose: false)
+      def initialize(string_a, string_b, format: :unified, context_lines: 3)
         @string_a      = string_a
         @string_b      = string_b
         @format        = format

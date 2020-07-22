@@ -112,10 +112,10 @@ module TTY
     #   the generated hex value
     #
     # @api public
-    def checksum_file(source, *args, **options)
+    def checksum_file(source, *args, noop: false)
       mode     = args.size.zero? ? "sha256" : args.pop
       digester = DigestFile.new(source, mode)
-      digester.call unless options[:noop]
+      digester.call unless noop
     end
     module_function :checksum_file
 
@@ -138,10 +138,9 @@ module TTY
     #   chmod("Gemfile", "u+x,g+x")
     #
     # @api public
-    def chmod(relative_path, permissions, **options)
-      log_status(:chmod, relative_path, options.fetch(:verbose, true),
-                 options.fetch(:color, :green))
-      ::FileUtils.chmod_R(permissions, relative_path) unless options[:noop]
+    def chmod(relative_path, permissions, verbose: true, color: :green, noop: false)
+      log_status(:chmod, relative_path, verbose: verbose, color: color)
+      ::FileUtils.chmod_R(permissions, relative_path) unless noop
     end
     module_function :chmod
 
@@ -170,7 +169,8 @@ module TTY
     # @return [void]
     #
     # @api public
-    def create_directory(destination, *args, **options)
+    def create_directory(destination, *args, context: nil, verbose: true,
+                         color: :green, noop: false, force: false, skip: false)
       parent = args.size.nonzero? ? args.pop : nil
       if destination.is_a?(String) || destination.is_a?(Pathname)
         destination = { destination.to_s => [] }
@@ -180,15 +180,18 @@ module TTY
         path = parent.nil? ? dir : ::File.join(parent, dir)
         unless ::File.exist?(path)
           ::FileUtils.mkdir_p(path)
-          log_status(:create, path, options.fetch(:verbose, true),
-                                    options.fetch(:color, :green))
+          log_status(:create, path, verbose: verbose, color: color)
         end
 
         files.each do |filename, contents|
           if filename.respond_to?(:each_pair)
-            create_directory(filename, path, **options)
+            create_directory(filename, path, context: context,
+                             verbose: verbose, color: color, noop: noop,
+                             force: force, skip: skip)
           else
-            create_file(::File.join(path, filename), contents, **options)
+            create_file(::File.join(path, filename), contents, context: context,
+                        verbose: verbose, color: color, noop: noop, force: force,
+                        skip: skip)
           end
         end
       end
@@ -203,9 +206,16 @@ module TTY
     # @param [String, Pathname] relative_path
     # @param [String|nil] content
     #   the content to add to file
-    # @param [Hash] options
-    # @option options [Symbol] :force
+    # @param [Symbol] :context
+    #   the binding to use for the template
+    # @param [Symbol] :force
     #   forces ovewrite if conflict present
+    # @param [Symbol] :verbose
+    #   If true log the action status to stdout
+    # @param [Symbol] :noop
+    #   If true do not execute the action.
+    # @param [Symbol] :skip
+    #   If true skip the action.
     #
     # @example
     #   create_file("doc/README.md", "# Title header")
@@ -216,11 +226,13 @@ module TTY
     #   end
     #
     # @api public
-    def create_file(relative_path, *args, **options, &block)
+    def create_file(relative_path, *args, context: nil, force: false, skip: false,
+                    verbose: true, color: :green, noop: false, &block)
       relative_path = relative_path.to_s
       content = block_given? ? block[] : args.join
 
-      CreateFile.new(self, relative_path, content, options).call
+      CreateFile.new(self, relative_path, content, context: context, force: force,
+                     skip: skip, verbose: verbose, color: color, noop: noop).call
     end
     module_function :create_file
 
@@ -239,29 +251,31 @@ module TTY
     #   copy_file "templates/%name%.rb", "app/%name%.rb", context: vars
     #
     # @param [String, Pathname] source_path
-    # @param [Hash] options
-    # @option options [Symbol] :context
+    #   the file path to copy file from
+    # @param [Symbol] :context
     #   the binding to use for the template
-    # @option options [Symbol] :preserve
+    # @param [Symbol] :preserve
     #   If true, the owner, group, permissions and modified time
     #   are preserved on the copied file, defaults to false.
-    # @option options [Symbol] :noop
+    # @param [Symbol] :noop
     #   If true do not execute the action.
-    # @option options [Symbol] :verbose
+    # @param [Symbol] :verbose
     #   If true log the action status to stdout
     #
     # @api public
-    def copy_file(source_path, *args, **options, &block)
+    def copy_file(source_path, *args, context: nil, force: false, skip: false,
+                  verbose: true, color: :green, noop: false, preserve: nil, &block)
       source_path = source_path.to_s
       dest_path = (args.first || source_path).to_s.sub(/\.erb$/, "")
 
-      ctx = if (vars = options[:context])
-              vars.instance_eval("binding")
+      ctx = if context
+              context.instance_eval("binding")
             else
               instance_eval("binding")
             end
 
-      create_file(dest_path, **options) do
+      create_file(dest_path, context: context, force: force, skip: skip,
+                  verbose: verbose, color: color, noop: noop) do
         version = ERB.version.scan(/\d+\.\d+\.\d+/)[0]
         template = if version.to_f >= 2.2
                     ERB.new(::File.binread(source_path), trim_mode: "-", eoutvar: "@output_buffer")
@@ -272,9 +286,10 @@ module TTY
         content = block[content] if block
         content
       end
-      return unless options[:preserve]
+      return unless preserve
 
-      copy_metadata(source_path, dest_path, **options)
+      copy_metadata(source_path, dest_path, verbose: verbose, noop: noop,
+                    color: color)
     end
     module_function :copy_file
 
@@ -315,13 +330,13 @@ module TTY
     #    README
     #
     # @param [String, Pathname] source_path
-    # @param [Hash[Symbol]] options
-    # @option options [Symbol] :preserve
+    #    the source directory to copy files from
+    # @param [Symbol] :preserve
     #   If true, the owner, group, permissions and modified time
     #   are preserved on the copied file, defaults to false.
-    # @option options [Symbol] :recursive
+    # @param [Symbol] :recursive
     #   If false, copies only top level files, defaults to true.
-    # @option options [Symbol] :exclude
+    # @param [Symbol] :exclude
     #   A regex that specifies files to ignore when copying.
     #
     # @example
@@ -329,23 +344,26 @@ module TTY
     #   copy_directory("app", "new_app", exclude: /docs/)
     #
     # @api public
-    def copy_directory(source_path, *args, **options, &block)
+    def copy_directory(source_path, *args, context: nil, force: false, skip: false,
+                       verbose: true, color: :green, noop: false, preserve: nil,
+                       recursive: true, exclude: nil, &block)
       source_path = source_path.to_s
       check_path(source_path)
       source = escape_glob_path(source_path)
       dest_path = (args.first || source).to_s
-      opts = { recursive: true }.merge(options)
-      pattern = opts[:recursive] ? ::File.join(source, "**") : source
+      pattern = recursive ? ::File.join(source, "**") : source
       glob_pattern = ::File.join(pattern, "*")
 
       Dir.glob(glob_pattern, ::File::FNM_DOTMATCH).sort.each do |file_source|
         next if ::File.directory?(file_source)
-        next if opts[:exclude] && file_source.match(opts[:exclude])
+        next if exclude && file_source.match(exclude)
 
         dest = ::File.join(dest_path, file_source.gsub(source_path, "."))
         file_dest = ::Pathname.new(dest).cleanpath.to_s
 
-        copy_file(file_source, file_dest, **options, &block)
+        copy_file(file_source, file_dest, context: context, force: force,
+                  skip: skip, verbose: verbose, color: color, noop: noop,
+                  preserve: preserve, &block)
       end
     end
     module_function :copy_directory
@@ -356,21 +374,22 @@ module TTY
     # Diff files line by line
     #
     # @param [String, Pathname] path_a
+    #   the path to the original file
     # @param [String, Pathname] path_b
-    # @param [Hash[Symbol]] options
-    # @option options [Symbol] :format
+    #   the path to a new file
+    # @param [Symbol] :format
     #   the diffining output format
-    # @option options [Symbol] :context_lines
+    # @param [Symbol] :context_lines
     #   the number of extra lines for the context
-    # @option options [Symbol] :threshold
+    # @param [Symbol] :threshold
     #   maximum file size in bytes
     #
     # @example
     #   diff(file_a, file_b, format: :old)
     #
     # @api public
-    def diff(path_a, path_b, **options)
-      threshold = options[:threshold] || 10_000_000
+    def diff(path_a, path_b, threshold: 10_000_00, format: :unified,
+             context_lines: 3, verbose: true, color: :green, noop: false)
       output = []
 
       open_tempfile_if_missing(path_a) do |file_a|
@@ -389,14 +408,13 @@ module TTY
           end
 
           log_status(:diff, "#{file_a.path} - #{file_b.path}",
-                     options.fetch(:verbose, true), options.fetch(:color, :green))
-          return output.join if options[:noop]
+                     verbose: verbose, color: color)
+          return output.join if noop
 
           block_size = file_a.lstat.blksize
           while !file_a.eof? && !file_b.eof?
-            output << Differ.new(file_a.read(block_size),
-                                 file_b.read(block_size),
-                                 **options).call
+            output << Differ.new(file_a.read(block_size), file_b.read(block_size),
+                                 format: format, context_lines: context_lines).call
           end
         end
       end
@@ -467,11 +485,11 @@ module TTY
     #   end
     #
     # @api public
-    def prepend_to_file(relative_path, *args, **options, &block)
-      log_status(:prepend, relative_path, options.fetch(:verbose, true),
-                 options.fetch(:color, :green))
-      options.merge!(before: /\A/, verbose: false)
-      inject_into_file(relative_path, *args, **options, &block)
+    def prepend_to_file(relative_path, *args, verbose: true, color: :green,
+                        force: true, noop: false, &block)
+      log_status(:prepend, relative_path, verbose: verbose, color: color)
+      inject_into_file(relative_path, *args, before: /\A/, verbose: false,
+                       color: color, force: force, noop: noop, &block)
     end
     module_function :prepend_to_file
 
@@ -498,11 +516,11 @@ module TTY
     #   end
     #
     # @api public
-    def append_to_file(relative_path, *args, **options, &block)
-      log_status(:append, relative_path, options.fetch(:verbose, true),
-                 options.fetch(:color, :green))
-      options.merge!(after: /\z/, verbose: false)
-      inject_into_file(relative_path, *args, **options, &block)
+    def append_to_file(relative_path, *args, verbose: true, color: :green,
+                       force: true, noop: false, &block)
+      log_status(:append, relative_path, verbose: verbose, color: color)
+      inject_into_file(relative_path, *args, after: /\z/, verbose: false,
+                       force: force, noop: noop, color: color, &block)
     end
     module_function :append_to_file
 
@@ -543,15 +561,12 @@ module TTY
     #   end
     #
     # @api public
-    def inject_into_file(relative_path, *args, **options, &block)
+    def inject_into_file(relative_path, *args, verbose: true, color: :green,
+                         after: nil, before: nil, force: true, noop: false, &block)
       check_path(relative_path)
       replacement = block_given? ? block[] : args.join
 
-      flag, match = if options.key?(:after)
-                      [:after, options.delete(:after)]
-                    else
-                      [:before, options.delete(:before)]
-                    end
+      flag, match = after ? [:after, after] : [:before, before]
 
       match = match.is_a?(Regexp) ? match : Regexp.escape(match)
       content = if flag == :after
@@ -560,10 +575,9 @@ module TTY
                   replacement + '\0'
                 end
 
-      log_status(:inject, relative_path, options.fetch(:verbose, true),
-                                         options.fetch(:color, :green))
-      replace_in_file(relative_path, /#{match}/, content,
-                      **options.merge(verbose: false))
+      log_status(:inject, relative_path, verbose: verbose, color: color)
+      replace_in_file(relative_path, /#{match}/, content, verbose: false,
+                      color: color, force: force, noop: noop)
     end
     module_function :inject_into_file
 
@@ -600,18 +614,18 @@ module TTY
     #   true when replaced content, false otherwise
     #
     # @api public
-    def replace_in_file(relative_path, *args, **options, &block)
+    def replace_in_file(relative_path, *args, verbose: true, color: :green,
+                        noop: false, force: true, &block)
       check_path(relative_path)
       contents = ::File.read(relative_path)
       replacement = (block ? block[] : args[1..-1].join).gsub('\0', "")
       match = Regexp.escape(replacement)
       status = nil
 
-      log_status(:replace, relative_path, options.fetch(:verbose, true),
-                                          options.fetch(:color, :green))
-      return false if options[:noop]
+      log_status(:replace, relative_path, verbose: verbose, color: color)
+      return false if noop
 
-      if options.fetch(:force, true) || !(contents =~ /^#{match}(\r?\n)*/m)
+      if force || !(contents =~ /^#{match}(\r?\n)*/m)
         status = contents.gsub!(*args, &block)
         if !status.nil?
           ::File.open(relative_path, "w") do |file|
@@ -643,15 +657,14 @@ module TTY
     #   remove_file "doc/README.md"
     #
     # @api public
-    def remove_file(relative_path, *args, **options)
+    def remove_file(relative_path, *args, verbose: true, color: :red, noop: false,
+                    force: nil, secure: true)
       relative_path = relative_path.to_s
-      log_status(:remove, relative_path, options.fetch(:verbose, true),
-                                         options.fetch(:color, :red))
+      log_status(:remove, relative_path, verbose: verbose, color: color)
 
-      return if options[:noop] || !::File.exist?(relative_path)
+      return if noop || !::File.exist?(relative_path)
 
-      ::FileUtils.rm_r(relative_path, force: options[:force],
-                       secure: options.fetch(:secure, true))
+      ::FileUtils.rm_r(relative_path, force: force, secure: secure)
     end
     module_function :remove_file
 
@@ -668,35 +681,34 @@ module TTY
     #   # =>  ["line 19", "line20", ... ]
     #
     # @example
-    #   tail_file "filename", 15
+    #   tail_file "filename", lines: 15
     #   # =>  ["line 19", "line20", ... ]
     #
     # @return [Array[String]]
     #
     # @api public
-    def tail_file(relative_path, num_lines = 10, **options, &block)
-      file       = ::File.open(relative_path)
-      chunk_size = options.fetch(:chunk_size, 512)
-      line_sep   = $/
-      lines      = []
+    def tail_file(relative_path, lines: 10, chunk_size: 512, &block)
+      file = ::File.open(relative_path)
+      line_sep = $/
+      output = []
       newline_count = 0
 
       ReadBackwardFile.new(file, chunk_size).each_chunk do |chunk|
         # look for newline index counting from right of chunk
         while (nl_index = chunk.rindex(line_sep, (nl_index || chunk.size) - 1))
           newline_count += 1
-          break if newline_count > num_lines || nl_index.zero?
+          break if newline_count > lines || nl_index.zero?
         end
 
-        if newline_count > num_lines
-          lines.insert(0, chunk[(nl_index + 1)..-1])
+        if newline_count > lines
+          output.insert(0, chunk[(nl_index + 1)..-1])
           break
         else
-          lines.insert(0, chunk)
+          output.insert(0, chunk)
         end
       end
 
-      lines.join.split(line_sep).each(&block).to_a
+      output.join.split(line_sep).each(&block).to_a
     end
     module_function :tail_file
 
@@ -741,7 +753,7 @@ module TTY
     # Log file operation
     #
     # @api private
-    def log_status(cmd, message, verbose, color = false)
+    def log_status(cmd, message, verbose: true, color: false)
       return unless verbose
 
       cmd = cmd.to_s.rjust(12)

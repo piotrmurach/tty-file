@@ -1,1 +1,1 @@
-require_relative 'tty/file'
+require_relative "tty/file"

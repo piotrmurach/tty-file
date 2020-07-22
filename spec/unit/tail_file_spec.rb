@@ -5,7 +5,7 @@ RSpec.describe TTY::File, "#tail_file" do
     it "tails file for lines with chunks smaller than file size" do
       file = path_factory.call("tail/lines")
 
-      lines = TTY::File.tail_file(file, 5, chunk_size: 2**3)
+      lines = TTY::File.tail_file(file, lines: 5, chunk_size: 2**3)
 
       expect(lines).to eq([
         "line12",
@@ -19,7 +19,7 @@ RSpec.describe TTY::File, "#tail_file" do
     it "tails file for lines with chunks equal file size" do
       file = path_factory.call("tail/lines")
 
-      lines = TTY::File.tail_file(file, 5, chunk_size: file.size)
+      lines = TTY::File.tail_file(file, lines: 5, chunk_size: file.size)
 
       expect(lines).to eq([
         "line12",
@@ -34,7 +34,7 @@ RSpec.describe TTY::File, "#tail_file" do
     it "tails file for lines with chunks larger than file size" do
       file = path_factory.call("tail/lines")
 
-      lines = TTY::File.tail_file(file, 5, chunk_size: 2**9)
+      lines = TTY::File.tail_file(file, lines: 5, chunk_size: 2**9)
 
       expect(lines).to eq([
         "line12",
@@ -49,7 +49,7 @@ RSpec.describe TTY::File, "#tail_file" do
       file = path_factory.call("tail/lines")
       lines = []
 
-      TTY::File.tail_file(file, 5, chunk_size: 8) do |line|
+      TTY::File.tail_file(file, lines: 5, chunk_size: 8) do |line|
         lines << line
       end
 
