@@ -56,7 +56,7 @@ module TTY
       buffer = read_to_char(relative_path, bytes, 0)
 
       begin
-        return buffer !~ /\A[\s[[:print:]]]*\z/m
+        buffer !~ /\A[\s[[:print:]]]*\z/m
       rescue ArgumentError => error
         return true if error.message =~ /invalid byte sequence/
         raise
@@ -396,7 +396,7 @@ module TTY
           while !file_a.eof? && !file_b.eof?
             output << Differ.new(file_a.read(block_size),
                                  file_b.read(block_size),
-                                 options).call
+                                 **options).call
           end
         end
       end

@@ -10,11 +10,12 @@ module TTY
       # Create a Differ
       #
       # @api public
-      def initialize(string_a, string_b, options = {})
+      def initialize(string_a, string_b, format: :unified, context_lines: 3,
+                     verbose: false)
         @string_a      = string_a
         @string_b      = string_b
-        @format        = options.fetch(:format, :unified)
-        @context_lines = options.fetch(:context_lines, 3)
+        @format        = format
+        @context_lines = context_lines
       end
 
       # Find character difference between two strings
@@ -25,10 +26,10 @@ module TTY
       #
       # @api public
       def call
-        diffs  = Diff::LCS.diff(string_a_lines, string_b_lines)
+        diffs = Diff::LCS.diff(string_a_lines, string_b_lines)
         return "" if diffs.empty?
 
-        hunks  = extract_hunks(diffs)
+        hunks = extract_hunks(diffs)
         format_hunks(hunks)
       end
 
