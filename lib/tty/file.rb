@@ -419,7 +419,7 @@ module TTY
             output << "#{differ.add_char * 3} #{file_b_path}\n"
           end
 
-          output << hunks
+          output << color_diff_lines(hunks, color: color, format: format)
           while !file_a.eof? && !file_b.eof?
             output << differ.(file_a.read(block_size), file_b.read(block_size))
           end
@@ -428,6 +428,17 @@ module TTY
       output.join
     end
     module_function :diff
+
+    # @api private
+    def color_diff_lines(hunks, color: true, format: :unified)
+      return hunks unless color && tty? && format == :unified
+
+      newline = "\n"
+      hunks.gsub(/^(\+[^+].*?)\n/, decorate("\\1", :green) + newline)
+           .gsub(/^(\-[^-].*?)\n/, decorate("\\1", :red) + newline)
+           .gsub(/^(@.+?)\n/, decorate("\\1", :cyan) + newline)
+    end
+    private_module_function :color_diff_lines
 
     # Check if file is binary or exceeds threshold size
     #
@@ -773,7 +784,6 @@ module TTY
     end
     private_module_function :relative_path
 
-
     @output = $stdout
     @pastel = Pastel.new(enabled: true)
 
@@ -826,5 +836,15 @@ module TTY
       end
     end
     private_module_function :open_tempfile_if_missing
+
+    # Check if IO is attached to a terminal
+    #
+    # return [Boolean]
+    #
+    # @api public
+    def tty?
+      @output.respond_to?(:tty?) && @output.tty?
+    end
+    private_module_function :tty?
   end # File
 end # TTY

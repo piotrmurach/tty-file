@@ -13,10 +13,10 @@ RSpec.describe TTY::File, "#diff" do
       expect(diff).to eq(strip_heredoc(<<-EOS
         --- tmp#{sep}diff#{sep}file_a
         +++ tmp#{sep}diff#{sep}file_b
-        @@ -1,4 +1,4 @@
+        \e[36m@@ -1,4 +1,4 @@\e[0m
          aaa
-        -bbb
-        +xxx
+        \e[31m-bbb\e[0m
+        \e[32m+xxx\e[0m
          ccc
       EOS
       ))
@@ -38,10 +38,10 @@ RSpec.describe TTY::File, "#diff" do
       expect(diff).to eq(strip_heredoc(<<-EOS
         --- tmp#{sep}diff#{sep}file_a
         +++ New contents
-        @@ -1,4 +1,4 @@
+        \e[36m@@ -1,4 +1,4 @@\e[0m
          aaa
-        -bbb
-        +xxx
+        \e[31m-bbb\e[0m
+        \e[32m+xxx\e[0m
          ccc
       EOS
       ))
@@ -51,7 +51,7 @@ RSpec.describe TTY::File, "#diff" do
       file_a = "aaa\nbbb\nccc\n"
       file_b = "aaa\nxxx\nccc\n"
 
-      diff = TTY::File.diff(file_a, file_b, verbose: false)
+      diff = TTY::File.diff(file_a, file_b, verbose: false, color: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
         --- Old contents
