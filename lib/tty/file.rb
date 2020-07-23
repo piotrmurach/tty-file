@@ -401,8 +401,8 @@ module TTY
           message = check_binary_or_large(file_b, threshold)
           return message if message
 
-          file_a_path = temp_a ? "Old contents" : relative_path(file_a.path)
-          file_b_path = temp_b ? "New contents" : relative_path(file_b.path)
+          file_a_path = temp_a ? "Old contents" : relative_path_from(file_a.path)
+          file_b_path = temp_b ? "New contents" : relative_path_from(file_b.path)
 
           log_status(:diff, "#{file_a_path} and #{file_b_path}",
                      verbose: verbose, color: color)
@@ -780,12 +780,12 @@ module TTY
     # @param [String] path
     #
     # @api private
-    def relative_path(path)
+    def relative_path_from(path)
       path = Pathname(path)
       return path if path.relative?
       path.relative_path_from(Pathname.pwd)
     end
-    private_module_function :relative_path
+    private_module_function :relative_path_from
 
     @output = $stdout
     @pastel = Pastel.new(enabled: true)
