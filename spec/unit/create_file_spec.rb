@@ -101,6 +101,25 @@ RSpec.describe TTY::File, "#create_file" do
           expect(File.read(file)).to eq("# Title")
         end
 
+        it "displays collision menu and shows files diff" do
+          test_prompt = TTY::Prompt::Test.new
+          test_prompt.input << "d" << "\n" << "n" << "\n"
+          test_prompt.input.rewind
+          allow(TTY::Prompt).to receive(:new).and_return(test_prompt)
+
+          file = path_factory.call("README.md")
+          TTY::File.create_file(file, "# Title", verbose: false)
+
+          expect {
+            TTY::File.create_file(file, "# Header", verbose: true)
+          }.to output(/\e\[31mcollision\e\[0m  #{file}/).to_stdout_from_any_process
+            .and output(/@@ -1 \+1 @@\n-# Title\n\+# Header/).to_stdout
+
+          expect(test_prompt.output.string).to match(/Overwrite #{file}\?/)
+
+          expect(File.read(file)).to eq("# Title")
+        end
+
         it "displays collision menu and aborts" do
           test_prompt = TTY::Prompt::Test.new
           test_prompt.input << "q\n"

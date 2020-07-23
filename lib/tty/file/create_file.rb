@@ -90,11 +90,21 @@ module TTY
       def file_collision(relative_path, content)
         choices = [
           { key: "y", name: "yes, overwrite", value: :yes },
+          { key: "d", name: "diff, compare old and new file", value: :diff },
           { key: "n", name: "no, do not overwrite", value: :no },
           { key: "q", name: "quit, abort", value: :quit }
         ]
-        answer = prompt.expand("Overwrite #{relative_path}?", choices)
+        while (answer = prompt.expand("Overwrite #{relative_path}?", choices)) == :diff do
+          show_diff
+        end
         interpret_answer(answer)
+      end
+
+      # Display difference between old and new file
+      #
+      # @api private
+      def show_diff
+        print base.__send__(:diff_files, relative_path, content, verbose: @verbose)
       end
 
       # @api private
