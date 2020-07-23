@@ -2,7 +2,6 @@
 
 require "diff/lcs"
 require "diff/lcs/hunk"
-require "enumerator"
 
 module TTY
   module File
