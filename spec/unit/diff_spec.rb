@@ -33,9 +33,11 @@ RSpec.describe TTY::File, "#diff" do
       src_a = path_factory.call("diff/file_a")
       src_b = "aaa\nxxx\nccc\n"
 
-      diff = TTY::File.diff(src_a, src_b, verbose: false, header: false)
+      diff = TTY::File.diff(src_a, src_b, verbose: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
+        --- tmp#{sep}diff#{sep}file_a
+        +++ New contents
         @@ -1,4 +1,4 @@
          aaa
         -bbb
@@ -49,9 +51,11 @@ RSpec.describe TTY::File, "#diff" do
       file_a = "aaa\nbbb\nccc\n"
       file_b = "aaa\nxxx\nccc\n"
 
-      diff = TTY::File.diff(file_a, file_b, verbose: false, header: false)
+      diff = TTY::File.diff(file_a, file_b, verbose: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
+        --- Old contents
+        +++ New contents
         @@ -1,4 +1,4 @@
          aaa
         -bbb

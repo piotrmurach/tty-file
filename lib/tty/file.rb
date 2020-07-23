@@ -398,8 +398,8 @@ module TTY
 
         open_tempfile_if_missing(path_b) do |file_b, temp_b|
           check_binary_or_large(file_b, threshold)
-          file_a_path = relative_path(file_a.path)
-          file_b_path = relative_path(file_b.path)
+          file_a_path = temp_a ? "Old contents" : relative_path(file_a.path)
+          file_b_path = temp_b ? "New contents" : relative_path(file_b.path)
 
           log_status(:diff, "#{file_a_path} and #{file_b_path}",
                      verbose: verbose, color: color)
@@ -415,8 +415,8 @@ module TTY
           return "No differences found\n" if hunks.empty?
 
           if %i[unified context old].include?(format) && header
-            output << "#{differ.delete_char * 3} #{temp_a ? temp_a : file_a_path}\n"
-            output << "#{differ.add_char * 3} #{temp_b ? temp_b : file_b_path}\n"
+            output << "#{differ.delete_char * 3} #{file_a_path}\n"
+            output << "#{differ.add_char * 3} #{file_b_path}\n"
           end
 
           output << hunks
