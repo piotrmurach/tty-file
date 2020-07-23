@@ -30,7 +30,7 @@ Though Ruby's `File` and `FileUtils` libraries provide very robust apis for deal
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'tty-file'
+gem "tty-file"
 ```
 
 And then execute:
@@ -64,7 +64,7 @@ Or install it yourself as:
 ## 1. Usage
 
 ```ruby
-TTY::File.replace_in_file('Gemfile', /gem 'rails'/, "gem 'hanami'")
+TTY::File.replace_in_file("Gemfile", /gem 'rails'/, "gem 'hanami'")
 ```
 
 ## 2. Interface
@@ -78,7 +78,7 @@ If you wish to silence verbose output use `verbose: false`. Similarly if you wis
 To check whether a file is a binary file, i.e. image, executable etc. do:
 
 ```ruby
-TTY::File.binary?('image.png') # => true
+TTY::File.binary?("image.png") # => true
 ```
 
 ### 2.2. checksum_file
@@ -93,7 +93,7 @@ Among the supported message digest algorithms are:
 For example, to create a digest for a string using `SHA1` do:
 
 ```ruby
-TTY::File.checksum_file("Some content\nThe end", 'sha1')
+TTY::File.checksum_file("Some content\nThe end", "sha1")
 # => "289388f187404135e6c15b21460442cf867180dd"
 ```
 
@@ -102,19 +102,19 @@ TTY::File.checksum_file("Some content\nThe end", 'sha1')
 To change file modes use `chmod`, like so:
 
 ```ruby
-TTY::File.chmod('filename.rb', 0777)
+TTY::File.chmod("filename.rb", 0777)
 ```
 
 There are a number of constants available to represent common mode bits such as `TTY::File::U_R` and `TTY::File::O_X`, and they can be used as follows:
 
 ```ruby
-TTY::File.chmod('filename.rb', TTY::File::U_R | TTY::File::O_X)
+TTY::File.chmod("filename.rb", TTY::File::U_R | TTY::File::O_X)
 ```
 
 Apart from traditional octal number definition for file permissions, you can use the more convenient permission notation used by the Unix `chmod` command:
 
 ```ruby
-TTY::File.chmod('filename.rb', 'u=wrx,g+x')
+TTY::File.chmod("filename.rb", "u=wrx,g+x")
 ```
 
 The `u`, `g`, and `o` specify the user, group, and other parts of the mode bits. The `a` symbol is equivalent to `ugo`.
@@ -124,13 +124,13 @@ The `u`, `g`, and `o` specify the user, group, and other parts of the mode bits.
 Copies a file's contents from a relative source to a relative destination.
 
 ```ruby
-TTY::File.copy_file 'Gemfile', 'Gemfile.bak'
+TTY::File.copy_file "Gemfile", "Gemfile.bak"
 ```
 
 If you provide a block then the file content is yielded:
 
 ```ruby
-TTY::File.copy_file('Gemfile', 'app/Gemfile') do |content|
+TTY::File.copy_file("Gemfile", "app/Gemfile") do |content|
   "https://rubygems.org\n" + content
 end
 ```
@@ -139,25 +139,25 @@ If the source file is an `ERB` template then you can provide a `:context` in whi
 
 ```ruby
 variables = OpenStruct.new
-variables[:foo] = 'bar'
+variables[:foo] = "bar"
 
-TTY::File.copy_file('templates/application.html.erb', context: variables)
+TTY::File.copy_file("templates/application.html.erb", context: variables)
 ```
 
 You can also specify the template name surrounding any dynamic variables with `%` to be evaluated:
 
 ```ruby
 variables = OpenStruct.new
-variables[:file_name] = 'foo'
+variables[:file_name] = "foo"
 
-TTY::File.copy_file('templates/%file_name%.rb', context: variables)
+TTY::File.copy_file("templates/%file_name%.rb", context: variables)
 # => Creates templates/foo.rb
 ```
 
 If the destination is a directory, then copies source inside that directory.
 
 ```ruby
-TTY::File.copy_file 'docs/README.md', 'app'
+TTY::File.copy_file "docs/README.md", "app"
 ```
 
 If the destination file already exists, a prompt menu will be displayed to enquire about action:
@@ -165,7 +165,7 @@ If the destination file already exists, a prompt menu will be displayed to enqui
 If you wish to preserve original owner, group, permission and modified time use `:preserve` option:
 
 ```ruby
-TTY::File.copy_file 'docs/README.md', 'app', preserve: true
+TTY::File.copy_file "docs/README.md", "app", preserve: true
 ```
 
 ### 2.5. create_file
@@ -173,7 +173,7 @@ TTY::File.copy_file 'docs/README.md', 'app', preserve: true
 To create a file at a given destination with the given content use `create_file`:
 
 ```ruby
-TTY::File.create_file 'docs/README.md', '## Title header'
+TTY::File.create_file "docs/README.md", "## Title header"
 ```
 
 On collision with already existing file, a menu is displayed:
@@ -182,7 +182,7 @@ You can force to always overwrite file with `:force` option or always skip by pr
 
 ### 2.6. copy_dir
 
-To recursively copy a directory of files from source to destination location use `copy_directory` or its alias 'copy_dir'.
+To recursively copy a directory of files from source to destination location use `copy_directory` or its alias `copy_dir`.
 
 Assuming you have the following directory structure:
 
@@ -197,7 +197,7 @@ Assuming you have the following directory structure:
 You can copy `doc` folder to `docs` by invoking:
 
 ```ruby
-TTY::File.copy_directory('doc', 'docs', context: ...)
+TTY::File.copy_directory("doc", "docs", context: ...)
 ```
 
 The `context` needs to respond to `name` message and given it returns `foo` value the following directory gets created:
@@ -213,13 +213,13 @@ The `context` needs to respond to `name` message and given it returns `foo` valu
 If you only need to copy top level files use option `recursive: false`:
 
 ```ruby
-TTY::File.copy_directory('doc', 'docs', recursive: false)
+TTY::File.copy_directory("doc", "docs", recursive: false)
 ```
 
 By passing `:exclude` option you can instruct the method to ignore any files including the given pattern:
 
 ```ruby
-TTY::File.copy_directory('doc', 'docs', exclude: 'subcommands')
+TTY::File.copy_directory("doc", "docs", exclude: "subcommands")
 ```
 
 ### 2.7. create_dir
@@ -227,21 +227,21 @@ TTY::File.copy_directory('doc', 'docs', exclude: 'subcommands')
 To create directory use `create_directory` or its alias `create_dir` passing as a first argument file path:
 
 ```ruby
-TTY::File.create_dir('/path/to/directory')
+TTY::File.create_dir("/path/to/directory")
 ```
 
 Or a data structure describing the directory tree including any files with or without content:
 
 ```ruby
 tree =
-  'app' => [
-    'README.md',
-    ['Gemfile', "gem 'tty-file'"],
-    'lib' => [
-      'cli.rb',
-      ['file_utils.rb', "require 'tty-file'"]
+  "app" => [
+    "README.md",
+    ["Gemfile", "gem 'tty-file'"],
+    "lib" => [
+      "cli.rb",
+      ["file_utils.rb", "require 'tty-file'"]
     ]
-    'spec' => []
+    "spec" => []
   ]
 ```
 
@@ -260,7 +260,7 @@ TTY::File.create_dir(tree)
 As a second argument you can provide a parent directory, otherwise current directory will be assumed:
 
 ```ruby
-TTY::File.create_dir(tree, '/path/to/parent/dir')
+TTY::File.create_dir(tree, "/path/to/parent/dir")
 ```
 
 ### 2.8. diff_files
@@ -268,7 +268,7 @@ TTY::File.create_dir(tree, '/path/to/parent/dir')
 To compare files line by line in a system independent way use `diff`, or `diff_files`:
 
 ```ruby
-TTY::File.diff_files('file_a', 'file_b')
+TTY::File.diff_files("file_a", "file_b")
 # =>
 #  @@ -1,4 +1,4 @@
 #   aaa
@@ -286,7 +286,7 @@ The `:context_lines` specifies how many extra lines around the differing lines t
 The `:threshold` sets maximum file size in bytes, by default files larger than `10Mb` are not processed.
 
 ```ruby
-TTY::File.diff_files('file_a', 'file_b', format: :old)
+TTY::File.diff_files("file_a", "file_b", format: :old)
 # =>
 #  1,4c1,4
 #  < aaa
@@ -301,7 +301,7 @@ TTY::File.diff_files('file_a', 'file_b', format: :old)
 Equally, you can perform a comparison between a file content and a string content like so:
 
 ```ruby
-TTY::File.diff_files('/path/to/file', 'some long text')
+TTY::File.diff_files("/path/to/file", "some long text")
 ```
 
 ### 2.9. download_file
@@ -332,13 +332,13 @@ TTY::File.download_file("https://gist.github.com/4701967", "doc/README.md", limi
 Inject content into a file at a given location and return `true` when performed successfully, `false` otherwise.
 
 ```ruby
-TTY::File.inject_into_file 'filename.rb', "text to add", after: "Code below this line\n"
+TTY::File.inject_into_file "filename.rb", "text to add", after: "Code below this line\n"
 ```
 
 Or using a block:
 
 ```ruby
-TTY::File.inject_into_file 'filename.rb', after: "Code below this line\n" do
+TTY::File.inject_into_file "filename.rb", after: "Code below this line\n" do
   "text to add"
 end
 ```
@@ -348,13 +348,13 @@ You can also use Regular Expressions in `:after` or `:before` to match file loca
 By default, this method will always inject content into file, regardless whether it is already present or not. To change this pass `:force` set to `false` to perform check before actually inserting text:
 
 ```ruby
-TTY::File.inject_into_file('filename.rb', "text to add", after: "Code below this line\n"
+TTY::File.inject_into_file("filename.rb", "text to add", after: "Code below this line\n"
 ```
 
 Alternatively, use `safe_inject_into_file` to check if the text can be safely inserted.
 
 ```ruby
-TTY::File.safe_inject_into_file('Gemfile', "gem 'tty'")
+TTY::File.safe_inject_into_file("Gemfile", "gem 'tty'")
 ```
 
 The [append_to_file](#212-append_to_file) and [prepend_to_file](#213-prepend_to_file) allow you to add content at the end and the begging of a file.
@@ -364,14 +364,14 @@ The [append_to_file](#212-append_to_file) and [prepend_to_file](#213-prepend_to_
 Replace content of a file matching condition by calling `replace_in_file` or `gsub_file`, which returns `true` when substitutions are performed successfully, `false` otherwise.
 
 ```ruby
-TTY::File.replace_in_file 'filename.rb', /matching condition/, 'replacement'
+TTY::File.replace_in_file "filename.rb", /matching condition/, "replacement"
 ```
 
 The replacement content can be provided in a block
 
 ```ruby
-TTY::File.gsub_file 'filename.rb', /matching condition/ do
-  'replacement'
+TTY::File.gsub_file "filename.rb", /matching condition/ do
+  "replacement"
 end
 ```
 
@@ -380,13 +380,13 @@ end
 Appends text to a file and returns `true` when performed successfully, `false` otherwise. You can provide the text as a second argument:
 
 ```ruby
-TTY::File.append_to_file('Gemfile', "gem 'tty'")
+TTY::File.append_to_file("Gemfile", "gem 'tty'")
 ```
 
 Or inside a block:
 
 ```ruby
-TTY::File.append_to_file('Gemfile') do
+TTY::File.append_to_file("Gemfile") do
   "gem 'tty'"
 end
 ```
@@ -394,13 +394,13 @@ end
 By default, this method will always append content regardless whether it is already present or not. To change this pass `:force` set to `false` to perform check before actually appending:
 
 ```ruby
-TTY::File.append_to_file('Gemfile', "gem 'tty'", force: false)
+TTY::File.append_to_file("Gemfile", "gem 'tty'", force: false)
 ```
 
 Alternatively, use `safe_append_to_file` to check if the text can be safely appended.
 
 ```ruby
-TTY::File.safe_append_to_file('Gemfile', "gem 'tty'")
+TTY::File.safe_append_to_file("Gemfile", "gem 'tty'")
 ```
 
 ### 2.13. prepend_to_file
@@ -408,13 +408,13 @@ TTY::File.safe_append_to_file('Gemfile', "gem 'tty'")
 Prepends text to a file and returns `true` when performed successfully, `false` otherwise. You can provide the text as a second argument:
 
 ```ruby
-TTY::File.prepend_to_file('Gemfile', "gem 'tty'")
+TTY::File.prepend_to_file("Gemfile", "gem 'tty'")
 ```
 
 Or inside a block:
 
 ```ruby
-TTY::File.prepend_to_file('Gemfile') do
+TTY::File.prepend_to_file("Gemfile") do
   "gem 'tty'"
 end
 ```
@@ -422,13 +422,13 @@ end
 By default, this method will always prepend content regardless whether it is already present or not. To change this pass `:force` set to `false` to perform check before actually prepending:
 
 ```ruby
-TTY::File.prepend_to_file('Gemfile', "gem 'tty'", force: false)
+TTY::File.prepend_to_file("Gemfile", "gem 'tty'", force: false)
 ```
 
 Alternatively, use `safe_prepend_to_file` to check if the text can be safely appended.
 
 ```ruby
-TTY::File.safe_prepend_to_file('Gemfile', "gem 'tty'")
+TTY::File.safe_prepend_to_file("Gemfile", "gem 'tty'")
 ```
 
 ### 2.14. remove_file
@@ -436,13 +436,13 @@ TTY::File.safe_prepend_to_file('Gemfile', "gem 'tty'")
 To remove a file do:
 
 ```ruby
-TTY::File.remove_file 'doc/README.md'
+TTY::File.remove_file "doc/README.md"
 ```
 
 You can also pass in `:force` to remove file ignoring any errors:
 
 ```ruby
-TTY::File.remove_file 'doc/README.md', force: true
+TTY::File.remove_file "doc/README.md", force: true
 ```
 
 ### 2.15. tail_file
@@ -450,14 +450,14 @@ TTY::File.remove_file 'doc/README.md', force: true
 To read the last 10 lines from a file do:
 
 ```ruby
-TTY::File.tail_file 'doc/README.md'
-# => ['## Copyright', 'Copyright (c) 2016-2017', ...]
+TTY::File.tail_file "doc/README.md"
+# => ["## Copyright", "Copyright (c) 2016-2017", ...]
 ```
 
 You can also pass a block:
 
 ```ruby
-TTY::File.tail_file('doc/README.md') do |line|
+TTY::File.tail_file("doc/README.md") do |line|
   puts line
 end
 ```
@@ -465,7 +465,7 @@ end
 To change how many lines are read pass a second argument:
 
 ```ruby
-TTY::File.tail_file('doc/README.md', 15)
+TTY::File.tail_file("doc/README.md", 15)
 ```
 
 ## Development
