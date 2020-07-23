@@ -394,15 +394,19 @@ module TTY
       output = []
 
       open_tempfile_if_missing(path_a) do |file_a, temp_a|
-        check_binary_or_large(file_a, threshold)
+        message = check_binary_or_large(file_a, threshold)
+        return message if message
 
         open_tempfile_if_missing(path_b) do |file_b, temp_b|
-          check_binary_or_large(file_b, threshold)
+          message = check_binary_or_large(file_b, threshold)
+          return message if message
+
           file_a_path = temp_a ? "Old contents" : relative_path(file_a.path)
           file_b_path = temp_b ? "New contents" : relative_path(file_b.path)
 
           log_status(:diff, "#{file_a_path} and #{file_b_path}",
                      verbose: verbose, color: color)
+
           return "" if noop
 
           differ = Differ.new(format: format, context_lines: context_lines)
@@ -445,10 +449,9 @@ module TTY
     # @api private
     def check_binary_or_large(file, threshold)
       if binary?(file)
-        raise ArgumentError, "(#{file.path} is binary, diff output suppressed)"
+        "#{file.path} is binary, diff output suppressed"
       elsif ::File.size(file) > threshold
-        raise ArgumentError, "(file size of #{file.path} exceeds #{threshold} " \
-                             "bytes, diff output suppressed)"
+        "file size of #{file.path} exceeds #{threshold} bytes, diff output suppressed"
       end
     end
     private_module_function :check_binary_or_large

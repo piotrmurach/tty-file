@@ -87,18 +87,18 @@ RSpec.describe TTY::File, "#diff" do
       file_a = path_factory.call("diff/file_a")
       file_b = path_factory.call("diff/file_b")
 
-      expect {
-        TTY::File.diff(file_a, file_b, threshold: 10)
-      }.to raise_error(ArgumentError, /file size of (.*) exceeds 10 bytes/)
+      diff = TTY::File.diff(file_a, file_b, threshold: 10)
+
+      expect(diff).to match(/file size of (.*) exceeds 10 bytes/)
     end
 
     it "doesn't diff binary files" do
       file_a = path_factory.call("blackhole.png")
       file_b = path_factory.call("diff/file_b")
 
-      expect {
-        TTY::File.diff(file_a, file_b)
-      }.to raise_error(ArgumentError, /is binary, diff output suppressed/)
+      diff = TTY::File.diff(file_a, file_b)
+
+      expect(diff).to match(/is binary, diff output suppressed/)
     end
   end
 
