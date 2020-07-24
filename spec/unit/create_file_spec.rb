@@ -103,7 +103,7 @@ RSpec.describe TTY::File, "#create_file" do
 
         it "displays collision menu and shows files diff" do
           test_prompt = TTY::Prompt::Test.new
-          test_prompt.input << "d" << "\n" << "n" << "\n"
+          test_prompt.input << "d\n" << "n\r"
           test_prompt.input.rewind
           allow(TTY::Prompt).to receive(:new).and_return(test_prompt)
 
