@@ -38,9 +38,10 @@ module TTY
 
         if %i[unified context old].include?(@format) && @header
           output << "#{differ.delete_char * 3} #{file_a_path}\n"
-          output << "#{differ.add_char * 3} #{file_b_path}\n"
+          output << "#{differ.add_char * 3} #{file_b_path}"
         end
 
+        output << "\n" unless hunks =~ /\A\n+@@/
         output << color_diff_lines(hunks, color: @color, format: @format)
         while !file_a.eof? && !file_b.eof?
           output << differ.(file_a.read(block_size), file_b.read(block_size))
