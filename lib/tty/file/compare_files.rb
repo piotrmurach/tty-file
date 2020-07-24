@@ -22,8 +22,8 @@ module TTY
       #
       # @api public
       def call(file_a, file_b, temp_a, temp_b)
-        file_a_path = temp_a ? "Old contents" : relative_path_from(file_a.path)
-        file_b_path = temp_b ? "New contents" : relative_path_from(file_b.path)
+        file_a_path = temp_a ? "Old contents" : file_a.path
+        file_b_path = temp_b ? "New contents" : file_b.path
 
         differ = Differ.new(format: @format, context_lines: @context_lines)
         block_size = file_a.lstat.blksize
@@ -59,10 +59,6 @@ module TTY
         hunks.gsub(/^(\+[^+].*?)\n/, decorate("\\1", :green) + newline)
             .gsub(/^(\-[^-].*?)\n/, decorate("\\1", :red) + newline)
             .gsub(/^(@.+?)\n/, decorate("\\1", :cyan) + newline)
-      end
-
-      def relative_path_from(path)
-        @base.__send__(:relative_path_from, path)
       end
 
       def decorate(*args)

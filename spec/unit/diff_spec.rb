@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe TTY::File, "#diff" do
-  let(:sep) { ::File::SEPARATOR }
-
   shared_context "diffing files" do
     it "diffs two files" do
       file_a = path_factory.call("diff/file_a")
@@ -11,8 +9,8 @@ RSpec.describe TTY::File, "#diff" do
       diff = TTY::File.diff(file_a, file_b, verbose: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
-        --- tmp#{sep}diff#{sep}file_a
-        +++ tmp#{sep}diff#{sep}file_b
+        --- #{file_a}
+        +++ #{file_b}
         \e[36m@@ -1,4 +1,4 @@\e[0m
          aaa
         \e[31m-bbb\e[0m
@@ -36,7 +34,7 @@ RSpec.describe TTY::File, "#diff" do
       diff = TTY::File.diff(src_a, src_b, verbose: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
-        --- tmp#{sep}diff#{sep}file_a
+        --- #{src_a}
         +++ New contents
         \e[36m@@ -1,4 +1,4 @@\e[0m
          aaa
