@@ -5,10 +5,10 @@ require "erb"
 require "tempfile"
 require "pathname"
 
+require_relative "file/compare_files"
 require_relative "file/create_file"
 require_relative "file/digest_file"
 require_relative "file/download_file"
-require_relative "file/differ"
 require_relative "file/read_backward_file"
 require_relative "file/version"
 
@@ -388,11 +388,9 @@ module TTY
     #   diff(file_a, file_b, format: :old)
     #
     # @api public
-    def diff(path_a, path_b, threshold: 10_000_00, format: :unified,
+    def diff(path_a, path_b, threshold: 10_000_000, format: :unified,
              header: true, context_lines: 3, verbose: true,
              color: :green, noop: false)
-      output = []
-
       open_tempfile_if_missing(path_a) do |file_a, temp_a|
         message = check_binary_or_large(file_a, threshold)
         return message if message
@@ -401,48 +399,27 @@ module TTY
           message = check_binary_or_large(file_b, threshold)
           return message if message
 
-          file_a_path = temp_a ? "Old contents" : relative_path_from(file_a.path)
-          file_b_path = temp_b ? "New contents" : relative_path_from(file_b.path)
+          file_a_path = temp_a ? "Old contents" : file_a.path
+          file_b_path = temp_b ? "New contents" : file_b.path
 
           log_status(:diff, "#{file_a_path} and #{file_b_path}",
                      verbose: verbose, color: color)
 
           return "" if noop
 
-          differ = Differ.new(format: format, context_lines: context_lines)
-          block_size = file_a.lstat.blksize
-          file_a_chunk = file_a.read(block_size)
-          file_b_chunk = file_b.read(block_size)
-          hunks = differ.(file_a_chunk, file_b_chunk)
+          diff_files = CompareFiles.new(self, format: format,
+                                        context_lines: context_lines,
+                                        header: header, verbose: verbose,
+                                        color: color, noop: noop)
 
-          return "" if file_a_chunk.empty? && file_b_chunk.empty?
-          return "No differences found\n" if hunks.empty?
-
-          if %i[unified context old].include?(format) && header
-            output << "#{differ.delete_char * 3} #{file_a_path}\n"
-            output << "#{differ.add_char * 3} #{file_b_path}\n"
-          end
-
-          output << color_diff_lines(hunks, color: color, format: format)
-          while !file_a.eof? && !file_b.eof?
-            output << differ.(file_a.read(block_size), file_b.read(block_size))
-          end
+          return diff_files.call(file_a, file_b, temp_a, temp_b)
         end
       end
-      output.join
     end
     module_function :diff
 
-    # @api private
-    def color_diff_lines(hunks, color: true, format: :unified)
-      return hunks unless color && tty? && format == :unified
-
-      newline = "\n"
-      hunks.gsub(/^(\+[^+].*?)\n/, decorate("\\1", :green) + newline)
-           .gsub(/^(\-[^-].*?)\n/, decorate("\\1", :red) + newline)
-           .gsub(/^(@.+?)\n/, decorate("\\1", :cyan) + newline)
-    end
-    private_module_function :color_diff_lines
+    alias diff_files diff
+    module_function :diff_files
 
     # Check if file is binary or exceeds threshold size
     #
@@ -451,13 +428,11 @@ module TTY
       if binary?(file)
         "#{file.path} is binary, diff output suppressed"
       elsif ::File.size(file) > threshold
-        "file size of #{file.path} exceeds #{threshold} bytes, diff output suppressed"
+        "file size of #{file.path} exceeds #{threshold} bytes, " \
+        " diff output suppressed"
       end
     end
     private_module_function :check_binary_or_large
-
-    alias diff_files diff
-    module_function :diff_files
 
     # Download the content from a given address and
     # save at the given relative destination. If block
