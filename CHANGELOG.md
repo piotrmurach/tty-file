@@ -1,9 +1,18 @@
 # Change log
 
-## [v0.10.0] - 2020-07-xx
+## [v0.10.0] - 2020-07-24
+
+### Added
+* Add diff option to file conflict menu to show file contents differences
+* Add :header option to #diff to show two-line header for compared files
+* Add git-like hunk coloring when displaying diff lines in unified format
 
 ### Changed
+* Change to only use keyword arguments in all methods
+* Change #tail_file to accept :lines as keyword parameter
 * Change to update tty-prompt & pastel dependencies
+* Change prompt to be quiet and provide no output after selection
+* Change #diff_files to stop raising on binary or large files
 
 ## [v0.9.0] - 2020-04-28
 
