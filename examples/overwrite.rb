@@ -13,6 +13,6 @@ fffff
 yyyyy
 EOS
 
-file_a = ::File.join(__dir__, "file-a")
+file_a = ::File.join(File.dirname(__FILE__), "file-a")
 
 TTY::File.create_file(file_a, content)
