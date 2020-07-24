@@ -52,7 +52,7 @@ module TTY
 
       # @api private
       def color_diff_lines(hunks, color: true, format: :unified)
-        return hunks unless color && tty? && format == :unified
+        return hunks unless color && format == :unified
 
         newline = "\n"
         hunks.gsub(/^(\+[^+].*?)\n/, decorate("\\1", :green) + newline)
@@ -62,10 +62,6 @@ module TTY
 
       def relative_path_from(path)
         @base.__send__(:relative_path_from, path)
-      end
-
-      def tty?
-        @base.__send__(:tty?)
       end
 
       def decorate(*args)

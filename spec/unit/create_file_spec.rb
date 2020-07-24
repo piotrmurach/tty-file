@@ -113,7 +113,7 @@ RSpec.describe TTY::File, "#create_file" do
           expect {
             TTY::File.create_file(file, "# Header", verbose: true)
           }.to output(/\e\[31mcollision\e\[0m  #{file}/).to_stdout_from_any_process
-            .and output(/@@ -1 \+1 @@\n-# Title\n\+# Header/).to_stdout
+            .and output(/\e\[36m@@ -1 \+1 @@\e\[0m\n\e\[31m-# Title\e\[0m\n\e\[32m\+# Header\e\[0m/).to_stdout
 
           expect(test_prompt.output.string).to match(/Overwrite #{file}\?/)
 
