@@ -19,7 +19,7 @@ module TTY
         @verbose = verbose
         @color   = color
         @relative_path = convert_encoded_path(relative_path)
-        @prompt  = TTY::Prompt.new
+        @prompt  = TTY::Prompt.new(quiet: true)
       end
 
       def exist?
