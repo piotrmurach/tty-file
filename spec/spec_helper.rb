@@ -17,6 +17,7 @@ end
 
 require "tty/file"
 require "find"
+require "tmpdir"
 require "webmock/rspec"
 
 module Helpers
@@ -38,14 +39,6 @@ module Helpers
     Pathname(fixtures_path(*args))
   end
 
-  def tmp_path(*args)
-    ::File.join(dir_path("tmp"), *args)
-  end
-
-  def tmp_pathname(*args)
-    Pathname.new(tmp_path(*args))
-  end
-
   def exists_and_identical?(source, dest)
     dest_path = tmp_path(dest)
     expect(::File.exist?(dest_path)).to be(true)
@@ -60,16 +53,26 @@ module Helpers
   end
 end
 
+RSpec.shared_context "identical files" do
+  def exists_and_identical?(source, dest)
+    expect(::File.exist?(dest)).to be(true)
+    expect(::FileUtils).to be_identical(source, dest)
+  end
+end
+
+RSpec.shared_context "sandbox" do
+  around(:each) do |example|
+    ::Dir.mktmpdir do |dir|
+      ::FileUtils.cp_r(fixtures_path("/."), dir)
+      ::Dir.chdir(dir, &example)
+    end
+  end
+end
+
 RSpec.configure do |config|
   config.include(Helpers)
-
-  config.before(:each) do
-    FileUtils.cp_r(fixtures_path("/."), tmp_path)
-  end
-
-  config.after(:each) do
-    FileUtils.rm_rf(tmp_path)
-  end
+  config.include_context "identical files"
+  config.include_context "sandbox", type: :sandbox
 
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true

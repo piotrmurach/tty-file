@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File, "#download_file" do
+RSpec.describe TTY::File, "#download_file", type: :sandbox do
   shared_context "downloading a file" do
     it "downloads a file from remote uri" do
       body = "##Header1\nCopy text.\n"
@@ -12,7 +12,7 @@ RSpec.describe TTY::File, "#download_file" do
       expect(File.read(path)).to eq(body)
     end
 
-    it "yields content from remoe uri" do
+    it "yields content from remote uri" do
       body = "##Header1\nCopy text.\n"
       stub_request(:get, "https://example.com/README.md").to_return(body: body)
       path = path_factory.call("doc/README.md")
@@ -55,13 +55,13 @@ RSpec.describe TTY::File, "#download_file" do
   end
 
   context "when passed a String instance for the file argument" do
-    let(:path_factory) { method(:tmp_path) }
+    let(:path_factory) { ->(file) { file } }
 
     include_context "downloading a file"
   end
 
   context "when passed a Pathname instance for the file argument" do
-    let(:path_factory) { method(:tmp_pathname) }
+    let(:path_factory) { ->(file) { Pathname(file) } }
 
     include_context "downloading a file"
   end

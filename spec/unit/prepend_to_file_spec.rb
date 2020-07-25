@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File, "#prepend_to_file" do
+RSpec.describe TTY::File, "#prepend_to_file", type: :sandbox do
   shared_context "prepending to a file" do
     it "appends to file" do
       file = path_factory.call("Gemfile")
@@ -111,13 +111,13 @@ RSpec.describe TTY::File, "#prepend_to_file" do
   end
 
   context "when passed a String instance for the file argument" do
-    let(:path_factory) { method(:tmp_path) }
+    let(:path_factory) { ->(file) { file } }
 
     include_context "prepending to a file"
   end
 
   context "when passed a Pathname instance for the file argument" do
-    let(:path_factory) { method(:tmp_pathname) }
+    let(:path_factory) { ->(file) { Pathname(file) } }
 
     include_context "prepending to a file"
   end

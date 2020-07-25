@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File, "#chmod" do
+RSpec.describe TTY::File, "#chmod", type: :sandbox do
   shared_context "changing file permissions" do
     context "when octal permisssions" do
       it "adds permissions to file - user executable",
@@ -79,13 +79,13 @@ RSpec.describe TTY::File, "#chmod" do
   end
 
   context "when passed a String instance for the file argument" do
-    let(:path_factory) { method(:tmp_path) }
+    let(:path_factory) { ->(file) { file } }
 
     include_context "changing file permissions"
   end
 
   context "when passed a Pathname instance for the file argument" do
-    let(:path_factory) { method(:tmp_pathname) }
+    let(:path_factory) { ->(file) { Pathname(file) } }
 
     include_context "changing file permissions"
   end

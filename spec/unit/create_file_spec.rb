@@ -2,7 +2,7 @@
 
 require "tty/prompt/test"
 
-RSpec.describe TTY::File, "#create_file" do
+RSpec.describe TTY::File, "#create_file", type: :sandbox do
   shared_context "creating files" do
     context "when new file" do
       it "creates file" do
@@ -10,7 +10,7 @@ RSpec.describe TTY::File, "#create_file" do
           TTY::File.create_file(path_factory.call("doc/README.md"))
         }.to output(/create/).to_stdout_from_any_process
 
-        expect(File.exist?(tmp_path("doc/README.md"))).to eq(true)
+        expect(File.exist?(("doc/README.md"))).to eq(true)
       end
 
       it "creates file with content" do
@@ -140,13 +140,13 @@ RSpec.describe TTY::File, "#create_file" do
   end
 
   context "when passed a String instance as the file argument" do
-    let(:path_factory) { method(:tmp_path) }
+    let(:path_factory) { ->(file) { file } }
 
     include_context "creating files"
   end
 
   context "when passed a Pathname instance as the file argument" do
-    let(:path_factory) { method(:tmp_pathname) }
+    let(:path_factory) { ->(file) { Pathname(file) } }
 
     include_context "creating files"
   end

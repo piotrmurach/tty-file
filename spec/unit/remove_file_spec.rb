@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TTY::File, "#remove_file" do
+RSpec.describe TTY::File, "#remove_file", type: :sandbox do
   shared_context "removing a file" do
     it "removes a given file", unless: RSpec::Support::OS.windows? do
       src_path = path_factory.call("Gemfile")
@@ -54,13 +54,13 @@ RSpec.describe TTY::File, "#remove_file" do
   end
 
   context "when passed a String instance for the file argument" do
-    let(:path_factory) { method(:tmp_path) }
+    let(:path_factory) { ->(file) { file } }
 
     include_context "removing a file"
   end
 
   context "when passed a Pathname instance for the file argument" do
-    let(:path_factory) { method(:tmp_pathname) }
+    let(:path_factory) { ->(file) { Pathname(file) } }
 
     include_context "removing a file"
   end

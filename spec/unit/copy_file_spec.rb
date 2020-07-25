@@ -2,14 +2,8 @@
 
 require "ostruct"
 
-RSpec.describe TTY::File, "#copy_file" do
-  def exists_and_identical?(source, dest)
-    dest_path = File.join(tmp_path, dest)
-    expect(::File.exist?(dest_path)).to be(true)
-
-    source_path = File.join(fixtures_path, source)
-    expect(::FileUtils).to be_identical(source_path, dest_path)
-  end
+RSpec.describe TTY::File, "#copy_file", type: :sandbox do
+  include_context "identical files"
 
   shared_context "copying files" do
     it "copies file without destination" do
@@ -105,8 +99,7 @@ RSpec.describe TTY::File, "#copy_file" do
 
       TTY::File.copy_file(src, dest, context: variables, verbose: false)
 
-      expected = tmp_path("app/expected.rb")
-      expect(File.read(expected)).to eq("bar\n")
+      expect(File.read("app/expected.rb")).to eq("bar\n")
     end
 
     it "converts filename based on class context" do
@@ -159,13 +152,13 @@ RSpec.describe TTY::File, "#copy_file" do
   end
 
   context "when passed String instances for the file arguments" do
-    let(:path_factory) { method(:tmp_path) }
+    let(:path_factory) { ->(file) { file } }
 
     include_context "copying files"
   end
 
   context "when passed Pathname instances for the file arguments" do
-    let(:path_factory) { method(:tmp_pathname) }
+    let(:path_factory) { ->(file) { Pathname(file) } }
 
     include_context "copying files"
   end
