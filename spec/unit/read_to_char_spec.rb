@@ -14,7 +14,7 @@ RSpec.describe TTY::File, "#read_to_char" do
   end
 
   it "reads file up to valid char", unless: RSpec::Support::OS.windows? do
-    file = tmp_pathname("binary", "unicode.txt")
+    file = fixtures_pathname("binary", "unicode.txt")
     bytes = 4096
 
     content = TTY::File.read_to_char(file, bytes)

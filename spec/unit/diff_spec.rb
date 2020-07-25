@@ -101,13 +101,13 @@ RSpec.describe TTY::File, "#diff" do
   end
 
   context "when passed String instances for the file arguments" do
-    let(:path_factory) { method(:tmp_path) }
+    let(:path_factory) { method(:fixtures_path) }
 
     include_context "diffing files"
   end
 
   context "when passed Pathname instances for the file arguments" do
-    let(:path_factory) { method(:tmp_pathname) }
+    let(:path_factory) { method(:fixtures_pathname) }
 
     include_context "diffing files"
   end

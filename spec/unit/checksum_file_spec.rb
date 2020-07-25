@@ -2,7 +2,7 @@
 
 RSpec.describe TTY::File, "#checksum_file" do
   it "generates checksum for a file" do
-    file = tmp_path("checksum/README.md")
+    file = fixtures_path("checksum/README.md")
 
     checksum = TTY::File.checksum_file(file)
     expected = "76ba1beb6c611fa32624ed253444138cdf23eb938a3812137f8a399c5b375bfe"
@@ -11,7 +11,7 @@ RSpec.describe TTY::File, "#checksum_file" do
   end
 
   it "generates checksum for a Pathname instance" do
-    file = tmp_pathname("checksum/README.md")
+    file = fixtures_pathname("checksum/README.md")
 
     checksum = TTY::File.checksum_file(file)
     expected = "76ba1beb6c611fa32624ed253444138cdf23eb938a3812137f8a399c5b375bfe"

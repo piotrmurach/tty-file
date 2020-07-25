@@ -64,13 +64,13 @@ RSpec.describe TTY::File, "#tail_file" do
   end
 
   context "when passed a String instance for the file argument" do
-    let(:path_factory) { method(:tmp_path) }
+    let(:path_factory) { method(:fixtures_pathname) }
 
     include_context "tailing a file"
   end
 
   context "when passed a Pathname instance for the file argument" do
-    let(:path_factory) { method(:tmp_pathname) }
+    let(:path_factory) { method(:fixtures_pathname) }
 
     include_context "tailing a file"
   end

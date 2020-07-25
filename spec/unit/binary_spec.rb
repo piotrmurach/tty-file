@@ -25,37 +25,37 @@ RSpec.describe TTY::File, "#binary?" do
   end
 
   it "identifies image file as binary" do
-    file = tmp_path("blackhole.png")
+    file = fixtures_path("blackhole.png")
 
     expect(TTY::File.binary?(file)).to eq(true)
   end
 
   it "identifies an image file given as a pathname as binary" do
-    file = tmp_pathname("blackhole.png")
+    file = fixtures_pathname("blackhole.png")
 
     expect(TTY::File.binary?(file)).to eq(true)
   end
 
   it "identifies image file provided by a Pathname instance as binary" do
-    file = tmp_pathname("blackhole.png")
+    file = fixtures_path("blackhole.png")
 
     expect(TTY::File.binary?(file)).to eq(true)
   end
 
   it "indetifies text file as non-binary" do
-    file = tmp_path("Gemfile")
+    file = fixtures_path("Gemfile")
 
     expect(TTY::File.binary?(file)).to eq(false)
   end
 
   it "identifies text file provided by a Pathname instance as non-binary" do
-    file = tmp_pathname("Gemfile")
+    file = fixtures_pathname("Gemfile")
 
     expect(TTY::File.binary?(file)).to eq(false)
   end
 
   it "indentifies a file as non-binary when greater than 4096 bytes with unicode chars", unless: RSpec::Support::OS.windows? do
-    file = tmp_pathname("binary", "unicode.txt")
+    file = fixtures_path("binary", "unicode.txt")
 
     expect(TTY::File.binary?(file)).to eq(false)
   end

@@ -34,6 +34,10 @@ module Helpers
     ::File.join(dir_path("spec", "fixtures"), *args)
   end
 
+  def fixtures_pathname(*args)
+    Pathname(fixtures_path(*args))
+  end
+
   def tmp_path(*args)
     ::File.join(dir_path("tmp"), *args)
   end
