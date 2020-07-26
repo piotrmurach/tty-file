@@ -750,18 +750,6 @@ module TTY
     end
     private_module_function :check_path
 
-    # Change absolute path to relative
-    #
-    # @param [String] path
-    #
-    # @api private
-    def relative_path_from(path)
-      path = Pathname(path)
-      return path if path.relative?
-      path.relative_path_from(Pathname.pwd)
-    end
-    private_module_function :relative_path_from
-
     @output = $stdout
     @pastel = Pastel.new(enabled: true)
 
