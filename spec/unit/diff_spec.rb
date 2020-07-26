@@ -34,8 +34,8 @@ RSpec.describe TTY::File, "#diff" do
       diff = TTY::File.diff(src_a, src_b, verbose: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
-        --- a#{src_a}
-        +++ b#{src_a}
+        --- #{::File.join("a", src_a)}
+        +++ #{::File.join("b", src_a)}
         \e[36m@@ -1,4 +1,4 @@\e[0m
          aaa
         \e[31m-bbb\e[0m
