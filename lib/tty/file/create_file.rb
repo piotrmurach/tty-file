@@ -91,7 +91,7 @@ module TTY
       def file_collision(relative_path, content)
         choices = [
           { key: "y", name: "yes, overwrite", value: :yes },
-          { key: "d", name: "diff, compare old and new file", value: :diff },
+          { key: "d", name: "diff, compare files", value: :diff },
           { key: "n", name: "no, do not overwrite", value: :no },
           { key: "q", name: "quit, abort", value: :quit }
         ]
