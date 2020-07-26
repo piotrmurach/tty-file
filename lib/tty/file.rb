@@ -424,8 +424,8 @@ module TTY
           message = check_binary_or_large(file_b, threshold)
           return message if message
 
-          file_a_path = temp_a ? "Old contents" : file_a.path
-          file_b_path = temp_b ? "New contents" : file_b.path
+          file_a_path, file_b_path = *diff_paths(file_a, file_b, temp_a, temp_b)
+                                      .map { |path| ::File.join(*path) }
 
           log_status(:diff, "#{file_a_path} and #{file_b_path}",
                      verbose: verbose, color: color)
@@ -433,11 +433,11 @@ module TTY
           return "" if noop
 
           diff_files = CompareFiles.new(self, format: format,
-                                        context_lines: context_lines,
-                                        header: header, verbose: verbose,
-                                        color: color, noop: noop)
+                                              context_lines: context_lines,
+                                              header: header, verbose: verbose,
+                                              color: color, noop: noop)
 
-          return diff_files.call(file_a, file_b, temp_a, temp_b)
+          return diff_files.call(file_a, file_b, file_a_path, file_b_path)
         end
       end
     end
@@ -445,6 +445,20 @@ module TTY
 
     alias diff_files diff
     module_function :diff_files
+
+    # @api private
+    def diff_paths(file_a, file_b, temp_a, temp_b)
+      if temp_a && !temp_b
+        [["a", file_b.path], ["b", file_b.path]]
+      elsif !temp_a && temp_b
+        [["a", file_a.path], ["b", file_a.path]]
+      elsif temp_a && temp_b
+        [["a"], ["b"]]
+      else
+        [file_a.path, file_b.path]
+      end
+    end
+    private_module_function :diff_paths
 
     # Check if file is binary or exceeds threshold size
     #

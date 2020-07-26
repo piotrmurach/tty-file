@@ -21,10 +21,7 @@ module TTY
       # Compare files
       #
       # @api public
-      def call(file_a, file_b, temp_a, temp_b)
-        file_a_path = temp_a ? "Old contents" : file_a.path
-        file_b_path = temp_b ? "New contents" : file_b.path
-
+      def call(file_a, file_b, file_a_path, file_b_path)
         differ = Differ.new(format: @format, context_lines: @context_lines)
         block_size = file_a.lstat.blksize
         file_a_chunk = file_a.read(block_size)

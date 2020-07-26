@@ -34,8 +34,8 @@ RSpec.describe TTY::File, "#diff" do
       diff = TTY::File.diff(src_a, src_b, verbose: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
-        --- #{src_a}
-        +++ New contents
+        --- a#{src_a}
+        +++ b#{src_a}
         \e[36m@@ -1,4 +1,4 @@\e[0m
          aaa
         \e[31m-bbb\e[0m
@@ -52,8 +52,8 @@ RSpec.describe TTY::File, "#diff" do
       diff = TTY::File.diff(file_a, file_b, verbose: false, color: false)
 
       expect(diff).to eq(strip_heredoc(<<-EOS
-        --- Old contents
-        +++ New contents
+        --- a
+        +++ b
         @@ -1,4 +1,4 @@
          aaa
         -bbb
