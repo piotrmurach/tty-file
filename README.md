@@ -170,13 +170,37 @@ TTY::File.copy_file "docs/README.md", "app", preserve: true
 
 ### 2.5. create_file
 
-To create a file at a given destination with the given content use `create_file`:
+To create a file at a given destination with some content use `create_file`:
 
 ```ruby
 TTY::File.create_file "docs/README.md", "## Title header"
 ```
 
-On collision with already existing file, a menu is displayed:
+On collision with already existing file, a menu gets displayed:
+
+```
+   collision  examples/file-a
+Overwrite examples/file-a? (enter "h" for help) [y,d,n,q,h]
+```
+
+The `d` option allows to compare the changes:
+
+```ruby
+--- examples/file-a
++++ New contents
+@@ -1,8 +1,9 @@
+ aaaaa
+ bbbbb
+-ccccc
++xxxxx
++
+ ddddd
+ eeeee
+ fffff
+-ggggg
++yyyyy
+Overwrite examples/file-a? (enter "h" for help) [y,d,n,q,h]
+````
 
 You can force to always overwrite file with `:force` option or always skip by providing `:skip`.
 
