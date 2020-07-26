@@ -39,14 +39,6 @@ module Helpers
     Pathname(fixtures_path(*args))
   end
 
-  def exists_and_identical?(source, dest)
-    dest_path = tmp_path(dest)
-    expect(::File.exist?(dest_path)).to be(true)
-
-    source_path = fixtures_path(source)
-    expect(::FileUtils).to be_identical(source_path, dest_path)
-  end
-
   def strip_heredoc(content)
     indent = content.scan(/^[ \t]*(?=\S)/).min.size || 0
     content.gsub(/^[ \t]{#{indent}}/, "")
@@ -71,7 +63,7 @@ end
 
 RSpec.configure do |config|
   config.include(Helpers)
-  config.include_context "identical files"
+  config.include_context "identical files", include_shared: true
   config.include_context "sandbox", type: :sandbox
 
   config.expect_with :rspec do |expectations|

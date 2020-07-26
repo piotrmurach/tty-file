@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe TTY::File, "#download_file", type: :sandbox do
+  include_context "identical files"
+
   shared_context "downloading a file" do
     it "downloads a file from remote uri" do
       body = "##Header1\nCopy text.\n"
