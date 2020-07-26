@@ -98,9 +98,8 @@ module TTY
     # @param [File, IO, String, Pathname] source
     #   the source to generate checksum for
     # @param [String] mode
-    # @param [Hash[Symbol]] options
-    # @option options [String] :noop
-    #   No operation
+    # @param [Boolean] noop
+    #   when true skip this action
     #
     # @example
     #   checksum_file("/path/to/file")
@@ -122,11 +121,15 @@ module TTY
     # Change file permissions
     #
     # @param [String, Pathname] relative_path
+    #   the string or path to a file
     # @param [Integer,String] permisssions
-    # @param [Hash[Symbol]] options
-    # @option options [Symbol] :noop
-    # @option options [Symbol] :verbose
-    # @option options [Symbol] :force
+    #   the string or octal number for permissoins
+    # @param [Boolean] noop
+    #   when true skips this action
+    # @param [Boolean] verbose
+    #   when true displays logging information
+    # @param [Symbol] color
+    #   the name for the color to format display message, :green by default
     #
     # @example
     #   chmod("Gemfile", 0755)
@@ -148,6 +151,18 @@ module TTY
     #
     # @param [String, Pathname, Hash] destination
     #   the path or data structure describing directory tree
+    # @param [Object] context
+    #   the context for template evaluation
+    # @param [Boolean] quiet
+    #   when true leaves prompt output, otherwise clears
+    # @param [Boolean] force
+    #   when true overwrites existing files, false by default
+    # @param [Boolean] noop
+    #   when true skips this action
+    # @param [Boolean] verbose
+    #   when true displays logging information
+    # @param [Symbol] color
+    #   the name for the color to format display message, :green by default
     #
     # @example
     #   create_directory("/path/to/dir")
@@ -207,20 +222,20 @@ module TTY
     # @param [String, Pathname] relative_path
     # @param [String|nil] content
     #   the content to add to file
-    # @param [Object] :context
+    # @param [Object] context
     #   the binding to use for the template
-    # @param [Symbol] :color
+    # @param [Symbol] color
     #   the color name to use for logging
-    # @param [Boolean] :force
+    # @param [Boolean] force
     #   forces ovewrite if conflict present
-    # @param [Boolean] :verbose
-    #   If true log the action status to stdout
-    # @param [Boolean] :noop
-    #   If true do not execute the action.
-    # @param [Boolean] :skip
-    #   If true skip the action.
-    # @param [Boolean] :quiet
-    #   If true leaves prompt output, otherwise clears.
+    # @param [Boolean] verbose
+    #   when true log the action status to stdout
+    # @param [Boolean] noop
+    #   when true do not execute the action
+    # @param [Boolean] skip
+    #   when true skip the action
+    # @param [Boolean] quiet
+    #   when true leaves prompt output, otherwise clears
     #
     # @example
     #   create_file("doc/README.md", "# Title header")
@@ -258,15 +273,17 @@ module TTY
     #
     # @param [String, Pathname] source_path
     #   the file path to copy file from
-    # @param [Symbol] :context
+    # @param [Object] context
     #   the binding to use for the template
-    # @param [Symbol] :preserve
-    #   If true, the owner, group, permissions and modified time
-    #   are preserved on the copied file, defaults to false.
-    # @param [Symbol] :noop
-    #   If true do not execute the action.
-    # @param [Symbol] :verbose
-    #   If true log the action status to stdout
+    # @param [Boolean] preserve
+    #   when true, the owner, group, permissions and modified time
+    #   are preserved on the copied file, defaults to false
+    # @param [Boolean] noop
+    #   when true does not execute the action
+    # @param [Boolean] verbose
+    #   when true log the action status to stdout
+    # @param [Symbol] color
+    #   the color name to use for logging
     #
     # @api public
     def copy_file(source_path, *args, context: nil, force: false, skip: false,
@@ -335,19 +352,21 @@ module TTY
     #    command.rb
     #    README
     #
-    # @param [String, Pathname] source_path
-    #    the source directory to copy files from
-    # @param [Symbol] :preserve
-    #   If true, the owner, group, permissions and modified time
-    #   are preserved on the copied file, defaults to false.
-    # @param [Symbol] :recursive
-    #   If false, copies only top level files, defaults to true.
-    # @param [Symbol] :exclude
-    #   A regex that specifies files to ignore when copying.
-    #
     # @example
     #   copy_directory("app", "new_app", recursive: false)
+    #
+    # @example
     #   copy_directory("app", "new_app", exclude: /docs/)
+    #
+    # @param [String, Pathname] source_path
+    #    the source directory to copy files from
+    # @param [Boolean] preserve
+    #   when true, the owner, group, permissions and modified time
+    #   are preserved on the copied file, defaults to false.
+    # @param [Boolean] recursive
+    #   when false, copies only top level files, defaults to true
+    # @param [Regexp] exclude
+    #   a regex that specifies files to ignore when copying
     #
     # @api public
     def copy_directory(source_path, *args, context: nil, force: false, skip: false,
@@ -383,11 +402,11 @@ module TTY
     #   the path to the original file
     # @param [String, Pathname] path_b
     #   the path to a new file
-    # @param [Symbol] :format
+    # @param [Symbol] format
     #   the diffining output format
-    # @param [Symbol] :context_lines
+    # @param [Intger] context_lines
     #   the number of extra lines for the context
-    # @param [Symbol] :threshold
+    # @param [Integer] threshold
     #   maximum file size in bytes
     #
     # @example
@@ -449,8 +468,8 @@ module TTY
     #   the URI address
     # @param [String, Pathname] dest
     #   the relative path to save
-    # @param [Symbol] :limit
-    #   the limit of redirects
+    # @param [Integer] limit
+    #   the number of maximium redirects
     #
     # @example
     #   download_file("https://gist.github.com/4701967",
@@ -552,16 +571,18 @@ module TTY
     # Inject content into file at a given location
     #
     # @param [String, Pathname] relative_path
-    #
-    # @param [Hash] options
-    # @option options [Symbol] :before
+    # @param [String] before
     #   the matching line to insert content before
-    # @option options [Symbol] :after
+    # @param [String] after
     #   the matching line to insert content after
-    # @option options [Symbol] :force
+    # @param [Boolean] force
     #   insert content more than once
-    # @option options [Symbol] :verbose
-    #   log status
+    # @param [Boolean] verbose
+    #   when true log status
+    # @param [Symbol] color
+    #  the color name used in displaying this action
+    # @param [Boolean] noop
+    #  when true skip perfomring this action
     #
     # @example
     #   inject_into_file("Gemfile", "gem 'tty'", after: "gem 'rack'\n")
@@ -610,11 +631,14 @@ module TTY
     # when no substitutions were performed, true otherwise.
     #
     # @param [String, Pathname] relative_path
-    # @options [Hash[String]] options
-    # @option options [Symbol] :force
+    # @param [Boolean] force
     #   replace content even if present
-    # @option options [Symbol] :verbose
-    #   log status
+    # @param [Boolean] verbose
+    #   when true log status to stdout
+    # @param [Boolean] noop
+    #   when true skip executing this action
+    # @param [Symbol] color
+    #   the name of the color used for displaying action
     #
     # @example
     #   replace_in_file("Gemfile", /gem 'rails'/, "gem 'hanami'")
@@ -657,15 +681,14 @@ module TTY
     # Remove a file or a directory at specified relative path.
     #
     # @param [String, Pathname] relative_path
-    # @param [Hash[:Symbol]] options
-    # @option options [Symbol] :noop
-    #   pretend removing file
-    # @option options [Symbol] :force
-    #   remove file ignoring errors
-    # @option options [Symbol] :verbose
-    #   log status
-    # @option options [Symbol] :secure
-    #   for secure removing
+    # @param [Boolean] noop
+    #   when true pretend to remove file
+    # @param [Boolean] force
+    #   when true remove file ignoring errors
+    # @param [Boolean] verbose
+    #   when true log status
+    # @param [Boolean] secure
+    #   when true check for secure removing
     #
     # @example
     #   remove_file "doc/README.md"
@@ -686,9 +709,10 @@ module TTY
     #
     # @param [String, Pathname] relative_path
     #   the relative path to a file
-    #
-    # @param [Integer] num_lines
+    # @param [Integer] lines
     #   the number of lines to return from file
+    # @param [Integer] chunk_size
+    #   the size of the chunk to read
     #
     # @example
     #   tail_file "filename"
