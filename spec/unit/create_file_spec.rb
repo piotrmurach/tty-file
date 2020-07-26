@@ -101,7 +101,9 @@ RSpec.describe TTY::File, "#create_file", type: :sandbox do
           expect(File.read(file)).to eq("# Title")
         end
 
-        it "displays collision menu and shows files diff" do
+        it "displays collision menu and shows files diff",
+          unless: RSpec::Support::OS.windows? do
+
           test_prompt = TTY::Prompt::Test.new
           test_prompt.input << "d\n" << "n\r"
           test_prompt.input.rewind
