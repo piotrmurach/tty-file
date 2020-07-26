@@ -9,7 +9,8 @@ module TTY
       attr_reader :base, :relative_path, :content, :prompt, :context
 
       def initialize(base, relative_path, content, context: nil, force: false,
-                     skip: false, verbose: true, noop: false, color: :green)
+                     skip: false, verbose: true, noop: false, color: :green,
+                     quiet: true)
         @base    = base
         @content = content
         @context = context || @base
@@ -19,7 +20,7 @@ module TTY
         @verbose = verbose
         @color   = color
         @relative_path = convert_encoded_path(relative_path)
-        @prompt  = TTY::Prompt.new(quiet: true)
+        @prompt  = TTY::Prompt.new(quiet: quiet)
       end
 
       def exist?

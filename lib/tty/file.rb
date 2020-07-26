@@ -170,7 +170,8 @@ module TTY
     #
     # @api public
     def create_directory(destination, *args, context: nil, verbose: true,
-                         color: :green, noop: false, force: false, skip: false)
+                         color: :green, noop: false, force: false, skip: false,
+                         quiet: true)
       parent = args.size.nonzero? ? args.pop : nil
       if destination.is_a?(String) || destination.is_a?(Pathname)
         destination = { destination.to_s => [] }
@@ -187,11 +188,11 @@ module TTY
           if filename.respond_to?(:each_pair)
             create_directory(filename, path, context: context,
                              verbose: verbose, color: color, noop: noop,
-                             force: force, skip: skip)
+                             force: force, skip: skip, quiet: quiet)
           else
             create_file(::File.join(path, filename), contents, context: context,
                         verbose: verbose, color: color, noop: noop, force: force,
-                        skip: skip)
+                        skip: skip, quiet: quiet)
           end
         end
       end
@@ -206,16 +207,20 @@ module TTY
     # @param [String, Pathname] relative_path
     # @param [String|nil] content
     #   the content to add to file
-    # @param [Symbol] :context
+    # @param [Object] :context
     #   the binding to use for the template
-    # @param [Symbol] :force
+    # @param [Symbol] :color
+    #   the color name to use for logging
+    # @param [Boolean] :force
     #   forces ovewrite if conflict present
-    # @param [Symbol] :verbose
+    # @param [Boolean] :verbose
     #   If true log the action status to stdout
-    # @param [Symbol] :noop
+    # @param [Boolean] :noop
     #   If true do not execute the action.
-    # @param [Symbol] :skip
+    # @param [Boolean] :skip
     #   If true skip the action.
+    # @param [Boolean] :quiet
+    #   If true leaves prompt output, otherwise clears.
     #
     # @example
     #   create_file("doc/README.md", "# Title header")
@@ -227,12 +232,13 @@ module TTY
     #
     # @api public
     def create_file(relative_path, *args, context: nil, force: false, skip: false,
-                    verbose: true, color: :green, noop: false, &block)
+                    verbose: true, color: :green, noop: false, quiet: true, &block)
       relative_path = relative_path.to_s
       content = block_given? ? block[] : args.join
 
       CreateFile.new(self, relative_path, content, context: context, force: force,
-                     skip: skip, verbose: verbose, color: color, noop: noop).call
+                     skip: skip, verbose: verbose, color: color, noop: noop,
+                     quiet: quiet).call
     end
     module_function :create_file
 
