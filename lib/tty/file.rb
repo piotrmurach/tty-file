@@ -404,7 +404,7 @@ module TTY
     #   the path to a new file
     # @param [Symbol] format
     #   the diffining output format
-    # @param [Intger] context_lines
+    # @param [Intger] lines
     #   the number of extra lines for the context
     # @param [Integer] threshold
     #   maximum file size in bytes
@@ -413,9 +413,8 @@ module TTY
     #   diff(file_a, file_b, format: :old)
     #
     # @api public
-    def diff(path_a, path_b, threshold: 10_000_000, format: :unified,
-             header: true, context_lines: 3, verbose: true,
-             color: :green, noop: false)
+    def diff(path_a, path_b, threshold: 10_000_000, format: :unified, lines: 3,
+             header: true, verbose: true, color: :green, noop: false)
       open_tempfile_if_missing(path_a) do |file_a, temp_a|
         message = check_binary_or_large(file_a, threshold)
         return message if message
@@ -432,8 +431,7 @@ module TTY
 
           return "" if noop
 
-          diff_files = CompareFiles.new(format: format,
-                                        context_lines: context_lines,
+          diff_files = CompareFiles.new(format: format, context_lines: lines,
                                         header: header, verbose: verbose,
                                         color: color, noop: noop,
                                         diff_colors: diff_colors)
