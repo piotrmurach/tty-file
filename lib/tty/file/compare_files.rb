@@ -39,11 +39,11 @@ module TTY
         end
 
         output << "\n" unless hunks =~ /\A\n+@@/
-        output << color_diff_lines(hunks, color: @color, format: @format)
+        output << hunks
         while !file_a.eof? && !file_b.eof?
           output << differ.(file_a.read(block_size), file_b.read(block_size))
         end
-        output.join
+        color_diff_lines(output.join, color: @color, format: @format)
       end
 
       private
@@ -53,9 +53,17 @@ module TTY
         return hunks unless color && format == :unified
 
         newline = "\n"
-        hunks.gsub(/^(\+[^+].*?)\n/, decorate("\\1", :green) + newline)
-            .gsub(/^(\-[^-].*?)\n/, decorate("\\1", :red) + newline)
-            .gsub(/^(@.+?)\n/, decorate("\\1", :cyan) + newline)
+        hunks.lines.map do |line|
+          if matched = line.to_s.match(/^(\+[^+]*?)\n/)
+            decorate(matched[1], :green) + newline
+          elsif matched = line.to_s.match(/^(\-[^-].*?)\n/)
+            decorate(matched[1], :red) + newline
+          elsif matched = line.to_s.match(/^(@@.+?@@)\n/)
+            decorate(matched[1], :cyan) + newline
+          else
+            line
+          end
+        end.join
       end
 
       def decorate(*args)
