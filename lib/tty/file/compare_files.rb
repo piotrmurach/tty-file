@@ -7,10 +7,8 @@ module TTY
     class CompareFiles
       extend Forwardable
 
-      def initialize(base, format: :unified, header: true, context_lines: 5,
-                     verbose: true, color: :green, noop: false,
-                     diff_colors: nil)
-        @base = base
+      def initialize(format: :unified, header: true, context_lines: 5,
+                     verbose: true, color: :green, noop: false, diff_colors: nil)
         @format = format
         @header = header
         @context_lines = context_lines

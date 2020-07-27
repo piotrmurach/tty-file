@@ -432,11 +432,11 @@ module TTY
 
           return "" if noop
 
-          diff_files = CompareFiles.new(self, format: format,
-                                              context_lines: context_lines,
-                                              header: header, verbose: verbose,
-                                              color: color, noop: noop,
-                                              diff_colors: diff_colors)
+          diff_files = CompareFiles.new(format: format,
+                                        context_lines: context_lines,
+                                        header: header, verbose: verbose,
+                                        color: color, noop: noop,
+                                        diff_colors: diff_colors)
 
           return diff_files.call(file_a, file_b, file_a_path, file_b_path)
         end
