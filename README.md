@@ -173,7 +173,7 @@ TTY::File.copy_file "docs/README.md", "app", preserve: true
 To create a file at a given destination with some content use `create_file`:
 
 ```ruby
-TTY::File.create_file "docs/README.md", "## Title header"
+TTY::File.create_file "file-a/README.md", content
 ```
 
 On collision with already existing file, a menu gets displayed:
@@ -185,9 +185,9 @@ Overwrite examples/file-a? (enter "h" for help) [y,d,n,q,h]
 
 The `d` option allows to compare the changes:
 
-```ruby
---- examples/file-a
-+++ New contents
+```
+--- a/examples/file-a
++++ b/examples/file-a
 @@ -1,8 +1,9 @@
  aaaaa
  bbbbb
@@ -203,6 +203,8 @@ Overwrite examples/file-a? (enter "h" for help) [y,d,n,q,h]
 ````
 
 You can force to always overwrite file with `:force` option or always skip by providing `:skip`.
+
+There is [examples/overwrite.rb](examples/overwrite.rb) that demonstrates diffing file with new content.
 
 ### 2.6. copy_dir
 
@@ -292,41 +294,84 @@ TTY::File.create_dir(tree, "/path/to/parent/dir")
 To compare files line by line in a system independent way use `diff`, or `diff_files`:
 
 ```ruby
-TTY::File.diff_files("file_a", "file_b")
-# =>
-#  @@ -1,4 +1,4 @@
-#   aaa
-#  -bbb
-#  +xxx
-#   ccc
+print TTY::File.diff_files("file-a", "file-b")
 ```
 
-You can also pass additional arguments such as `:format`, `:context_lines` and `:threshold`.
+Printing output to console would result in:
 
-Accepted formats are `:old`, `:unified`, `:context`, `:ed`, `:reverse_ed`, by default the `:unified` format is used.
+```
+        diff  examples/file-a and examples/file-b
+--- examples/file-a
++++ examples/file-b
+@@ -1,8 +1,9 @@
+ aaaaa
+ bbbbb
+-ccccc
++xxxxx
++
+ ddddd
+ eeeee
+ fffff
+-ggggg
++yyyyy
+```
 
-The `:context_lines` specifies how many extra lines around the differing lines to include in the output. By default its 3 lines.
+You can also pass additional parameters such as:
 
-The `:threshold` sets maximum file size in bytes, by default files larger than `10Mb` are not processed.
+* `:format` - accepted values are `:unified`, `:old`, `:context` and `:ed`. Defaults to `:unified` as seen in the output above - similar to git tool.
+* `:lines` - how many extra lines to include in the output around the compared lines. Defaults to `3` lines.
+* `:threshold` - set maximum file size in bytes. By default files larger than `10Mb` are no processed.
+* `:header` - controls display of two-line files comparison. By default `true`.
+
+Changing format to `:old`, removing context lines and skipping log output:
 
 ```ruby
-TTY::File.diff_files("file_a", "file_b", format: :old)
-# =>
-#  1,4c1,4
-#  < aaa
-#  < bbb
-#  < ccc
-#  ---
-#  > aaa
-#  > xxx
-#  > ccc
+TTY::File.diff_files("file_a", "file_b", format: :old, lines: 0, verbose: false)
 ```
 
-Equally, you can perform a comparison between a file content and a string content like so:
+Results in the following output:
+
+```
+<<< examples/file-a
+>>> examples/file-b
+3c3,4
+< ccccc
+---
+> xxxxx
+>
+
+7c8
+< ggggg
+---
+> yyyyy
+```
+
+In addition, you can perform a comparison between a file and a string or between two strings. For example, comparing file with content:
 
 ```ruby
-TTY::File.diff_files("/path/to/file", "some long text")
+TTY::File.diff_files("file-a", "new\nlong\ntext")
 ```
+
+Will output:
+
+```
+        diff  a/examples/file-a and b/examples/file-a
+--- a/examples/file-a
++++ b/examples/file-a
+@@ -1,8 +1,4 @@
+-aaaaa
+-bbbbb
+-ccccc
+-ddddd
+-eeeee
+-fffff
+-ggggg
++new
++long
++text
+````
+
+Please run [examples/diff.rb](examples/diff.rb) to see how output works.
 
 ### 2.9. download_file
 
