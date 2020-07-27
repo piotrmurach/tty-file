@@ -1,6 +1,6 @@
 # Change log
 
-## [v0.10.0] - 2020-07-24
+## [v0.10.0] - 2020-07-27
 
 ### Added
 * Add diff option to file conflict menu to show file contents differences
