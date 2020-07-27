@@ -435,7 +435,8 @@ module TTY
           diff_files = CompareFiles.new(self, format: format,
                                               context_lines: context_lines,
                                               header: header, verbose: verbose,
-                                              color: color, noop: noop)
+                                              color: color, noop: noop,
+                                              diff_colors: diff_colors)
 
           return diff_files.call(file_a, file_b, file_a_path, file_b_path)
         end
@@ -459,6 +460,15 @@ module TTY
       end
     end
     private_module_function :diff_paths
+
+    def diff_colors
+      {
+        green: @pastel.green.detach,
+        red: @pastel.red.detach,
+        cyan: @pastel.cyan.detach
+      }
+    end
+    private_module_function :diff_colors
 
     # Check if file is binary or exceeds threshold size
     #

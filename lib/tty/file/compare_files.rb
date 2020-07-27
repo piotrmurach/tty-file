@@ -8,7 +8,8 @@ module TTY
       extend Forwardable
 
       def initialize(base, format: :unified, header: true, context_lines: 5,
-                     verbose: true, color: :green, noop: false)
+                     verbose: true, color: :green, noop: false,
+                     diff_colors: nil)
         @base = base
         @format = format
         @header = header
@@ -16,6 +17,7 @@ module TTY
         @verbose = verbose
         @color = color
         @noop = noop
+        @diff_colors = diff_colors
       end
 
       # Compare files
@@ -43,31 +45,27 @@ module TTY
         while !file_a.eof? && !file_b.eof?
           output << differ.(file_a.read(block_size), file_b.read(block_size))
         end
-        color_diff_lines(output.join, color: @color, format: @format)
+        color_diff_lines(output.join)
       end
 
       private
 
       # @api private
-      def color_diff_lines(hunks, color: true, format: :unified)
-        return hunks unless color && format == :unified
+      def color_diff_lines(hunks)
+        return hunks unless @color && @format == :unified
 
         newline = "\n"
         hunks.lines.map do |line|
           if matched = line.to_s.match(/^(\+[^+]*?)\n/)
-            decorate(matched[1], :green) + newline
+            @diff_colors[:green].(matched[1]) + newline
           elsif matched = line.to_s.match(/^(\-[^-].*?)\n/)
-            decorate(matched[1], :red) + newline
+            @diff_colors[:red].(matched[1]) + newline
           elsif matched = line.to_s.match(/^(@@.+?@@)\n/)
-            decorate(matched[1], :cyan) + newline
+            @diff_colors[:cyan].(matched[1]) + newline
           else
             line
           end
         end.join
-      end
-
-      def decorate(*args)
-        @base.__send__(:decorate, *args)
       end
     end # CompareFiles
   end # File
