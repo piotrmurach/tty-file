@@ -1,11 +1,11 @@
 <div align="center">
-  <a href="https://piotrmurach.github.io/tty" target="_blank"><img width="130" src="https://cdn.rawgit.com/piotrmurach/tty/master/images/tty.png" alt="tty logo" /></a>
+  <a href="https://ttytoolkit.org"><img width="130" src="https://github.com/piotrmurach/tty/raw/master/images/tty.png" alt="TTY Toolkit logo" /></a>
 </div>
 
 # TTY::File [![Gitter](https://badges.gitter.im/Join%20Chat.svg)][gitter]
 
 [![Gem Version](https://badge.fury.io/rb/tty-file.svg)][gem]
-[![Build Status](https://secure.travis-ci.org/piotrmurach/tty-file.svg?branch=master)][travis]
+[![Actions CI](https://github.com/piotrmurach/tty-file/workflows/CI/badge.svg?branch=master)][gh_actions_ci]
 [![Build status](https://ci.appveyor.com/api/projects/status/og69rn550s4mt1q3?svg=true)][appveyor]
 [![Maintainability](https://api.codeclimate.com/v1/badges/9ce2d164ea4835901ccd/maintainability)][codeclimate]
 [![Coverage Status](https://coveralls.io/repos/github/piotrmurach/tty-file/badge.svg)][coverage]
@@ -13,13 +13,15 @@
 
 [gitter]: https://gitter.im/piotrmurach/tty
 [gem]: http://badge.fury.io/rb/tty-file
-[travis]: http://travis-ci.org/piotrmurach/tty-file
+[gh_actions_ci]: https://github.com/piotrmurach/tty-file/actions?query=workflow%3ACI
 [appveyor]: https://ci.appveyor.com/project/piotrmurach/tty-file
 [codeclimate]: https://codeclimate.com/github/piotrmurach/tty-file/maintainability
 [coverage]: https://coveralls.io/github/piotrmurach/tty-file
 [inchpages]: http://inch-ci.org/github/piotrmurach/tty-file
 
-> File manipulation utility methods
+> File manipulation utility methods.
+
+**TTY::File** provides independent file utilities component for [TTY](https://github.com/piotrmurach/tty) toolkit.
 
 ## Motivation
 
