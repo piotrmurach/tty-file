@@ -27,6 +27,10 @@ module TTY
         ::File.exist?(relative_path)
       end
 
+      def directory?
+        ::File.directory?(relative_path)
+      end
+
       def identical?
         ::File.binread(relative_path) == content
       end
@@ -59,6 +63,11 @@ module TTY
       #
       # @api private
       def detect_collision
+        if directory?
+          notify(:error, :red)
+          return
+        end
+
         if exist?
           if identical?
             notify(:identical, :cyan)
