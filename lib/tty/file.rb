@@ -288,8 +288,18 @@ module TTY
     # @api public
     def copy_file(source_path, *args, context: nil, force: false, skip: false,
                   verbose: true, color: :green, noop: false, preserve: nil, &block)
+
       source_path = source_path.to_s
+      unless ::File.file? source_path
+        log_status(:error, source_path, verbose: verbose, color: :red)
+        return
+      end
+
       dest_path = (args.first || source_path).to_s.sub(/\.erb$/, "")
+
+      if ::File.directory? dest_path
+        dest_path = ::File.join(dest_path, ::File.basename(source_path))
+      end
 
       ctx = if context
               context.instance_eval("binding")
@@ -297,7 +307,7 @@ module TTY
               instance_eval("binding")
             end
 
-      create_file(dest_path, context: context, force: force, skip: skip,
+      file_dest = create_file(dest_path, context: context, force: force, skip: skip,
                   verbose: verbose, color: color, noop: noop) do
         version = ERB.version.scan(/\d+\.\d+\.\d+/)[0]
         template = if version.to_f >= 2.2
@@ -309,10 +319,11 @@ module TTY
         content = block[content] if block
         content
       end
-      return unless preserve
+      return file_dest unless preserve
 
       copy_metadata(source_path, dest_path, verbose: verbose, noop: noop,
                     color: color)
+      file_dest
     end
     module_function :copy_file
 
